@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pão do Ciso - Cardápio Digital</title>
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <!-- <link rel="icon" type="image/png" href="img/logo-favicon.png"> -->
+    
+    <!-- Meta Tags para SEO e Redes Sociais -->
+    <meta name="description" content="Pães artesanais de fermentação natural, antipasti e produtos selecionados. Faça seu pedido para a próxima fornada do Pão do Ciso.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Pão do Ciso | Pães Artesanais de Fermentação Natural">
+    <meta property="og:description" content="Pães de fermentação natural, antepastos e produtos artesanais. Faça seu pedido para a próxima fornada!">
+    <meta property="og:image" content="img/logo-preview.jpg">
+    <meta property="og:url" content="https://paodociso.com.br">
+    <meta name="theme-color" content="#4a6c2f">
+</head>
+<body>
+    <!-- ===================== CABEÇALHO PRINCIPAL ===================== -->
+    <header class="cabecalho-principal">
+        <div class="cabecalho-container">
+            <div class="logo-placeholder" style="width:70px;height:70px;background:linear-gradient(135deg, #4a6c2f, #8B4513);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.2);">
+                <span style="color:white;font-weight:bold;font-size:12px;">PÃO<br>DO<br>CISO</span>
+            </div>
+            
+            <div class="cabecalho-info">
+                <h1 class="titulo-cabecalho">Pão do Ciso</h1>
+                
+                <div class="contatos-cabecalho">
+                    <a href="https://instagram.com/paodociso" target="_blank" class="link-contato">
+                        <i class="fab fa-instagram"></i> @paodociso
+                    </a>
+                    <a href="https://wa.me/5511982391781" target="_blank" class="link-contato">
+                        <i class="fab fa-whatsapp"></i> (11) 98239-1781
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================== BANNER DE FORNADA ===================== -->
+    <div class="container">
+        <div class="banner-fornada" onclick="abrirModal('modal-informacoes-fornada')">
+            <div class="fornada-conteudo">
+                <h2 id="texto-data-fornada" class="fornada-titulo">
+                    <i class="fas fa-calendar-alt"></i> PRÓXIMA FORNADA: CARREGANDO...
+                </h2>
+                <p id="texto-limite-pedido" class="fornada-subtitulo">
+                    Pedidos até: carregando...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== ÁREA PRINCIPAL DE PRODUTOS ===================== -->
+    <main id="container-aplicativo" class="container">
+        <!-- Os produtos serão carregados dinamicamente pelo JavaScript -->
+    </main>
+
+    <!-- ===================== BARRA FIXA DO CARRINHO ===================== -->
+    <div id="barra-carrinho" class="barra-carrinho-fixa" onclick="abrirModalCarrinho()">
+        <div class="barra-esquerda">
+            <span class="quantidade-carrinho" id="resumo-quantidade-carrinho">0 itens</span>
+            <span class="valor-carrinho" id="resumo-total-carrinho">R$ 0,00</span>
+        </div>
+        <div class="barra-direita">
+            VER CESTA <i class="fas fa-shopping-basket"></i>
+        </div>
+    </div>
+
+    <!-- ===================== OVERLAY PARA MODAIS ===================== -->
+    <div id="overlay-modal" class="overlay-modal" onclick="fecharTodosModais()"></div>
+
+    <!-- ===================== MODAL 1: INFORMAÇÕES DA FORNADA ===================== -->
+    <div id="modal-informacoes-fornada" class="modal">
+        <button class="botao-fechar-modal" onclick="fecharModal('modal-informacoes-fornada')">&times;</button>
+        
+        <div class="conteudo-modal">
+            <i class="fas fa-bread-slice icone-modal"></i>
+            
+            <h3 class="titulo-modal">Informações da Fornada</h3>
+            
+            <div id="conteudo-fornada" class="texto-modal">
+                <div class="destaque-fornada">
+                    <span class="destaque-titulo">PRÓXIMA FORNADA</span>
+                    <span id="data-fornada-modal" class="destaque-data">Carregando...</span>
+                    
+                    <span class="destaque-titulo">PEDIDOS ATÉ</span>
+                    <span id="limite-fornada-modal" class="destaque-data">Carregando...</span>
+                </div>
+
+                <div class="informacoes-fornada">
+                    <p><i class="fas fa-seedling"></i> <strong>Produção Artesanal:</strong> Nossos pães são feitos com fermentação natural (Levain).</p>
+                    <p><i class="fas fa-clock"></i> <strong>Frescor Garantido:</strong> Tudo é assado na manhã do dia da entrega.</p>
+                    <p><i class="fas fa-box"></i> <strong>Pedidos Limitados:</strong> Trabalhamos sob demanda com capacidade controlada.</p>
+                </div>
+            </div>
+
+            <div class="dica-fornada">
+                <i class="fas fa-lightbulb"></i> <strong>Dica:</strong> Garanta o seu pedido com antecedência!
+            </div>
+            
+            <button class="botao-acao botao-verde" onclick="fecharModal('modal-informacoes-fornada')">
+                ENTENDI, VAMOS ÀS COMPRAS! <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===================== MODAL 2: DETALHES DO PRODUTO ===================== -->
+    <div id="modal-produto" class="modal">
+        <button class="botao-fechar-modal" onclick="fecharModal('modal-produto')">&times;</button>
+        
+        <div id="corpo-modal-produto" class="conteudo-modal-produto">
+            <!-- Conteúdo será injetado dinamicamente -->
+        </div>
+        
+        <div class="botoes-modal-produto">
+            <!-- Botão para adicionar e continuar comprando -->
+            <button id="botao-adicionar-simples" 
+                    class="botao-acao botao-bege" 
+                    onclick="adicionarItemAoCarrinho()">
+                <i class="fas fa-plus"></i> ADICIONAR AO CARRINHO
+            </button>
+            
+            <!-- Botão para adicionar e ir para o carrinho -->
+            <button id="botao-adicionar-e-ir-para-carrinho" 
+                    class="botao-acao botao-verde" 
+                    onclick="adicionarEIrParaCarrinho()" 
+                    style="display: none;">
+                <i class="fas fa-shopping-basket"></i> VER CARRINHO
+            </button>
+        </div>
+    </div>
+    
+    <!-- ===================== MODAL 3: CARRINHO DE COMPRAS ===================== -->
+    <div id="modal-carrinho" class="modal">
+        <button class="botao-fechar-modal" onclick="fecharModal('modal-carrinho')">&times;</button>
+        
+        <div id="conteudo-carrinho" class="conteudo-modal-carrinho">
+            <!-- Conteúdo será injetado dinamicamente pelo JavaScript -->
+        </div>
+    </div>
+
+    <!-- ===================== MODAL 4: DADOS DO CLIENTE ===================== -->
+    <div id="modal-dados-cliente" class="modal">
+        <button class="botao-fechar-modal" onclick="fecharModal('modal-dados-cliente')">&times;</button>
+        
+        <div class="conteudo-modal">
+            <h3 class="titulo-modal">Seus Dados</h3>
+            
+            <div class="formulario-dados">
+                <!-- Campo: Nome Completo -->
+                <div class="grupo-campo">
+                    <label for="nome-cliente" class="rotulo-campo obrigatorio">
+                        NOME COMPLETO
+                    </label>
+                    <input type="text" 
+                           id="nome-cliente" 
+                           class="campo-entrada"
+                           placeholder="Como podemos te chamar?"
+                           autocomplete="name">
+                </div>
+                
+                <!-- Campo: WhatsApp -->
+                <div class="grupo-campo">
+                    <label for="whatsapp-cliente" class="rotulo-campo obrigatorio">
+                        WHATSAPP
+                    </label>
+                    <input type="tel" 
+                           id="whatsapp-cliente" 
+                           class="campo-entrada"
+                           placeholder="(11) 98765-4321"
+                           autocomplete="tel">
+                </div>
+                
+                <!-- Seção de Endereço (só aparece se for entrega) -->
+                <div id="secao-endereco" style="display: none;">
+                    <div class="separador-endereco"></div>
+                    
+                    <h4 class="subtitulo-endereco">
+                        <i class="fas fa-map-marker-alt"></i> ENDEREÇO DE ENTREGA
+                    </h4>
+                    
+                    <!-- Campo: CEP -->
+                    <div class="grupo-campo">
+                        <label for="codigo-postal-cliente" class="rotulo-campo obrigatorio">
+                            CEP
+                        </label>
+                        <input type="text" 
+                               id="codigo-postal-cliente" 
+                               class="campo-entrada"
+                               placeholder="00000-000"
+                               maxlength="9"
+                               oninput="formatarCodigoPostal(this)">
+                        <small class="texto-ajuda">Digite 8 números para buscar automaticamente</small>
+                    </div>
+                    
+                    <!-- Campos autopreenchidos pelo CEP -->
+                    <div class="grupo-campo">
+                        <label for="logradouro-cliente" class="rotulo-campo obrigatorio">
+                            RUA
+                        </label>
+                        <input type="text" 
+                               id="logradouro-cliente" 
+                               class="campo-entrada campo-leitura"
+                               readonly
+                               placeholder="Será preenchido automaticamente">
+                    </div>
+                    
+                    <div class="grupo-duplo">
+                        <div class="grupo-campo">
+                            <label for="bairro-cliente" class="rotulo-campo obrigatorio">
+                                BAIRRO
+                            </label>
+                            <input type="text" 
+                                   id="bairro-cliente" 
+                                   class="campo-entrada campo-leitura"
+                                   readonly
+                                   placeholder="Será preenchido automaticamente">
+                        </div>
+                        
+                        <div class="grupo-campo">
+                            <label for="cidade-cliente" class="rotulo-campo">
+                                CIDADE/UF
+                            </label>
+                            <input type="text" 
+                                   id="cidade-cliente" 
+                                   class="campo-entrada campo-leitura"
+                                   readonly
+                                   placeholder="Será preenchido automaticamente">
+                        </div>
+                    </div>
+                    
+                    <!-- Campos para preenchimento manual -->
+                    <div class="grupo-duplo">
+                        <div class="grupo-campo">
+                            <label for="numero-residencia-cliente" class="rotulo-campo obrigatorio">
+                                NÚMERO
+                            </label>
+                            <input type="text" 
+                                   id="numero-residencia-cliente" 
+                                   class="campo-entrada"
+                                   placeholder="123"
+                                   autocomplete="address-line2">
+                        </div>
+                        
+                        <div class="grupo-campo">
+                            <label for="complemento-residencia-cliente" class="rotulo-campo">
+                                COMPLEMENTO
+                            </label>
+                            <input type="text" 
+                                   id="complemento-residencia-cliente" 
+                                   class="campo-entrada"
+                                   placeholder="Apto 45, Bloco B"
+                                   autocomplete="address-line3">
+                        </div>
+                    </div>
+                    
+                    <!-- Campo: Ponto de Referência -->
+                    <div class="grupo-campo">
+                        <label for="ponto-referencia-entrega" class="rotulo-campo">
+                            PONTO DE REFERÊNCIA
+                        </label>
+                        <input type="text" 
+                               id="ponto-referencia-entrega" 
+                               class="campo-entrada"
+                               placeholder="Ex: Próximo ao mercado, portão azul">
+                    </div>
+                    
+                    <!-- Informação de Frete -->
+                    <div id="informacao-frete" class="card-informacao-frete" style="display: none;">
+                        <i class="fas fa-motorcycle"></i>
+                        <div class="info-frete-conteudo">
+                            <span class="info-frete-titulo">FRETE CALCULADO:</span>
+                            <span id="valor-frete" class="info-frete-valor">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botões de Ação -->
+            <div class="botoes-acao">
+                <button id="botao-prosseguir-pagamento" 
+                        class="botao-acao botao-verde"
+                        onclick="validarDadosCliente()">
+                    ESCOLHER PAGAMENTO <i class="fas fa-credit-card"></i>
+                </button>
+                
+                <button class="botao-acao botao-bege"
+                        onclick="fecharModal('modal-dados-cliente'); abrirModal('modal-carrinho');">
+                    <i class="fas fa-arrow-left"></i> VOLTAR À CESTA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== MODAL 5: FORMA DE PAGAMENTO ===================== -->
+    <div id="modal-pagamento" class="modal">
+        <button class="botao-fechar-modal" onclick="fecharTodosModais()">&times;</button>
+        
+        <div class="conteudo-modal">
+            <h3 class="titulo-modal">Forma de Pagamento</h3>
+            
+            <!-- Resumo do Pedido -->
+            <div class="resumo-pedido">
+                <div class="resumo-item">
+                    <span>Itens no Carrinho:</span>
+                    <span id="quantidade-itens-pagamento">0</span>
+                </div>
+                <div class="resumo-item">
+                    <span>Taxa de Entrega:</span>
+                    <span id="taxa-entrega-pagamento">R$ 0,00</span>
+                </div>
+                <div class="resumo-total">
+                    <span>TOTAL:</span>
+                    <span id="total-geral-pagamento">R$ 0,00</span>
+                </div>
+            </div>
+            
+            <!-- Opções de Pagamento -->
+            <div class="opcoes-pagamento">
+                <!-- Opção 1: PIX -->
+                <div class="opcao-pagamento" onclick="selecionarPagamento('PIX', this)">
+                    <div class="opcao-cabecalho">
+                        <i class="fa-brands fa-pix"></i>
+                        <span class="opcao-titulo">PIX</span>
+                        <span class="opcao-recomendado">RECOMENDADO</span>
+                    </div>
+                    
+                    <div class="opcao-conteudo" style="display: none;">
+                        <div class="pix-valor">
+                            VALOR: <span id="valor-pix">R$ 0,00</span>
+                        </div>
+                        
+                        <div class="pix-qrcode">
+                            <div style="width:160px;height:160px;background:#f5f5f5;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;border-radius:10px;margin:0 auto;flex-direction:column;">
+                                <div style="background:black;width:140px;height:140px;display:grid;grid-template-columns:repeat(21, 1fr);grid-template-rows:repeat(21, 1fr);padding:10px;">
+                                    <!-- Simula um QR Code -->
+                                </div>
+                                <span style="color:#666;font-size:12px;text-align:center;margin-top:10px;">QR Code PIX</span>
+                            </div>
+                            <p class="pix-legenda">Escaneie o QR Code ou copie a chave abaixo:</p>
+                        </div>
+                        
+                        <div class="pix-chave" onclick="copiarChavePix()">
+                            <span id="texto-chave-pix">paodociso@gmail.com</span>
+                            <i class="far fa-copy"></i>
+                        </div>
+                        
+                        <div id="mensagem-copiado" class="mensagem-sucesso" style="display: none;">
+                            ✅ Chave PIX copiada!
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Opção 2: Cartão -->
+                <div class="opcao-pagamento" onclick="selecionarPagamento('Cartão', this)">
+                    <div class="opcao-cabecalho">
+                        <i class="fas fa-credit-card"></i>
+                        <span class="opcao-titulo">CARTÃO (CRÉDITO/DÉBITO)</span>
+                    </div>
+                    
+                    <div class="opcao-conteudo" style="display: none;">
+                        <p class="opcao-descricao">
+                            Pague por aproximação na entrega ou solicite o link de pagamento via WhatsApp.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Opção 3: Dinheiro -->
+                <div class="opcao-pagamento" onclick="selecionarPagamento('Dinheiro', this)">
+                    <div class="opcao-cabecalho">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span class="opcao-titulo">DINHEIRO</span>
+                    </div>
+                    
+                    <div class="opcao-conteudo" style="display: none;">
+                        <p class="opcao-descricao">
+                            Pagamento em espécie no momento da entrega/retirada.
+                        </p>
+                        <p class="opcao-observacao">
+                            <i class="fas fa-info-circle"></i> Tenha o troco preparado, por favor.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botões de Ação -->
+            <div class="botoes-acao">
+                <button id="botao-finalizar-pedido" 
+                        class="botao-acao botao-verde"
+                        onclick="finalizarPedido()"
+                        disabled>
+                    FINALIZAR PEDIDO <i class="fab fa-whatsapp"></i>
+                </button>
+                
+                <button class="botao-acao botao-bege"
+                        onclick="fecharModal('modal-pagamento'); abrirModal('modal-dados-cliente');">
+                    <i class="fas fa-arrow-left"></i> VOLTAR AOS DADOS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== MODAL 6: CONFIRMAÇÃO DE SUCESSO ===================== -->
+    <div id="modal-sucesso" class="modal">
+        <div class="conteudo-modal-sucesso">
+            <div class="icone-sucesso">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            
+            <h3 class="titulo-sucesso">PEDIDO ENVIADO COM SUCESSO!</h3>
+            
+            <div class="mensagem-sucesso">
+                <p>✅ Seu pedido foi registrado em nosso sistema.</p>
+                <p>📱 Você será redirecionado para o WhatsApp em instantes...</p>
+                <p>💬 Confirme o pagamento e combine os detalhes da entrega.</p>
+            </div>
+            
+            <div class="detalhes-pedido">
+                <div class="detalhe-item">
+                    <i class="fas fa-receipt"></i>
+                    <span>Nº do Pedido: <strong id="numero-pedido">#0001</strong></span>
+                </div>
+                <div class="detalhe-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Horário: <strong id="horario-pedido">00:00</strong></span>
+                </div>
+            </div>
+            
+            <button id="botao-fechar-sucesso" 
+                    class="botao-acao botao-verde"
+                    onclick="reiniciarSistema()">
+                <i class="fas fa-home"></i> VOLTAR AO CARDÁPIO
+            </button>
+            
+            <p class="texto-agradecimento">
+                Obrigado por escolher o Pão do Ciso! 🥖
+            </p>
+        </div>
+    </div>
+
+    <!-- ===================== RODAPÉ ===================== -->
+    <footer class="rodape">
+        <div class="container">
+            <p class="texto-rodape">
+                <i class="fas fa-heart"></i> Feito com carinho por Pão do Ciso
+            </p>
+            <p class="copyright">
+                © 2024 Pão do Ciso - Todos os direitos reservados
+            </p>
+        </div>
+    </footer>
+
+    <!-- ===================== SCRIPTS JAVASCRIPT ===================== -->
+    <!-- ORDEM CORRETA DE CARREGAMENTO -->
+    <script src="js/dados.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/modais.js"></script>
+    <script src="js/notificacoes.js"></script>
+    <script src="js/cardapio.js"></script>
+    <script src="js/produto-modal.js"></script>
+    <script src="js/opcionais.js"></script>
+    <script src="js/carrinho.js"></script>
+    <script src="js/dados-cliente.js"></script>
+    <script src="js/cep-frete.js"></script>
+    <script src="js/pagamento.js"></script>
+    <script src="js/envio.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
