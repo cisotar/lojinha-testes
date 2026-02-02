@@ -1607,3 +1607,18 @@ select:focus {
     white-space: nowrap;
     z-index: 1000;
 }
+
+/* Adicione no final do style.css */
+.aviso-cep {
+    display: block;
+    margin-top: 5px;
+    color: var(--cinza-escuro);
+    font-size: 0.75rem;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.aviso-cep i {
+    margin-right: 5px;
+    color: var(--verde-militar);
+}

@@ -282,6 +282,12 @@ function alterarModoEntrega(modo) {
         infoTaxa.style.display = modo === 'entrega' ? 'block' : 'none';
     }
     
+    // 🔥 NOVA LINHA ADICIONADA (PASSO 4)
+    // Se for entrega, inicializa o AddressManager
+    if (modo === 'entrega' && window.AddressManager) {
+        window.AddressManager.init();
+    }
+    
     atualizarResumoFinanceiroCarrinho();
 }
 

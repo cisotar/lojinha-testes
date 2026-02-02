@@ -208,7 +208,7 @@
                         <input type="text" 
                                id="logradouro-cliente" 
                                class="campo-entrada campo-leitura"
-                               readonly
+                               
                                placeholder="Será preenchido automaticamente">
                     </div>
                     
@@ -220,7 +220,7 @@
                             <input type="text" 
                                    id="bairro-cliente" 
                                    class="campo-entrada campo-leitura"
-                                   readonly
+                                   
                                    placeholder="Será preenchido automaticamente">
                         </div>
                         
@@ -231,7 +231,7 @@
                             <input type="text" 
                                    id="cidade-cliente" 
                                    class="campo-entrada campo-leitura"
-                                   readonly
+                                   
                                    placeholder="Será preenchido automaticamente">
                         </div>
                     </div>
@@ -284,6 +284,7 @@
             </div>
             
             <!-- Botões de Ação -->
+        
             <div class="botoes-acao" style="display: flex; flex-direction: column; gap: 10px;">
                 
                 <button id="botao-prosseguir-pagamento" 
@@ -292,11 +293,24 @@
                     ESCOLHER PAGAMENTO <i class="fas fa-credit-card"></i>
                 </button>
                 
+                <!-- 🔥 NOVO BOTÃO DE TESTE (PASSO 5) -->
+                <!--
+                <button
+                    id="btn-testar-endereco"
+                    type="button"
+                    class="botao-secundario"
+                    onclick="testarEndereco()"
+                >
+                    Testar endereço
+                </button>
+                -->
+                
                 <button class="botao-acao botao-bege"
                         onclick="fecharModal('modal-dados-cliente'); abrirModal('modal-carrinho');">
                     <i class="fas fa-arrow-left"></i> VOLTAR À CESTA
                 </button>
             </div>
+
         </div>
     </div>
 
@@ -474,6 +488,7 @@
     <script src="js/cep-frete.js"></script>
     <script src="js/pagamento.js"></script>
     <script src="js/envio.js"></script>
+    <script src="js/address-manager.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

@@ -1,7 +1,6 @@
 // ============================================
 // INICIALIZAÇÃO PRINCIPAL - PÃO DO CISO
 // ============================================
-
 function inicializarSistema() {
     console.log('Inicializando sistema Pão do Ciso...');
     
@@ -43,8 +42,39 @@ function inicializarSistema() {
         });
     }
     
+    // 🔥 PASSO 8: VERIFICAÇÃO DO ADDRESSMANAGER
+    // Adicione esta parte NO FINAL da função, antes do console.log final:
+    console.log('🔍 Verificando AddressManager...');
+    
+    // Verificação após um pequeno delay (para garantir que todos scripts carregaram)
+    setTimeout(() => {
+        if (window.AddressManager) {
+            console.log('✅ AddressManager carregado com sucesso!');
+            console.log('📋 Métodos disponíveis:', Object.keys(window.AddressManager));
+            
+            // Testa cada método individualmente
+            const metodos = ['init', 'validar', 'getEndereco', 'formatarCEP'];
+            metodos.forEach(metodo => {
+                if (typeof window.AddressManager[metodo] === 'function') {
+                    console.log(`   ✓ ${metodo}(): OK`);
+                } else {
+                    console.warn(`   ✗ ${metodo}(): Não encontrado`);
+                }
+            });
+        } else {
+            console.error('❌ AddressManager NÃO foi carregado!');
+            console.warn('⚠️ Verifique:');
+            console.warn('   1. O arquivo address-manager.js existe em js/');
+            console.warn('   2. Foi adicionado antes de dados-cliente.js no HTML');
+            console.warn('   3. Não há erros de sintaxe no arquivo');
+        }
+    }, 500); // 500ms de delay
+    
     console.log('✅ Sistema inicializado. Carrinho:', carrinho);
-}   
+}
+
+// Mantenha esta linha no final do arquivo (não modifique)
+window.inicializarSistema = inicializarSistema;
 
 // INICIALIZAR QUANDO O DOM CARREGAR
 document.addEventListener('DOMContentLoaded', function() {
