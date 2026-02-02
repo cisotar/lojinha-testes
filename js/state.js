@@ -2,48 +2,41 @@
 // ESTADO DA APLICAÇÃO - PÃO DO CISO
 // ============================================
 
-// VERIFICAR DUPLICAÇÃO
-if (window.__PAO_CARREGADO) {
-    console.warn('Pão do Ciso já foi carregado. Ignorando state.js');
-} else {
-    window.__PAO_CARREGADO = true;
+// REMOVER O BLOCO if/else COMPLETAMENTE
+// E DEIXAR APENAS O CÓDIGO ESSENCIAL:
 
-    // ESTADO GLOBAL
-    window.carrinho = {};
-    window.produtoAtual = null;
-    window.enderecoCliente = {
-        cep: '',
-        logradouro: '',
-        bairro: '',
-        cidade: '',
-        estado: '',
-        numero: '',
-        complemento: '',
-        referencia: ''
-    };
+// ESTADO GLOBAL
+window.carrinho = {};
+window.produtoAtual = null;
+window.enderecoCliente = {
+    cep: '',
+    logradouro: '',
+    bairro: '',
+    cidade: '',
+    estado: '',
+    numero: '',
+    complemento: '',
+    referencia: ''
+};
 
-    window.estadoAplicativo = {
-        formaPagamento: null,
-        totalGeral: 0,
-        modoEntrega: 'retirada',
-        taxaEntrega: 0,
-        bairroEntrega: null,
-        cupomAplicado: null,
-        descontoCupom: 0
-    };
+window.estadoAplicativo = {
+    formaPagamento: null,
+    totalGeral: 0,
+    modoEntrega: 'retirada',
+    taxaEntrega: 0,
+    bairroEntrega: null,
+    cupomAplicado: null,
+    descontoCupom: 0
+};
 
-    // FUNÇÕES DE ESTADO
-// FUNÇÕES DE ESTADO - MODIFICADAS
+// FUNÇÕES DE ESTADO
 function carregarCarrinhoSalvo() {
-    // SEMPRE começa com carrinho vazio (não carrega do localStorage)
     window.carrinho = {};
-    console.log('🆕 Carrinho inicializado vazio (não persiste entre sessões)');
+    console.log('🆕 Carrinho inicializado vazio');
 }
 
 function salvarCarrinho() {
-    // NÃO salva no localStorage - carrinho é apenas da sessão atual
-    // Apenas mantém em memória durante a sessão
-    console.log('🔄 Carrinho atualizado (apenas em memória)');
+    console.log('🔄 Carrinho atualizado');
 }
 
 function resetarEstado() {
@@ -73,8 +66,7 @@ function resetarEstado() {
     console.log('🔄 Estado resetado');
 }
 
-    // EXPORTAR FUNÇÕES
-    window.carregarCarrinhoSalvo = carregarCarrinhoSalvo;
-    window.salvarCarrinho = salvarCarrinho;
-    window.resetarEstado = resetarEstado;
-}
+// EXPORTAR FUNÇÕES
+window.carregarCarrinhoSalvo = carregarCarrinhoSalvo;
+window.salvarCarrinho = salvarCarrinho;
+window.resetarEstado = resetarEstado;

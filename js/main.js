@@ -5,22 +5,22 @@
 function inicializarSistema() {
     console.log('Inicializando sistema Pão do Ciso...');
     
-    // Carregar estado salvo
+    // 1. CARREGAR CARRINHO PRIMEIRO (IMPORTANTE!)
     if (typeof carregarCarrinhoSalvo === 'function') {
         carregarCarrinhoSalvo();
-    } else {
-        console.error('Função carregarCarrinhoSalvo não encontrada!');
     }
     
-    // Inicializar componentes
+    // 2. DEPOIS RENDERIZAR CARDÁPIO
     if (typeof renderizarCardapio === 'function') {
         renderizarCardapio();
     }
     
+    // 3. DEPOIS ATUALIZAR BARRA
     if (typeof atualizarBarraCarrinho === 'function') {
         atualizarBarraCarrinho();
     }
     
+    // 4. RESTANTE DO CÓDIGO...
     if (typeof configurarEventosGerais === 'function') {
         configurarEventosGerais();
     }
@@ -39,13 +39,11 @@ function inicializarSistema() {
         barraCarrinho.addEventListener('click', function() {
             if (typeof abrirModalCarrinho === 'function') {
                 abrirModalCarrinho();
-            } else {
-                console.error('Função abrirModalCarrinho não encontrada!');
             }
         });
     }
     
-    console.log('✅ Sistema Pão do Ciso inicializado com sucesso!');
+    console.log('✅ Sistema inicializado. Carrinho:', carrinho);
 }
 
 // INICIALIZAR QUANDO O DOM CARREGAR

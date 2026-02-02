@@ -223,7 +223,8 @@ function removerItemDoCarrinho(identificador) {
     salvarCarrinho();
     renderizarCarrinho();
     atualizarBarraCarrinho();
-    renderizarCardapio();
+    // Atualizar apenas badges, não re-renderizar tudo
+    atualizarBadgesAposRemocao();
 }
 
 function aplicarCupom() {

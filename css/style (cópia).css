@@ -1,10 +1,12 @@
 /* ============================================
    ESTILOS PRINCIPAIS - PÃO DO CISO
-   Versão reorganizada e otimizada
+   Mantendo o estilo original com melhorias
+   Versão corrigida com modal de produto
    ============================================ */
 
 /* ===================== VARIÁVEIS DE CORES ===================== */
 :root {
+    /* Cores originais do sistema */
     --verde-militar: #4a6c2f;
     --marrom-cafe: #8B4513;
     --marrom-detalhe: #A0522D;
@@ -18,6 +20,8 @@
     --cinza-escuro: #4a4a4a;
     --branco: #ffffff;
     --preto: #111111;
+    
+    /* Novas cores adicionadas */
     --verde-sucesso: #28a745;
     --azul-info: #17a2b8;
     --amarelo-alerta: #ffc107;
@@ -37,87 +41,13 @@ body {
     background-color: var(--bege-claro);
     color: var(--cinza-escuro);
     line-height: 1.6;
-    padding-bottom: 80px;
+    padding-bottom: 80px; /* Espaço para a barra do carrinho */
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 15px;
-}
-
-/* ===================== ANIMAÇÕES ===================== */
-@keyframes modalEntrada {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -40%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-@keyframes pulseFrete {
-    0% { border-color: var(--verde-militar); }
-    50% { border-color: var(--marrom-cafe); }
-    100% { border-color: var(--verde-militar); }
-}
-
-@keyframes pulsar {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-@keyframes badgeAppear {
-    from {
-        transform: scale(0);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-@keyframes badgeUpdate {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
 }
 
 /* ===================== CABEÇALHO PRINCIPAL ===================== */
@@ -229,30 +159,7 @@ body {
     opacity: 0.95;
 }
 
-/* ===================== SEÇÃO DE PRODUTOS ===================== */
-.titulo-secao-wrapper {
-    display: flex;
-    align-items: center;
-    margin: 30px 15px 15px;
-    gap: 15px;
-}
-
-.linha-solida {
-    flex: 1;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--marrom-cafe), transparent);
-}
-
-.titulo-secao {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--marrom-cafe);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    white-space: nowrap;
-    text-align: center;
-}
-
+/* ===================== CARDS DE PRODUTOS ===================== */
 .grid-produtos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -261,7 +168,6 @@ body {
     padding: 0 15px;
 }
 
-/* ===================== CARDS DE PRODUTOS ===================== */
 .card {
     background: var(--branco);
     border-radius: 15px;
@@ -294,8 +200,8 @@ body {
     transform: scale(1.05);
 }
 
-/* BADGE DE QUANTIDADE NOS CARDS - VERSÃO MELHORADA */
-.card-imagem-wrapper .badge-quantidade {
+/* ÚNICA definição do badge */
+.badge-quantidade {
     display: none;
     position: absolute;
     top: 10px;
@@ -310,19 +216,30 @@ body {
     font-weight: 900;
     font-size: 0.9rem;
     z-index: 10;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     border: 2px solid var(--branco);
-    animation: badgeAppear 0.3s ease-out;
-    /* Novas melhorias */
-    transition: all 0.3s ease;
+    animation: pulse 0.5s ease-in-out; /* Adicionado aqui */
 }
 
-.card-imagem-wrapper .badge-quantidade[style*="display: flex"] {
-    display: flex !important;
+/* Container da imagem no modal */
+.imagem-produto-container {
+    position: relative; /* ESSENCIAL */
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    max-height: 250px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    background: #fff;
+    padding: 10px;
 }
 
-.card-imagem-wrapper .badge-quantidade.updated {
-    animation: badgeUpdate 0.3s ease-out;
+/* Animação (se não existir) */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
 }
 
 .card-content {
@@ -366,6 +283,43 @@ body {
     font-size: 1.3rem;
     font-weight: 900;
     color: var(--verde-militar);
+}
+
+.titulo-secao-wrapper {
+    display: flex;
+    align-items: center;
+    margin: 30px 15px 15px;
+    gap: 15px;
+}
+
+.linha-solida {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--marrom-cafe), transparent);
+}
+
+.titulo-secao {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--marrom-cafe);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Para o container da imagem no modal */
+.imagem-produto-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    max-height: 250px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    background: #fff;
+    padding: 10px;
 }
 
 /* ===================== BARRA DO CARRINHO FIXA ===================== */
@@ -421,7 +375,7 @@ body {
     font-size: 1.1rem;
 }
 
-/* ===================== MODAIS ===================== */
+/* ===================== OVERLAY DOS MODAIS ===================== */
 .overlay-modal {
     display: none;
     position: fixed;
@@ -434,7 +388,7 @@ body {
     backdrop-filter: blur(3px);
 }
 
-/* ESTILO GERAL DOS MODAIS */
+/* ===================== MODAIS (ESTILO GERAL) ===================== */
 .modal {
     display: none;
     position: fixed;
@@ -450,6 +404,17 @@ body {
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: modalEntrada 0.3s ease-out;
+}
+
+@keyframes modalEntrada {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
 
 .botao-fechar-modal {
@@ -504,7 +469,6 @@ body {
     margin: 20px 0;
 }
 
-/* MODAL DE FORNADA */
 .destaque-fornada {
     background: var(--bege-claro);
     padding: 15px;
@@ -531,7 +495,7 @@ body {
     font-weight: 500;
     font-size: 1.1rem;
     display: block;
-    color: var(--marrim-detalhe);
+    color: var(--marrom-detalhe);
     margin-bottom: 15px;
 }
 
@@ -568,65 +532,84 @@ body {
     margin-right: 8px;
 }
 
-/* MODAL DE PRODUTO */
+/* ===================== BOTÕES (ESTILO ORIGINAL) ===================== */
+.botao-acao {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.botao-verde {
+    background: var(--verde-militar);
+    color: var(--branco);
+}
+
+.botao-verde:hover {
+    background: #3a5a24;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 108, 47, 0.3);
+}
+
+.botao-bege {
+    background: var(--bege-escuro);
+    color: var(--marrom-cafe);
+    border: 1px solid var(--marrom-detalhe);
+}
+
+.botao-bege:hover {
+    background: var(--bege-claro);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
+}
+
+.botao-acao:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ===================== MODAL DE PRODUTO - CORREÇÕES ===================== */
 .conteudo-modal-produto {
     padding: 20px;
 }
 
+/* Container da imagem */
 .imagem-produto-container {
     position: relative; 
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin: 0 auto 20px auto;
-    width: 100%;
-    max-height: 300px;
-    overflow: visible !important; 
+    margin-bottom: 20px;
+    max-height: 250px;
+    overflow: hidden;
     border-radius: 12px;
-    border: 1px solid var(--cinza-medio);
-    background: var(--branco);
-    padding: 5px;
+    border: 1px solid #eee;
+    background: #fff;
+    padding: 10px;
 }
 
+/* Imagem do produto */
 .imagem-produto-modal {
     width: 100%;
+    max-width: 250px;
     height: auto;
-    max-height: 280px;
+    max-height: 230px;
     object-fit: contain;
     border-radius: 8px;
-    display: block;
 }
 
-/* BADGE NO MODAL DE PRODUTO - VERSÃO MELHORADA */
-.imagem-produto-container .badge-quantidade {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background: var(--verde-militar);
-    color: var(--branco);
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 0.9rem;
-    z-index: 10;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    border: 2px solid var(--branco);
-    animation: badgeAppear 0.3s ease-out;
-    /* Novas melhorias */
-    transition: all 0.3s ease;
-}
-
-.imagem-produto-container .badge-quantidade.updated {
-    animation: badgeUpdate 0.3s ease-out;
-}
-
-.badge-quantidade, #badge-quantidade-modal {
-    z-index: 999 !important;
-}
-
+/* Informações do produto */
 .info-produto-modal {
     padding: 15px;
     background: #f9f9f9;
@@ -652,6 +635,7 @@ body {
     font-weight: 500;
 }
 
+/* Controle de quantidade */
 .controle-quantidade-produto {
     display: flex;
     justify-content: space-between;
@@ -705,6 +689,7 @@ body {
     color: #000;
 }
 
+/* Opcionais */
 .titulo-opcionais {
     font-size: 0.9rem;
     font-weight: 900;
@@ -720,6 +705,7 @@ body {
     padding-right: 5px;
 }
 
+/* Opcional individual */
 .opcional-item {
     display: flex;
     justify-content: space-between;
@@ -765,6 +751,7 @@ body {
     color: #111;
 }
 
+/* Botões pequenos para opcionais */
 .botao-quantidade-pequeno {
     width: 30px;
     height: 30px;
@@ -786,6 +773,7 @@ body {
     color: white;
 }
 
+/* Subtotal */
 #container-subtotal-produto {
     background: #ffeded;
     padding: 15px;
@@ -814,6 +802,7 @@ body {
     margin-top: 5px;
 }
 
+/* Botões do modal */
 .botoes-modal-produto {
     padding: 0 20px 20px;
     display: flex;
@@ -821,6 +810,7 @@ body {
     gap: 10px;
 }
 
+/* Status de adicionado */
 #status-adicionado-produto {
     text-align: center;
     background: #e8f5e9;
@@ -833,14 +823,163 @@ body {
     display: none;
 }
 
-/* MODAL DE CARRINHO */
+#status-adicionado-produto.visivel {
+    display: block;
+}
+
+#status-adicionado-produto.escondido {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Estados de visibilidade */
+.visivel {
+    display: block !important;
+}
+
+.escondido {
+    display: none !important;
+}
+
+/* ===================== MODAL DE CARRINHO ===================== */
 .conteudo-modal-carrinho {
     padding: 20px;
     max-height: 70vh;
     overflow-y: auto;
 }
 
-/* MODAL DE PAGAMENTO */
+/* ===================== FORMULÁRIO DE DADOS ===================== */
+.formulario-dados {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.grupo-campo {
+    margin-bottom: 15px;
+}
+
+.rotulo-campo {
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: var(--vermelho-alerta);
+    display: block;
+    margin-bottom: 8px;
+}
+
+.rotulo-campo.obrigatorio::after {
+    content: " *";
+    color: var(--vermelho-alerta);
+}
+
+.campo-entrada {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid var(--borda-nav);
+    font-size: 1rem;
+    outline: none;
+    background: var(--cinza-claro);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.campo-entrada:focus {
+    border-color: var(--verde-militar);
+    box-shadow: 0 0 0 3px rgba(74, 108, 47, 0.1);
+    background: var(--branco);
+}
+
+.campo-entrada.campo-leitura {
+    background-color: var(--cinza-claro);
+    color: var(--cinza-escuro);
+    cursor: not-allowed;
+}
+
+.texto-ajuda {
+    font-size: 0.7rem;
+    color: var(--cinza-escuro);
+    margin-top: 5px;
+    display: block;
+}
+
+.grupo-duplo {
+    display: flex;
+    gap: 15px;
+}
+
+.grupo-duplo .grupo-campo {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.separador-endereco {
+    border-top: 1px dashed var(--borda-nav);
+    padding-top: 15px;
+    margin-top: 5px;
+}
+
+.subtitulo-endereco {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--marrom-cafe);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-informacao-frete {
+    background: var(--bege-claro);
+    border: 2px dashed var(--verde-militar);
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    animation: pulseFrete 2s infinite;
+}
+
+@keyframes pulseFrete {
+    0% { border-color: var(--verde-militar); }
+    50% { border-color: var(--marrom-cafe); }
+    100% { border-color: var(--verde-militar); }
+}
+
+.card-informacao-frete i {
+    font-size: 1.5rem;
+    color: var(--verde-militar);
+}
+
+.info-frete-conteudo {
+    flex-grow: 1;
+}
+
+.info-frete-titulo {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--cinza-escuro);
+    display: block;
+}
+
+.info-frete-valor {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--verde-militar);
+}
+
+.botoes-acao {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ===================== MODAL DE PAGAMENTO ===================== */
 .resumo-pedido {
     background: var(--cinza-claro);
     padding: 15px;
@@ -1007,7 +1146,7 @@ body {
     text-align: center;
 }
 
-/* MODAL DE SUCESSO */
+/* ===================== MODAL DE SUCESSO ===================== */
 .conteudo-modal-sucesso {
     padding: 40px 25px;
     text-align: center;
@@ -1020,11 +1159,27 @@ body {
     animation: pulsar 1.5s infinite;
 }
 
+@keyframes pulsar {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
 .titulo-sucesso {
     color: var(--verde-sucesso);
     font-weight: 900;
     margin-bottom: 20px;
     font-size: 1.5rem;
+}
+
+.mensagem-sucesso {
+    color: var(--cinza-escuro);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.mensagem-sucesso p {
+    margin-bottom: 10px;
 }
 
 .detalhes-pedido {
@@ -1057,175 +1212,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* ===================== BOTÕES ===================== */
-.botao-acao {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 900;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.botao-verde {
-    background: var(--verde-militar);
-    color: var(--branco);
-}
-
-.botao-verde:hover {
-    background: #3a5a24;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(74, 108, 47, 0.3);
-}
-
-.botao-bege {
-    background: var(--bege-escuro);
-    color: var(--marrom-cafe);
-    border: 1px solid var(--marrom-detalhe);
-}
-
-.botao-bege:hover {
-    background: var(--bege-claro);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
-}
-
-.botao-acao:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
-}
-
-/* ===================== FORMULÁRIO DE DADOS ===================== */
-.formulario-dados {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.grupo-campo {
-    margin-bottom: 15px;
-}
-
-.rotulo-campo {
-    font-size: 0.75rem;
-    font-weight: 900;
-    color: var(--vermelho-alerta);
-    display: block;
-    margin-bottom: 8px;
-}
-
-.rotulo-campo.obrigatorio::after {
-    content: " *";
-    color: var(--vermelho-alerta);
-}
-
-.campo-entrada {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid var(--borda-nav);
-    font-size: 1rem;
-    outline: none;
-    background: var(--cinza-claro);
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.campo-entrada:focus {
-    border-color: var(--verde-militar);
-    box-shadow: 0 0 0 3px rgba(74, 108, 47, 0.1);
-    background: var(--branco);
-}
-
-.campo-entrada.campo-leitura {
-    background-color: var(--cinza-claro);
-    color: var(--cinza-escuro);
-    cursor: not-allowed;
-}
-
-.texto-ajuda {
-    font-size: 0.7rem;
-    color: var(--cinza-escuro);
-    margin-top: 5px;
-    display: block;
-}
-
-.grupo-duplo {
-    display: flex;
-    gap: 15px;
-}
-
-.grupo-duplo .grupo-campo {
-    flex: 1;
-    margin-bottom: 0;
-}
-
-.separador-endereco {
-    border-top: 1px dashed var(--borda-nav);
-    padding-top: 15px;
-    margin-top: 5px;
-}
-
-.subtitulo-endereco {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--marrom-cafe);
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.card-informacao-frete {
-    background: var(--bege-claro);
-    border: 2px dashed var(--verde-militar);
-    padding: 12px;
-    border-radius: 10px;
-    margin-top: 15px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    animation: pulseFrete 2s infinite;
-}
-
-.card-informacao-frete i {
-    font-size: 1.5rem;
-    color: var(--verde-militar);
-}
-
-.info-frete-conteudo {
-    flex-grow: 1;
-}
-
-.info-frete-titulo {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--cinza-escuro);
-    display: block;
-}
-
-.info-frete-valor {
-    font-size: 1.2rem;
-    font-weight: 900;
-    color: var(--verde-militar);
-}
-
-.botoes-acao {
-    margin-top: 25px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
 /* ===================== RODAPÉ ===================== */
 .rodape {
     background: var(--cinza-claro);
@@ -1251,112 +1237,6 @@ body {
     color: var(--cinza-escuro);
     font-size: 0.8rem;
     opacity: 0.8;
-}
-
-/* ===================== NOTIFICAÇÕES ===================== */
-.notificacao {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--verde-sucesso);
-    color: var(--branco);
-    padding: 15px 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 9999;
-    animation: slideIn 0.3s ease-out forwards;
-    max-width: 350px;
-    font-weight: 600;
-    border-left: 5px solid var(--verde-militar);
-}
-
-.notificacao i {
-    font-size: 1.2rem;
-}
-
-.notificacao-flutuante {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #4CAF50;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 9999;
-    transform: translateX(120%);
-    transition: transform 0.3s ease;
-    max-width: 300px;
-    font-weight: 500;
-}
-
-.notificacao-flutuante.ativo {
-    transform: translateX(0);
-}
-
-.notificacao-error {
-    background: #f44336;
-}
-
-.notificacao-info {
-    background: #2196F3;
-}
-
-.notificacao-warning {
-    background: #ff9800;
-}
-
-/* ===================== CLASSES DE ESTADO ===================== */
-.visivel, .mostrar {
-    display: block !important;
-}
-
-.escondido, .esconder {
-    display: none !important;
-}
-
-.campo-valido {
-    border-color: var(--verde-sucesso) !important;
-    background-color: rgba(40, 167, 69, 0.05) !important;
-}
-
-.campo-invalido {
-    border-color: var(--vermelho-alerta) !important;
-    background-color: rgba(204, 0, 0, 0.05) !important;
-}
-
-.texto-centralizado {
-    text-align: center;
-}
-
-.margem-superior {
-    margin-top: 20px;
-}
-
-.margem-inferior {
-    margin-bottom: 20px;
-}
-
-/* ===================== SCROLL PERSONALIZADO ===================== */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--verde-militar);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #3a5a24;
 }
 
 /* ===================== RESPONSIVIDADE ===================== */
@@ -1403,9 +1283,9 @@ body {
         font-size: 1.2rem;
     }
     
+    /* Modal de produto responsivo */
     .imagem-produto-container {
         max-height: 200px;
-        overflow: visible !important;
     }
     
     .imagem-produto-modal {
@@ -1422,19 +1302,9 @@ body {
     .controles-quantidade {
         justify-content: center;
     }
-    
-    /* RESPONSIVIDADE PARA BADGE NOS CARDS */
-    .card-imagem-wrapper {
-        height: 180px; /* Reduz altura em telas menores */
-    }
-    
-    .card-imagem-wrapper .badge-quantidade,
-    .imagem-produto-container .badge-quantidade {
-        width: 26px;
-        height: 26px;
-        font-size: 0.8rem;
-    }
 }
+
+/* CONTINUAÇÃO DO ARQUIVO CSS TRUNCADO */
 
 @media (max-width: 480px) {
     .conteudo-modal {
@@ -1447,7 +1317,7 @@ body {
     }
     
     .card-imagem-wrapper {
-        height: 160px; /* Reduz ainda mais em telas pequenas */
+        height: 180px;
     }
     
     .fornada-titulo {
@@ -1458,6 +1328,7 @@ body {
         font-size: 0.7rem;
     }
     
+    /* Modal de produto mobile */
     .conteudo-modal-produto {
         padding: 15px;
     }
@@ -1465,7 +1336,6 @@ body {
     .imagem-produto-container {
         max-height: 180px;
         padding: 8px;
-        overflow: visible !important;
     }
     
     .imagem-produto-modal {
@@ -1473,6 +1343,7 @@ body {
         max-height: 160px;
     }
     
+    /* Ajustes adicionais para mobile */
     .card-content {
         padding: 12px;
     }
@@ -1489,6 +1360,23 @@ body {
         gap: 8px;
     }
     
+    .botoes-carrinho {
+        gap: 8px;
+    }
+    
+    .opcoes-entrega {
+        flex-direction: column;
+    }
+    
+    .grupo-cupom {
+        flex-direction: column;
+    }
+    
+    .botao-aplicar-cupom {
+        width: 100%;
+    }
+    
+    /* Ajustes para o modal de produto em telas muito pequenas */
     .controles-quantidade {
         gap: 10px;
     }
@@ -1513,19 +1401,35 @@ body {
     .controles-opcional {
         align-self: flex-end;
     }
-    
-    /* RESPONSIVIDADE PARA BADGE EM TELAS MUITO PEQUENAS */
-    .card-imagem-wrapper .badge-quantidade,
-    .imagem-produto-container .badge-quantidade {
-        width: 24px;
-        height: 24px;
-        font-size: 0.75rem;
-        top: 8px;
-        right: 8px;
-    }
 }
 
-/* ===================== ACESSIBILIDADE ===================== */
+/* Classes de visibilidade (necessárias para o modal de produto) */
+.visivel {
+    display: block !important;
+}
+
+.escondido {
+    display: none !important;
+}
+
+/* Animações adicionais */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Estilos para notificações */
+.notificacao {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Melhorias de acessibilidade */
 button:focus,
 input:focus,
 select:focus {
@@ -1533,7 +1437,65 @@ select:focus {
     outline-offset: 2px;
 }
 
-/* ===================== TOOLTIPS BÁSICOS ===================== */
+/* Scroll personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--verde-militar);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #3a5a24;
+}
+
+/* ===================== RODAPÉ ===================== */
+.rodape {
+    background: var(--cinza-claro);
+    padding: 20px 0;
+    margin-top: 40px;
+    border-top: 1px solid var(--cinza-medio);
+}
+
+.texto-rodape {
+    text-align: center;
+    color: var(--cinza-escuro);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.texto-rodape i {
+    color: var(--vermelho-alerta);
+    margin-right: 5px;
+}
+
+.copyright {
+    text-align: center;
+    color: var(--cinza-escuro);
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+
+/* Estados de validação para campos */
+.campo-valido {
+    border-color: var(--verde-sucesso) !important;
+    background-color: rgba(40, 167, 69, 0.05) !important;
+}
+
+.campo-invalido {
+    border-color: var(--vermelho-alerta) !important;
+    background-color: rgba(204, 0, 0, 0.05) !important;
+}
+
+/* Tooltips básicos */
 [title] {
     position: relative;
 }
@@ -1552,3 +1514,26 @@ select:focus {
     white-space: nowrap;
     z-index: 1000;
 }
+
+/* ===================== UTILITÁRIOS ===================== */
+.texto-centralizado {
+    text-align: center;
+}
+
+.margem-superior {
+    margin-top: 20px;
+}
+
+.margem-inferior {
+    margin-bottom: 20px;
+}
+
+.esconder {
+    display: none !important;
+}
+
+.mostrar {
+    display: block !important;
+}
+
+/* Fim do arquivo CSS */

@@ -2,50 +2,36 @@
 // MODAL DE PRODUTO - PÃO DO CISO
 // ============================================
 
-function alterarQuantidadeProduto(valor) {
-    const novaQuantidade = produtoAtual.quantidade + valor;
-    
-    if (novaQuantidade < 0) return; // Permite zero
-    
-    produtoAtual.quantidade = novaQuantidade;
-    
-    // Atualizar display
-    const quantidadeDisplay = elemento('quantidade-produto-modal');
-    if (quantidadeDisplay) {
-        quantidadeDisplay.textContent = novaQuantidade;
+function configurarProduto(indiceSessao, indiceItem) {
+    const produto = dadosIniciais.secoes[indiceSessao].itens[indiceItem];
+    const identificador = `item-${indiceSessao}-${indiceItem}`;
+
+    if (produto.esgotado) {
+        alert('Este produto está esgotado no momento.');
+        return;
     }
-    
-    // Atualizar status
-    const statusAdicionado = elemento('status-adicionado-produto');
-    if (statusAdicionado) {
-        statusAdicionado.className = novaQuantidade > 0 ? 'visivel' : 'escondido';
-    }
-    
-    // Atualizar container de opcionais
-    const containerOpcionais = elemento('contener-opcionais-produto');
-    if (containerOpcionais) {
-        containerOpcionais.className = novaQuantidade > 0 ? 'visivel' : 'escondido';
-    }
-    
-    // Atualizar container de subtotal
-    const containerSubtotal = elemento('container-subtotal-produto');
-    if (containerSubtotal) {
-        containerSubtotal.className = novaQuantidade > 0 ? 'visivel' : 'escondido';
-    }
-    
-    // Atualizar badge no cardápio
-    atualizarBadgeQuantidade();
-    
-    // Verificar botões - ADICIONAR ESTA CHAMADA
-    verificarVisibilidadeBotoesModal();
-    
-    // Recalcular subtotal
-    atualizarSubtotalProduto();
+
+    // Configurar produto atual
+    produtoAtual = {
+        identificador: identificador,
+        indiceSessao: indiceSessao,
+        indiceItem: indiceItem,
+        quantidade: 0, // MUDAR DE 1 PARA 0
+        opcionais: {}
+    };
+
+    renderizarModalProduto(produto);
+    abrirModal('modal-produto');
 }
 
 function renderizarModalProduto(produto) {
+    console.log('🔄 renderizarModalProduto chamado para:', produto.nome);
+    
     const container = elemento('corpo-modal-produto');
-    if (!container) return;
+    if (!container) {
+        console.error('❌ Container do modal não encontrado!');
+        return;
+    }
 
     // Determinar opcionais ativos
     const opcionaisParaExibir = obterOpcionaisAtivos(produto);
@@ -53,11 +39,11 @@ function renderizarModalProduto(produto) {
     // Renderizar HTML corrigido
     container.innerHTML = `
         <!-- Status de Adicionado -->
-        <div id="status-adicionado-produto" class="${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}">
+        <!-- <div id="status-adicionado-produto" class="${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}">
             <i class="fas fa-check-circle"></i> Item adicionado ao carrinho
-        </div>
+        </div> -->
         
-        <!-- Imagem do Produto (tamanho corrigido) -->
+        <!-- Imagem do Produto com Badge -->
         <div class="imagem-produto-container">
             <img src="${produto.imagem}" alt="${produto.nome}" class="imagem-produto-modal">
         </div>
@@ -109,6 +95,11 @@ function renderizarModalProduto(produto) {
         </div>
     `;
 
+    console.log('✅ Modal renderizado. Verificando elementos...');
+    console.log('Número de containers de imagem:', container.querySelectorAll('.imagem-produto-container').length);
+    console.log('Número de imagens:', container.querySelectorAll('.imagem-produto-modal').length);
+    console.log('Número de badges:', container.querySelectorAll('.badge-quantidade').length);
+
     // Atualizar visibilidade dos botões
     verificarVisibilidadeBotoesModal();
 }
@@ -137,6 +128,7 @@ function obterOpcionaisAtivos(produto) {
 function alterarQuantidadeProduto(valor) {
     const novaQuantidade = produtoAtual.quantidade + valor;
     
+    // PERMITE 0, MAS NÃO NEGATIVO
     if (novaQuantidade < 0) return;
     
     produtoAtual.quantidade = novaQuantidade;
@@ -146,23 +138,44 @@ function alterarQuantidadeProduto(valor) {
     if (quantidadeDisplay) {
         quantidadeDisplay.textContent = novaQuantidade;
     }
+
+    // ✅ ETAPA 1.2: ATUALIZAR BADGE SOBRE A IMAGEM
+    const badgeImagem = elemento('badge-quantidade-modal');
+    if (badgeImagem) {
+        if (novaQuantidade > 0) {
+            badgeImagem.textContent = novaQuantidade;
+            badgeImagem.style.display = 'flex';
+        } else {
+            badgeImagem.style.display = 'none';
+        }
+    }
     
-    // Atualizar status
+    // ✅ SE QUANTIDADE FOR 0, LIMPAR OPCIONAIS
+    if (novaQuantidade === 0) {
+        produtoAtual.opcionais = {};
+        
+        // Zerar contadores visuais dos opcionais
+        const contadoresOpcionais = document.querySelectorAll('.quantidade-opcional');
+        contadoresOpcionais.forEach(contador => {
+            contador.textContent = '0';
+        });
+    }
+    
+    // ✅ ATUALIZAR VISIBILIDADE BASEADA NA QUANTIDADE
     const statusAdicionado = elemento('status-adicionado-produto');
-    if (statusAdicionado) {
-        statusAdicionado.className = novaQuantidade > 0 ? 'visivel' : 'escondido';
-    }
-    
-    // Atualizar container de opcionais
     const containerOpcionais = elemento('contener-opcionais-produto');
-    if (containerOpcionais) {
-        containerOpcionais.className = novaQuantidade > 0 ? 'visivel' : 'escondido';
-    }
-    
-    // Atualizar container de subtotal
     const containerSubtotal = elemento('container-subtotal-produto');
-    if (containerSubtotal) {
-        containerSubtotal.className = novaQuantidade > 0 ? 'visivel' : 'escondido';
+    
+    if (novaQuantidade > 0) {
+        // Mostrar tudo
+        if (statusAdicionado) statusAdicionado.classList.remove('escondido');
+        if (containerOpcionais) containerOpcionais.classList.remove('escondido');
+        if (containerSubtotal) containerSubtotal.classList.remove('escondido');
+    } else {
+        // Esconder tudo
+        if (statusAdicionado) statusAdicionado.classList.add('escondido');
+        if (containerOpcionais) containerOpcionais.classList.add('escondido');
+        if (containerSubtotal) containerSubtotal.classList.add('escondido');
     }
     
     // Atualizar badge no cardápio
@@ -217,31 +230,20 @@ function verificarVisibilidadeBotoesModal() {
     
     if (!botaoAdicionarSimples || !botaoAdicionarIrCarrinho) return;
     
-    // NOVA LÓGICA: 
-    // - Se quantidade > 0: MOSTRA 2 BOTÕES
-    // - Se quantidade = 0: MOSTRA 1 BOTÃO (desabilitado)
+    // Lógica corrigida:
+    // Botão "Ver Carrinho" aparece quando:
+    // 1. Quantidade do produto atual for maior que 0
+    // 2. E já houver algo no carrinho global
     
-    if (produtoAtual.quantidade > 0) {
-        // MOSTRA OS 2 BOTÕES
-        botaoAdicionarSimples.style.display = 'block';
+    const temItensNoCarrinho = Object.keys(carrinho).length > 0;
+    const mostrarBotaoIrCarrinho = produtoAtual.quantidade > 0 && temItensNoCarrinho;
+    
+    if (mostrarBotaoIrCarrinho) {
         botaoAdicionarIrCarrinho.style.display = 'block';
-        
-        // Texto do primeiro botão
         botaoAdicionarSimples.innerHTML = '<i class="fas fa-plus"></i> ADICIONAR MAIS';
-        
-        // Habilita ambos
-        botaoAdicionarSimples.disabled = false;
-        botaoAdicionarIrCarrinho.disabled = false;
     } else {
-        // MOSTRA APENAS 1 BOTÃO (desabilitado)
-        botaoAdicionarSimples.style.display = 'block';
         botaoAdicionarIrCarrinho.style.display = 'none';
-        
-        // Texto do botão único
         botaoAdicionarSimples.innerHTML = '<i class="fas fa-plus"></i> ADICIONAR AO CARRINHO';
-        
-        // Desabilita até escolher quantidade
-        botaoAdicionarSimples.disabled = true;
     }
 }
 
@@ -276,12 +278,28 @@ function sincronizarProdutoNoCarrinho() {
     
     salvarCarrinho();
     atualizarBarraCarrinho();
-}   
+    
+    // ATUALIZAR BADGE NO CARD TAMBÉM
+    if (typeof atualizarBadgeNoCard === 'function') {
+        atualizarBadgeNoCard(produtoAtual.indiceSessao, produtoAtual.indiceItem);
+    }
+}
 
-// EXPORTAR FUNÇÕES PARA O ESCOPO GLOBAL
+function removerItemDoCarrinho(identificador) {
+    delete carrinho[identificador];
+    salvarCarrinho();
+    renderizarCarrinho();
+    atualizarBarraCarrinho();
+    // Atualizar apenas badges, não re-renderizar tudo
+    if (typeof atualizarBadgesAposRemocao === 'function') {
+        atualizarBadgesAposRemocao();
+    }
+}
+
+// EXPORTAR FUNÇÕES
 window.configurarProduto = configurarProduto;
 window.alterarQuantidadeProduto = alterarQuantidadeProduto;
-window.alterarQuantidadeOpcional = alterarQuantidadeOpcional;
 window.adicionarItemAoCarrinho = adicionarItemAoCarrinho;
 window.adicionarEIrParaCarrinho = adicionarEIrParaCarrinho;
 window.obterOpcionaisAtivos = obterOpcionaisAtivos;
+window.removerItemDoCarrinho = removerItemDoCarrinho;

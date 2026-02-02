@@ -3,7 +3,10 @@
 // ============================================
 
 function alterarQuantidadeOpcional(nomeOpcional, precoOpcional, valor) {
-    if (produtoAtual.quantidade === 0) return;
+    if (produtoAtual.quantidade === 0) {
+        alert('Adicione pelo menos 1 item do produto antes de selecionar opcionais.');
+    return;
+}
     
     // Inicializar opcional se não existir
     if (!produtoAtual.opcionais[nomeOpcional]) {
@@ -36,4 +39,4 @@ function alterarQuantidadeOpcional(nomeOpcional, precoOpcional, valor) {
 
 // EXPORTAR FUNÇÕES
 window.alterarQuantidadeOpcional = alterarQuantidadeOpcional;
-window.obterOpcionaisAtivos = obterOpcionaisAtivos;
+//window.obterOpcionaisAtivos = obterOpcionaisAtivos;
