@@ -48,117 +48,111 @@ function renderizarCarrinho() {
 
     const itens = Object.values(carrinho);
     
+    // 1. Caso Carrinho Vazio
     if (itens.length === 0) {
-        container.innerHTML = `
-            <div class="carrinho-vazio">
-                <i class="fas fa-shopping-basket" style="font-size:3rem; color:#ddd; margin-bottom:20px;"></i>
-                <p style="color:#888; font-weight:500; margin-bottom:20px;">Seu carrinho está vazio no momento.</p>
-                <button class="botao-acao botao-verde" onclick="fecharModal('modal-carrinho')">
-                    VOLTAR AO CARDÁPIO
-                </button>
-            </div>
-        `;
+        container.innerHTML = gerarHTMLCarrinhoVazio();
         return;
     }
 
+    // 2. Montagem do HTML Modularizado
     let html = `
         <h3 class="titulo-carrinho">Carrinho de Compras</h3>
         <div class="lista-itens-carrinho">
-    `;
-
-    itens.forEach(item => {
-        const produto = dadosIniciais.secoes[item.indiceSessao].itens[item.indiceItem];
-        let subtotalItem = produto.preco * item.quantidade;
-        let htmlOpcionais = '';
-
-        // Opcionais do item
-        Object.keys(item.opcionais).forEach(nomeOpcional => {
-            const opcional = item.opcionais[nomeOpcional];
-            subtotalItem += opcional.quantidade * opcional.preco;
-            htmlOpcionais += `
-                <div class="opcional-carrinho">
-                    + ${opcional.quantidade}x ${nomeOpcional}
-                </div>
-            `;
-        });
-
-        html += `
-            <div class="item-carrinho">
-                <div class="info-item-carrinho">
-                    <div class="nome-quantidade-item">
-                        <span class="quantidade-item">${item.quantidade}x</span>
-                        <span class="nome-item">${produto.nome}</span>
-                    </div>
-                    ${htmlOpcionais}
-                    <div class="subtotal-item">${formatarMoeda(subtotalItem)}</div>
-                </div>
-                <button class="botao-remover-item" onclick="removerItemDoCarrinho('${item.identificador}')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-    });
-
-    html += `
+            ${itens.map(item => gerarHTMLItemCarrinho(item)).join('')}
         </div>
         
-        <!-- Opções do Carrinho -->
-        <div class="opcoes-carrinho">
-            <!-- Cupom -->
-            <div class="grupo-cupom">
-                <input type="text" id="campo-cupom-carrinho" 
-                       placeholder="CUPOM DE DESCONTO" 
-                       class="campo-cupom">
-                <button class="botao-aplicar-cupom" onclick="aplicarCupom()">
-                    APLICAR
-                </button>
-            </div>
-            
-            <!-- Modo de Entrega -->
-            <div class="grupo-entrega">
-                <p class="titulo-entrega">Como deseja receber seu pedido?</p>
-                <div class="opcoes-entrega">
-                    <label class="opcao-entrega ${estadoAplicativo.modoEntrega === 'retirada' ? 'selecionada' : ''}">
-                        <input type="radio" name="modoEntrega" value="retirada" 
-                               ${estadoAplicativo.modoEntrega === 'retirada' ? 'checked' : ''}
-                               onchange="alterarModoEntrega('retirada')">
-                        <i class="fas fa-store"></i>
-                        <span>RETIRADA</span>
-                    </label>
-                    <label class="opcao-entrega ${estadoAplicativo.modoEntrega === 'entrega' ? 'selecionada' : ''}">
-                        <input type="radio" name="modoEntrega" value="entrega" 
-                               ${estadoAplicativo.modoEntrega === 'entrega' ? 'checked' : ''}
-                               onchange="alterarModoEntrega('entrega')">
-                        <i class="fas fa-motorcycle"></i>
-                        <span>ENTREGA</span>
-                    </label>
-                </div>
-                
-                <!-- Informação da Taxa -->
-                <div id="informacao-taxa-entrega" class="informacao-taxa" 
-                     style="${estadoAplicativo.modoEntrega === 'entrega' ? 'display: block;' : 'display: none;'}">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Taxa de entrega será calculada no próximo passo</span>
-                </div>
-            </div>
-        </div>
+        ${gerarHTMLOpcoesEntregaCupom()}
         
-        <!-- Resumo Financeiro -->
         <div id="resumo-financeiro-carrinho"></div>
         
-        <!-- Botões de Ação -->
-        <div class="botoes-carrinho">
-            <button class="botao-acao botao-bege" onclick="fecharModal('modal-carrinho')">
-                + CONTINUAR COMPRANDO +
-            </button>
-            <button class="botao-acao botao-verde" onclick="prosseguirParaDadosCliente()">
-                PROSSEGUIR PARA O PAGAMENTO <i class="fas fa-arrow-right"></i>
-            </button>
-        </div>
+        ${gerarHTMLBotoesAcaoCarrinho()}
     `;
 
     container.innerHTML = html;
     atualizarResumoFinanceiroCarrinho();
+}
+
+// --- SUB-FUNÇÕES DE RENDERIZAÇÃO ---
+
+function gerarHTMLCarrinhoVazio() {
+    return `
+        <div class="carrinho-vazio">
+            <i class="fas fa-shopping-basket" style="font-size:3rem; color:#ddd; margin-bottom:20px;"></i>
+            <p style="color:#888; font-weight:500; margin-bottom:20px;">Seu carrinho está vazio no momento.</p>
+            <button class="botao-acao botao-bege" onclick="fecharModal('modal-carrinho')">
+                VOLTAR AO CARDÁPIO
+            </button>
+        </div>
+    `;
+}
+
+function gerarHTMLItemCarrinho(item) {
+    const produto = dadosIniciais.secoes[item.indiceSessao].itens[item.indiceItem];
+    let subtotalItem = produto.preco * item.quantidade;
+    let htmlOpcionais = '';
+
+    Object.keys(item.opcionais).forEach(nomeOpcional => {
+        const opcional = item.opcionais[nomeOpcional];
+        subtotalItem += opcional.quantidade * opcional.preco;
+        htmlOpcionais += `<div class="opcional-carrinho">+ ${opcional.quantidade}x ${nomeOpcional}</div>`;
+    });
+
+    return `
+        <div class="item-carrinho">
+            <div class="info-item-carrinho">
+                <div class="nome-quantidade-item">
+                    <span class="quantidade-item">${item.quantidade}x</span>
+                    <span class="nome-item">${produto.nome}</span>
+                </div>
+                ${htmlOpcionais}
+                <div class="subtotal-item">${formatarMoeda(subtotalItem)}</div>
+            </div>
+            <button class="botao-remover-item" onclick="removerItemDoCarrinho('${item.identificador}')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+}
+
+function gerarHTMLOpcoesEntregaCupom() {
+    return `
+        <div class="opcoes-carrinho">
+            <div class="grupo-cupom">
+                <input type="text" id="campo-cupom-carrinho" placeholder="CUPOM DE DESCONTO" class="campo-cupom">
+                <button class="botao-aplicar-cupom" onclick="aplicarCupom()">APLICAR</button>
+            </div>
+            <div class="grupo-entrega">
+                <p class="titulo-entrega">Como deseja receber seu pedido?</p>
+                <div class="opcoes-entrega">
+                    <label class="opcao-entrega ${estadoAplicativo.modoEntrega === 'retirada' ? 'selecionada' : ''}">
+                        <input type="radio" name="modoEntrega" value="retirada" ${estadoAplicativo.modoEntrega === 'retirada' ? 'checked' : ''} onchange="alterarModoEntrega('retirada')">
+                        <i class="fas fa-store"></i> <span>RETIRADA</span>
+                    </label>
+                    <label class="opcao-entrega ${estadoAplicativo.modoEntrega === 'entrega' ? 'selecionada' : ''}">
+                        <input type="radio" name="modoEntrega" value="entrega" ${estadoAplicativo.modoEntrega === 'entrega' ? 'checked' : ''} onchange="alterarModoEntrega('entrega')">
+                        <i class="fas fa-motorcycle"></i> <span>ENTREGA</span>
+                    </label>
+                </div>
+                <div id="informacao-taxa-entrega" class="informacao-taxa" style="${estadoAplicativo.modoEntrega === 'entrega' ? 'display: block;' : 'display: none;'}">
+                    <i class="fas fa-info-circle"></i> <span>Taxa de entrega será calculada no próximo passo</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function gerarHTMLBotoesAcaoCarrinho() {
+    return `
+        <div class="botoes-carrinho" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+            <button class="botao-acao botao-verde-militar" onclick="prosseguirParaDadosCliente()">
+                PROSSEGUIR PARA O PAGAMENTO <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <button class="botao-acao botao-bege" onclick="fecharModal('modal-carrinho')">
+                CONTINUAR COMPRANDO
+            </button>
+        </div>
+    `;
 }
 
 function atualizarResumoFinanceiroCarrinho() {

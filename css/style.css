@@ -5,18 +5,24 @@
 
 /* ===================== VARIÁVEIS DE CORES ===================== */
 :root {
-    --verde-militar: #4a6c2f;
-    --marrom-cafe: #8B4513;
-    --marrom-detalhe: #A0522D;
-    --borda-nav: #ddd;
-    --bege-claro: #fdfaf7;
-    --bege-escuro: #f5f0e6;
+    /* CORES PREFERIDAS (A sua segunda lista) */
+    --bg-creme: #fdf5e6;
+    --verde-militar: #2d3a27;
+    --marrom-cafe: #2e2610;
+    --marrom-detalhe: #7d4f39;
+    --borda-nav: #dccbb0;
+    --texto: #3e2723;
+    --red: #b22222;
+    --branco: #ffffff;
+    --bg-container-modal: #f9f9f9;
+
+    /* CORES COMPLEMENTARES DA LISTA ANTIGA (Preservando utilitários) */
+    --bege-escuro: #f5f0e6; /* Base para o seu .botao-bege */
     --vermelho-alerta: #cc0000;
     --vermelho-suave: #ffeded;
     --cinza-claro: #f9f9f9;
     --cinza-medio: #eeeeee;
     --cinza-escuro: #4a4a4a;
-    --branco: #ffffff;
     --preto: #111111;
     --verde-sucesso: #28a745;
     --azul-info: #17a2b8;
@@ -34,7 +40,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    background-color: var(--bege-claro);
+    background-color: var(--bege-escuro);
     color: var(--cinza-escuro);
     line-height: 1.6;
     padding-bottom: 80px;
@@ -366,6 +372,50 @@ body {
     font-size: 1.3rem;
     font-weight: 900;
     color: var(--verde-militar);
+}
+
+/* 1. O Container do Card (removemos a opacidade daqui) */
+.card.esgotado {
+    position: relative;
+    cursor: not-allowed !important;
+    overflow: hidden; /* Mantém o carimbo dentro do card */
+}
+
+/* 2. A Película Opaca (Overlay) */
+.card.esgotado::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Película branca clara */
+    backdrop-filter: grayscale(1); /* Deixa o fundo cinza */
+    z-index: 5; /* Fica acima da foto, mas abaixo do carimbo */
+}
+
+/* 3. O Carimbo (Forte e por cima de tudo) */
+.card.esgotado::after {
+    content: "ESGOTADO";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-25deg);
+    
+    background-color: #8B4513; /* Seu Marrom Café */
+    color: #FFFFFF;
+    opacity: 1 !important; /* Força a opacidade total */
+    
+    padding: 10px 80px;
+    font-weight: 900;
+    font-size: 1.1rem;
+    text-align: center;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    
+    z-index: 10; /* O nível mais alto */
+    white-space: nowrap;
+    pointer-events: none;
 }
 
 /* ===================== BARRA DO CARRINHO FIXA ===================== */
@@ -1058,51 +1108,56 @@ body {
 }
 
 /* ===================== BOTÕES ===================== */
+/* Base para todos os botões de modal */
 .botao-acao {
     width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 900;
+    padding: 14px 20px; /* Equilíbrio entre os 16px e 12px que você tinha */
+    border-radius: 8px;   /* Um meio termo elegante entre 5px e 12px */
+    font-weight: 700;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-top: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
+    margin-top: 10px;
 }
 
-.botao-verde {
-    background: var(--verde-militar);
+/* BOTÃO DE AVANÇO (Verde Militar) */
+.botao-verde-militar {
+    background-color: var(--verde-militar);
     color: var(--branco);
+    border: none;
 }
 
-.botao-verde:hover {
-    background: #3a5a24;
+.botao-verde-militar:hover:not(:disabled) {
+    background-color: #3a5a24; /* O tom que você sugeriu no hover */
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(74, 108, 47, 0.3);
+    box-shadow: 0 5px 15px rgba(45, 58, 39, 0.3);
 }
 
+/* BOTÃO DE RETROCESSO (Bege) */
 .botao-bege {
-    background: var(--bege-escuro);
+    background-color: var(--bege-escuro);
     color: var(--marrom-cafe);
     border: 1px solid var(--marrom-detalhe);
 }
 
-.botao-bege:hover {
-    background: var(--bege-claro);
+.botao-bege:hover:not(:disabled) {
+    background-color: var(--bg-creme);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
 }
 
+/* ESTADO DESABILITADO */
 .botao-acao:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none !important;
+    box-shadow: none !important;
 }
 
 /* ===================== FORMULÁRIO DE DADOS ===================== */

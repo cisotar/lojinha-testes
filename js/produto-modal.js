@@ -2,6 +2,8 @@
 // MODAL DE PRODUTO - PÃO DO CISO
 // ============================================
 
+// produto-modal.js
+
 function configurarProduto(indiceSessao, indiceItem) {
     const produto = dadosIniciais.secoes[indiceSessao].itens[indiceItem];
     const identificador = `item-${indiceSessao}-${indiceItem}`;
@@ -11,50 +13,53 @@ function configurarProduto(indiceSessao, indiceItem) {
         return;
     }
 
-    // Configurar produto atual
-    produtoAtual = {
-        identificador: identificador,
-        indiceSessao: indiceSessao,
-        indiceItem: indiceItem,
-        quantidade: 0, // MUDAR DE 1 PARA 0
-        opcionais: {}
-    };
+    // --- LÓGICA DE RECUPERAÇÃO DO CARRINHO ---
+    // Verificamos se este identificador já existe no objeto global 'carrinho'
+    const itemExistente = carrinho[identificador];
+
+    if (itemExistente) {
+        // Se já existe, usamos uma cópia profunda (JSON) para não alterar 
+        // o carrinho diretamente antes do utilizador clicar em "Confirmar"
+        produtoAtual = JSON.parse(JSON.stringify(itemExistente));
+        console.log(`✅ Produto recuperado do carrinho: ${produto.nome} (Qtde: ${produtoAtual.quantidade})`);
+    } else {
+        // Se não existe, criamos o objeto novo com quantidade inicial 1
+        produtoAtual = {
+            identificador: identificador,
+            indiceSessao: indiceSessao,
+            indiceItem: indiceItem,
+            quantidade: 0, 
+            opcionais: {}
+        };
+        console.log(`📝 Iniciando novo produto no modal: ${produto.nome}`);
+    }
+    // ----------------------------------------
 
     renderizarModalProduto(produto);
     abrirModal('modal-produto');
 }
 
-function renderizarModalProduto(produto) {
-    console.log('🔄 renderizarModalProduto chamado para:', produto.nome);
-    
-    const container = elemento('corpo-modal-produto');
-    if (!container) {
-        console.error('❌ Container do modal não encontrado!');
-        return;
-    }
+// --- NOVAS FUNÇÕES MODULARIZADAS PARA O MODAL ---
 
-    // Determinar opcionais ativos
-    const opcionaisParaExibir = obterOpcionaisAtivos(produto);
-    
-    // Renderizar HTML corrigido
-    container.innerHTML = `
-        <!-- Status de Adicionado -->
-        <!-- <div id="status-adicionado-produto" class="${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}">
-            <i class="fas fa-check-circle"></i> Item adicionado ao carrinho
-        </div> -->
-        
-        <!-- Imagem do Produto com Badge -->
+function gerarHTMLImagemProduto(produto) {
+    return `
         <div class="imagem-produto-container">
             <img src="${produto.imagem}" alt="${produto.nome}" class="imagem-produto-modal">
         </div>
+    `;
+}
 
-        <!-- Informações do Produto -->
+function gerarHTMLInfoProduto(produto) {
+    return `
         <div class="info-produto-modal">
             <h2 class="nome-produto-modal">${produto.nome}</h2>
             <p class="descricao-produto-modal">${produto.descricao || ''}</p>
         </div>
+    `;
+}
 
-        <!-- Controle de Quantidade -->
+function gerarHTMLControleQuantidade(produto) {
+    return `
         <div class="controle-quantidade-produto">
             <div class="preco-produto">${formatarMoeda(produto.preco)}</div>
             <div class="controles-quantidade">
@@ -63,47 +68,70 @@ function renderizarModalProduto(produto) {
                 <button class="botao-quantidade" onclick="alterarQuantidadeProduto(1)">+</button>
             </div>
         </div>
-
-        <!-- Opcionais (se houver) -->
-        ${opcionaisParaExibir.length > 0 ? `
-        <div id="contener-opcionais-produto" class="${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}">
-            <h4 class="titulo-opcionais"><i class="fas fa-list"></i> OPCIONAIS</h4>
-            <div class="lista-opcionais">
-                ${opcionaisParaExibir.map(opcional => `
-                <div class="opcional-item">
-                    <div class="opcional-info">
-                        <div class="opcional-nome">${opcional.nome}</div>
-                        <div class="opcional-preco">${formatarMoeda(opcional.preco)}</div>
-                    </div>
-                    <div class="controles-opcional">
-                        <button class="botao-quantidade-pequeno" onclick="alterarQuantidadeOpcional('${opcional.nome}', ${opcional.preco}, -1)">-</button>
-                        <span id="quantidade-opcional-${opcional.nome.replace(/\s+/g, '-')}" class="quantidade-opcional">
-                            ${produtoAtual.opcionais[opcional.nome] ? produtoAtual.opcionais[opcional.nome].quantidade : 0}
-                        </span>
-                        <button class="botao-quantidade-pequeno" onclick="alterarQuantidadeOpcional('${opcional.nome}', ${opcional.preco}, 1)">+</button>
-                    </div>
-                </div>
-                `).join('')}
-            </div>
-        </div>
-        ` : ''}
-
-        <!-- Subtotal -->
-        <div id="container-subtotal-produto" class="${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}">
-            <div class="subtitulo-subtotal">SUBTOTAL DO ITEM</div>
-            <div id="valor-subtotal-produto" class="valor-subtotal">${formatarMoeda(calcularSubtotalProduto())}</div>
-        </div>
     `;
-
-    console.log('✅ Modal renderizado. Verificando elementos...');
-    console.log('Número de containers de imagem:', container.querySelectorAll('.imagem-produto-container').length);
-    console.log('Número de imagens:', container.querySelectorAll('.imagem-produto-modal').length);
-    console.log('Número de badges:', container.querySelectorAll('.badge-quantidade').length);
-
-    // Atualizar visibilidade dos botões
-    verificarVisibilidadeBotoesModal();
 }
 
+function gerarHTMLSecaoOpcionais(produto) {
+    const opcionaisParaExibir = obterOpcionaisAtivos(produto);
+    if (opcionaisParaExibir.length === 0) return '';
+
+    const listaHTML = opcionaisParaExibir.map(opcional => {
+        const qtdAtual = produtoAtual.opcionais[opcional.nome] ? produtoAtual.opcionais[opcional.nome].quantidade : 0;
+        const idOpcional = opcional.nome.replace(/\s+/g, '-');
+        return `
+            <div class="opcional-item">
+                <div class="opcional-info">
+                    <div class="opcional-nome">${opcional.nome}</div>
+                    <div class="opcional-preco">${formatarMoeda(opcional.preco)}</div>
+                </div>
+                <div class="controles-opcional">
+                    <button class="botao-quantidade-pequeno" onclick="alterarQuantidadeOpcional('${opcional.nome}', ${opcional.preco}, -1)">-</button>
+                    <span id="quantidade-opcional-${idOpcional}" class="quantidade-opcional">${qtdAtual}</span>
+                    <button class="botao-quantidade-pequeno" onclick="alterarQuantidadeOpcional('${opcional.nome}', ${opcional.preco}, 1)">+</button>
+                </div>
+            </div>`;
+    }).join('');
+
+    return `
+        <div id="contener-opcionais-produto" class="${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}">
+            <h4 class="titulo-opcionais"><i class="fas fa-list"></i> OPCIONAIS</h4>
+            <div class="lista-opcionais">${listaHTML}</div>
+        </div>
+    `;
+}
+
+function gerarHTMLSubtotal() {
+    const subtotal = calcularSubtotalProduto();
+    console.log(`💰 Renderizando Subtotal centralizado: ${formatarMoeda(subtotal)}`);
+    
+    return `
+        <div id="container-subtotal-produto" class="container-subtotal-modal ${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}" style="text-align: center; width: 100%; margin-top: 20px;">
+            <div class="subtitulo-subtotal" style="display: block; width: 100%;">SUBTOTAL DO ITEM</div>
+            <div id="valor-subtotal-produto" class="valor-subtotal" style="display: block; width: 100%; font-weight: bold;">${formatarMoeda(subtotal)}</div>
+        </div>
+    `;
+}
+
+// --- FUNÇÃO PRINCIPAL REESCRITA ---
+
+function renderizarModalProduto(produto) {
+    console.log('🔄 Renderizando Modal (Modularizado) para:', produto.nome);
+    
+    const container = elemento('corpo-modal-produto');
+    if (!container) return console.error('❌ Container do modal não encontrado!');
+
+    // Montagem do HTML usando as funções auxiliares
+    container.innerHTML = `
+        ${gerarHTMLImagemProduto(produto)}
+        ${gerarHTMLInfoProduto(produto)}
+        ${gerarHTMLControleQuantidade(produto)}
+        ${gerarHTMLSecaoOpcionais(produto)}
+        ${gerarHTMLSubtotal()}
+    `;
+
+    console.log('✅ Modal renderizado com sucesso.');
+    verificarVisibilidadeBotoesModal();
+}
 function obterOpcionaisAtivos(produto) {
     const opcionaisParaExibir = [];
     
@@ -125,67 +153,44 @@ function obterOpcionaisAtivos(produto) {
 }
 
 // ===================== CONTROLE DE QUANTIDADE DO PRODUTO =====================
-function alterarQuantidadeProduto(valor) {
-    const novaQuantidade = produtoAtual.quantidade + valor;
-    
-    // PERMITE 0, MAS NÃO NEGATIVO
-    if (novaQuantidade < 0) return;
-    
-    produtoAtual.quantidade = novaQuantidade;
-    
-    // Atualizar display
-    const quantidadeDisplay = elemento('quantidade-produto-modal');
-    if (quantidadeDisplay) {
-        quantidadeDisplay.textContent = novaQuantidade;
-    }
+// produto-modal.js
 
-    // ✅ ETAPA 1.2: ATUALIZAR BADGE SOBRE A IMAGEM
-    const badgeImagem = elemento('badge-quantidade-modal');
-    if (badgeImagem) {
-        if (novaQuantidade > 0) {
-            badgeImagem.textContent = novaQuantidade;
-            badgeImagem.style.display = 'flex';
-        } else {
-            badgeImagem.style.display = 'none';
-        }
-    }
-    
-    // ✅ SE QUANTIDADE FOR 0, LIMPAR OPCIONAIS
-    if (novaQuantidade === 0) {
+function alterarQuantidadeProduto(valor) {
+    console.log(`--- ALTERANDO QUANTIDADE PRODUTO ---`);
+    const novaQuantidade = produtoAtual.quantidade + valor;
+
+    if (novaQuantidade < 0) return;
+
+    produtoAtual.quantidade = novaQuantidade;
+    console.log(`✅ Nova quantidade definida: ${produtoAtual.quantidade}`);
+
+    // CORREÇÃO PONTO 1: Se zerar o produto, limpa os dados e a TELA dos opcionais
+    if (produtoAtual.quantidade === 0) {
+        console.log('🗑️ Produto zerado. Resetando interface de opcionais.');
+        
+        // Limpa os dados
         produtoAtual.opcionais = {};
         
-        // Zerar contadores visuais dos opcionais
-        const contadoresOpcionais = document.querySelectorAll('.quantidade-opcional');
-        contadoresOpcionais.forEach(contador => {
-            contador.textContent = '0';
+        // Limpa a interface: busca todos os spans de quantidade de opcional e bota 0
+        const displaysOpcionais = document.querySelectorAll('.quantidade-opcional');
+        displaysOpcionais.forEach(span => {
+            span.textContent = '0';
         });
     }
-    
-    // ✅ ATUALIZAR VISIBILIDADE BASEADA NA QUANTIDADE
-    const statusAdicionado = elemento('status-adicionado-produto');
-    const containerOpcionais = elemento('contener-opcionais-produto');
-    const containerSubtotal = elemento('container-subtotal-produto');
-    
-    if (novaQuantidade > 0) {
-        // Mostrar tudo
-        if (statusAdicionado) statusAdicionado.classList.remove('escondido');
-        if (containerOpcionais) containerOpcionais.classList.remove('escondido');
-        if (containerSubtotal) containerSubtotal.classList.remove('escondido');
-    } else {
-        // Esconder tudo
-        if (statusAdicionado) statusAdicionado.classList.add('escondido');
-        if (containerOpcionais) containerOpcionais.classList.add('escondido');
-        if (containerSubtotal) containerSubtotal.classList.add('escondido');
-    }
-    
-    // Atualizar badge no cardápio
-    atualizarBadgeQuantidade();
-    
-    // Verificar botões
+
+    // 1. Atualiza a interface do modal (produto principal)
+    const elementoQtd = elemento('quantidade-produto-modal');
+    if (elementoQtd) elementoQtd.textContent = produtoAtual.quantidade;
+
+    // 2. Atualiza visibilidade e subtotal
     verificarVisibilidadeBotoesModal();
     
-    // Recalcular subtotal
-    atualizarSubtotalProduto();
+    const subtotal = calcularSubtotalProduto();
+    const elementoSubtotal = elemento('valor-subtotal-produto');
+    if (elementoSubtotal) elementoSubtotal.textContent = formatarMoeda(subtotal);
+
+    // 3. Sincroniza com o carrinho
+    sincronizarProdutoNoCarrinho();
 }
 
 function atualizarBadgeQuantidade() {
@@ -224,26 +229,53 @@ function atualizarSubtotalProduto() {
 }
 
 // ===================== CONTROLE DE BOTÕES DO MODAL =====================
+// produto-modal.js
+
+// produto-modal.js
+
 function verificarVisibilidadeBotoesModal() {
-    const botaoAdicionarSimples = elemento('botao-adicionar-simples');
-    const botaoAdicionarIrCarrinho = elemento('botao-adicionar-e-ir-para-carrinho');
+    const qtd = produtoAtual.quantidade;
+    const containerOpcionais = document.getElementById('contener-opcionais-produto');
+    const containerSubtotal = document.getElementById('container-subtotal-produto');
     
-    if (!botaoAdicionarSimples || !botaoAdicionarIrCarrinho) return;
-    
-    // Lógica corrigida:
-    // Botão "Ver Carrinho" aparece quando:
-    // 1. Quantidade do produto atual for maior que 0
-    // 2. E já houver algo no carrinho global
-    
-    const temItensNoCarrinho = Object.keys(carrinho).length > 0;
-    const mostrarBotaoIrCarrinho = produtoAtual.quantidade > 0 && temItensNoCarrinho;
-    
-    if (mostrarBotaoIrCarrinho) {
-        botaoAdicionarIrCarrinho.style.display = 'block';
-        botaoAdicionarSimples.innerHTML = '<i class="fas fa-plus"></i> ADICIONAR MAIS';
+    // IDs REAIS do seu index.html
+    const btnBege = document.getElementById('botao-adicionar-simples');
+    const btnVerde = document.getElementById('botao-adicionar-e-ir-para-carrinho');
+
+    console.log(`👁️ Ajustando botões do modal de produto. Qtd: ${qtd}`);
+
+    // 1. Visibilidade de detalhes (opcionais e subtotal)
+    if (qtd > 0) {
+        if (containerOpcionais) containerOpcionais.classList.replace('escondido', 'visivel');
+        if (containerSubtotal) containerSubtotal.classList.replace('escondido', 'visivel');
     } else {
-        botaoAdicionarIrCarrinho.style.display = 'none';
-        botaoAdicionarSimples.innerHTML = '<i class="fas fa-plus"></i> ADICIONAR AO CARRINHO';
+        if (containerOpcionais) containerOpcionais.classList.replace('visivel', 'escondido');
+        if (containerSubtotal) containerSubtotal.classList.replace('visivel', 'escondido');
+    }
+
+        // 3. BOTÃO BEGE (RETROCEDER): Continuar Comprando
+    if (btnBege) {
+        btnBege.className = 'botao-acao botao-bege';
+        btnBege.innerHTML = '<i class="fas fa-arrow-left"></i> CONTINUAR COMPRANDO';
+        // Ação de apenas fechar o modal
+        btnBege.onclick = function() { fecharModal('modal-produto'); };
+        btnBege.style.display = 'flex';
+    }
+
+    // 2. BOTÃO VERDE (AVANÇAR): Abrir Carrinho
+    if (btnVerde) {
+        btnVerde.className = 'botao-acao botao-verde-militar'; // Aplicando sua nova cor militar
+        btnVerde.innerHTML = '<i class="fas fa-shopping-basket"></i> ABRIR CARRINHO DE COMPRAS';
+        btnVerde.style.display = (qtd > 0) ? 'flex' : 'none';
+    }
+
+    // 3. BOTÃO BEGE (RETROCEDER): Continuar Comprando
+    if (btnBege) {
+        btnBege.className = 'botao-acao botao-bege';
+        btnBege.innerHTML = '<i class="fas fa-arrow-left"></i> CONTINUAR COMPRANDO';
+        // Ação de apenas fechar o modal
+        btnBege.onclick = function() { fecharModal('modal-produto'); };
+        btnBege.style.display = 'flex';
     }
 }
 
@@ -270,16 +302,23 @@ function adicionarEIrParaCarrinho() {
 }
 
 function sincronizarProdutoNoCarrinho() {
+    console.log(`🔄 Sincronizando "${produtoAtual.identificador}" com o carrinho...`);
+
     if (produtoAtual.quantidade > 0) {
-        carrinho[produtoAtual.identificador] = { ...produtoAtual };
+        // Adiciona ou atualiza no carrinho (cópia profunda para segurança)
+        carrinho[produtoAtual.identificador] = JSON.parse(JSON.stringify(produtoAtual));
+        console.log(`✅ Item atualizado no carrinho. Qtd: ${produtoAtual.quantidade}`);
     } else {
+        // Se a quantidade é 0, removemos completamente do objeto carrinho
         delete carrinho[produtoAtual.identificador];
+        console.log(`🗑️ Item removido do carrinho (quantidade zero).`);
     }
-    
+
+    // Salva no LocalStorage e atualiza os elementos visuais externos
     salvarCarrinho();
     atualizarBarraCarrinho();
     
-    // ATUALIZAR BADGE NO CARD TAMBÉM
+    // Atualiza o badge no card do cardápio sem recarregar a página
     if (typeof atualizarBadgeNoCard === 'function') {
         atualizarBadgeNoCard(produtoAtual.indiceSessao, produtoAtual.indiceItem);
     }

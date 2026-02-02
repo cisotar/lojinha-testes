@@ -44,7 +44,7 @@ function inicializarSistema() {
     }
     
     console.log('✅ Sistema inicializado. Carrinho:', carrinho);
-}
+}   
 
 // INICIALIZAR QUANDO O DOM CARREGAR
 document.addEventListener('DOMContentLoaded', function() {

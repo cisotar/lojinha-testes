@@ -2,13 +2,18 @@
 // GERENCIAMENTO DE OPCIONAIS - PÃO DO CISO
 // ============================================
 
+// opcionais.js
+
 function alterarQuantidadeOpcional(nomeOpcional, precoOpcional, valor) {
-    if (produtoAtual.quantidade === 0) {
-        alert('Adicione pelo menos 1 item do produto antes de selecionar opcionais.');
-    return;
-}
+    console.log(`--- ALTERANDO OPCIONAL: ${nomeOpcional} ---`);
+
+    // 1. Se o produto principal for 0, não permite adicionar opcionais
+    if (produtoAtual.quantidade === 0 && valor > 0) {
+        alert('Aumente a quantidade do produto antes de adicionar opcionais.');
+        return;
+    }
     
-    // Inicializar opcional se não existir
+    // Inicializar opcional se não existir no objeto
     if (!produtoAtual.opcionais[nomeOpcional]) {
         produtoAtual.opcionais[nomeOpcional] = {
             quantidade: 0,
@@ -18,23 +23,36 @@ function alterarQuantidadeOpcional(nomeOpcional, precoOpcional, valor) {
     
     const novaQuantidade = produtoAtual.opcionais[nomeOpcional].quantidade + valor;
     
+    // Impede quantidade negativa
     if (novaQuantidade < 0) return;
     
     produtoAtual.opcionais[nomeOpcional].quantidade = novaQuantidade;
+    console.log(`✅ Opcional ${nomeOpcional}: ${novaQuantidade}`);
     
-    // Atualizar display
-    const elementoQuantidade = elemento(`quantidade-opcional-${nomeOpcional.replace(/\s+/g, '-')}`);
+    // 2. Se a quantidade do opcional zerar, removemos a chave para limpar o objeto
+    if (novaQuantidade === 0) {
+        delete produtoAtual.opcionais[nomeOpcional];
+        console.log(`🗑️ Opcional ${nomeOpcional} removido por quantidade zero.`);
+    }
+    
+    // 3. Atualizar o número na tela (ID gerado na nossa nova função modularizada)
+    const idDisplay = `quantidade-opcional-${nomeOpcional.replace(/\s+/g, '-')}`;
+    const elementoQuantidade = elemento(idDisplay);
     if (elementoQuantidade) {
         elementoQuantidade.textContent = novaQuantidade;
     }
     
-    // Remover opcional se quantidade for zero
-    if (novaQuantidade === 0) {
-        delete produtoAtual.opcionais[nomeOpcional];
+    // 4. Recalcular subtotal e sincronizar com o carrinho em tempo real
+    const novoSubtotal = calcularSubtotalProduto();
+    const elementoSubtotal = elemento('valor-subtotal-produto');
+    if (elementoSubtotal) {
+        elementoSubtotal.textContent = formatarMoeda(novoSubtotal);
     }
-    
-    // Recalcular subtotal
-    atualizarSubtotalProduto();
+
+    // Chama a função que já criamos no produto-modal.js
+    if (typeof sincronizarProdutoNoCarrinho === 'function') {
+        sincronizarProdutoNoCarrinho();
+    }
 }
 
 // EXPORTAR FUNÇÕES

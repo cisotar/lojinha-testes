@@ -2,9 +2,6 @@
 // ESTADO DA APLICAÇÃO - PÃO DO CISO
 // ============================================
 
-// REMOVER O BLOCO if/else COMPLETAMENTE
-// E DEIXAR APENAS O CÓDIGO ESSENCIAL:
-
 // ESTADO GLOBAL
 window.carrinho = {};
 window.produtoAtual = null;
@@ -31,12 +28,28 @@ window.estadoAplicativo = {
 
 // FUNÇÕES DE ESTADO
 function carregarCarrinhoSalvo() {
-    window.carrinho = {};
-    console.log('🆕 Carrinho inicializado vazio');
+    try {
+        const carrinhoSalvo = localStorage.getItem('carrinho_pao_do_ciso');
+        if (carrinhoSalvo) {
+            window.carrinho = JSON.parse(carrinhoSalvo);
+            console.log('🛒 Carrinho carregado do localStorage:', window.carrinho);
+        } else {
+            window.carrinho = {};
+            console.log('🆕 Carrinho inicializado vazio');
+        }
+    } catch (error) {
+        console.error('❌ Erro ao carregar carrinho:', error);
+        window.carrinho = {};
+    }
 }
 
 function salvarCarrinho() {
-    console.log('🔄 Carrinho atualizado');
+    try {
+        localStorage.setItem('carrinho_pao_do_ciso', JSON.stringify(window.carrinho));
+        console.log('💾 Carrinho salvo no localStorage:', window.carrinho);
+    } catch (error) {
+        console.error('❌ Erro ao salvar carrinho:', error);
+    }
 }
 
 function resetarEstado() {
@@ -63,7 +76,8 @@ function resetarEstado() {
         descontoCupom: 0
     };
     
-    console.log('🔄 Estado resetado');
+    localStorage.removeItem('carrinho_pao_do_ciso');
+    console.log('🔄 Estado resetado completamente');
 }
 
 // EXPORTAR FUNÇÕES
