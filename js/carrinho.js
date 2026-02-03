@@ -115,6 +115,11 @@ function gerarHTMLItemCarrinho(item) {
 }
 
 function gerarHTMLOpcoesEntregaCupom() {
+    console.log("📦 Renderizando opções de entrega e cupom...");
+    
+    // Usar o estado atual para determinar se mostra ou não
+    const mostrarCEP = estadoAplicativo.modoEntrega === 'entrega';
+    
     return `
         <div class="opcoes-carrinho">
             <div class="grupo-cupom">
@@ -133,12 +138,49 @@ function gerarHTMLOpcoesEntregaCupom() {
                         <i class="fas fa-motorcycle"></i> <span>ENTREGA</span>
                     </label>
                 </div>
-                <div id="informacao-taxa-entrega" class="informacao-taxa" style="${estadoAplicativo.modoEntrega === 'entrega' ? 'display: block;' : 'display: none;'}">
-                    <i class="fas fa-info-circle"></i> <span>Taxa de entrega será calculada no próximo passo</span>
+                
+                <!-- 🔥 CORREÇÃO: Removido style="display: none;" e usando variável -->
+                <div id="secao-cep-carrinho" class="secao-cep-carrinho" style="${mostrarCEP ? 'display: block;' : 'display: none;'}">
+                    <div class="informacao-taxa">
+                        <i class="fas fa-info-circle"></i> 
+                        <span>Informe seu CEP para o cálculo da taxa de entrega</span>
+                    </div>
+                    
+                    <div class="grupo-cep-carrinho">
+                        <input type="text" 
+                               id="cep-carrinho" 
+                               class="campo-cep-carrinho"
+                               placeholder="00000-000"
+                               maxlength="9"
+                               value="${enderecoCliente.cep ? formatarCEP(enderecoCliente.cep) : ''}">
+                        <button class="botao-calcular-frete" onclick="calcularFreteNoCarrinho()">
+                            <i class="fas fa-calculator"></i> CALCULAR
+                        </button>
+                    </div>
+                    
+                    <!-- Display do frete calculado -->
+                    <div id="resultado-frete-carrinho" class="resultado-frete" style="display: none;">
+                        <div class="frete-info">
+                            <i class="fas fa-truck"></i>
+                            <div class="frete-detalhes">
+                                <span class="frete-titulo">TAXA DE ENTREGA:</span>
+                                <span id="valor-frete-carrinho" class="frete-valor">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     `;
+}
+
+function testarVisibilidadeCEP() {
+    console.log('=== TESTE DE VISIBILIDADE CEP ===');
+    const secaoCEP = elemento('secao-cep-carrinho');
+    console.log('Seção CEP encontrada:', !!secaoCEP);
+    console.log('Display atual:', secaoCEP?.style.display);
+    console.log('Modo entrega atual:', estadoAplicativo.modoEntrega);
+    console.log('=== FIM TESTE ===');
 }
 
 function gerarHTMLBotoesAcaoCarrinho() {
@@ -271,9 +313,16 @@ function alterarModoEntrega(modo) {
         opcao.classList.remove('selecionada');
     });
     
-    const opcaoSelecionada = document.querySelector(`[value="${modo}"]`).closest('.opcao-entrega');
+    const opcaoSelecionada = document.querySelector(`[value="${modo}"]`)?.closest('.opcao-entrega');
     if (opcaoSelecionada) {
         opcaoSelecionada.classList.add('selecionada');
+    }
+    
+    // 🔥 CORREÇÃO: Mostrar/ocultar seção CEP no carrinho
+    const secaoCEP = elemento('secao-cep-carrinho');
+    if (secaoCEP) {
+        secaoCEP.style.display = modo === 'entrega' ? 'block' : 'none';
+        console.log(`Seção CEP ${modo === 'entrega' ? 'mostrada' : 'ocultada'}`);
     }
     
     // Mostrar/ocultar informação da taxa
@@ -285,11 +334,13 @@ function alterarModoEntrega(modo) {
     // 🔥 NOVA LINHA ADICIONADA (PASSO 4)
     // Se for entrega, inicializa o AddressManager
     if (modo === 'entrega' && window.AddressManager) {
+        console.log('Inicializando AddressManager para entrega');
         window.AddressManager.init();
     }
     
     atualizarResumoFinanceiroCarrinho();
 }
+
 
 function prosseguirParaDadosCliente() {
     if (Object.keys(carrinho).length === 0) {
@@ -314,6 +365,48 @@ function prosseguirParaDadosCliente() {
     }
 }
 
+function calcularFreteNoCarrinho() {
+    const campoCEP = elemento('cep-carrinho');
+    if (!campoCEP) return;
+    
+    const cep = campoCEP.value.replace(/\D/g, '');
+    if (cep.length !== 8) {
+        alert('Digite um CEP válido com 8 números.');
+        campoCEP.focus();
+        return;
+    }
+    
+    // Salva o CEP no endereço global
+    enderecoCliente.cep = cep;
+    
+    // Formata o CEP no campo
+    campoCEP.value = cep.substring(0,5) + '-' + cep.substring(5);
+    
+    calcularFretePorBairroNoCarrinho(cep);
+}
+
+function calcularFretePorBairroNoCarrinho(cep) {
+    const freteCalculado = 8.00;
+    
+    estadoAplicativo.taxaEntrega = freteCalculado;
+    estadoAplicativo.cepCalculado = cep;
+    
+    atualizarDisplayFreteCarrinho(freteCalculado);
+    atualizarResumoFinanceiroCarrinho();
+    
+    mostrarNotificacao(`Frete calculado: R$ ${freteCalculado.toFixed(2)}`, 'success');
+}
+
+function atualizarDisplayFreteCarrinho(valor) {
+    const resultadoDiv = elemento('resultado-frete-carrinho');
+    const valorSpan = elemento('valor-frete-carrinho');
+    
+    if (resultadoDiv && valorSpan) {
+        resultadoDiv.style.display = 'block';
+        valorSpan.textContent = formatarMoeda(valor);
+    }
+}
+
 // EXPORTAR FUNÇÕES
 window.atualizarBarraCarrinho = atualizarBarraCarrinho;
 window.abrirModalCarrinho = abrirModalCarrinho;
@@ -321,3 +414,5 @@ window.removerItemDoCarrinho = removerItemDoCarrinho;
 window.aplicarCupom = aplicarCupom;
 window.alterarModoEntrega = alterarModoEntrega;
 window.prosseguirParaDadosCliente = prosseguirParaDadosCliente;
+window.calcularFreteNoCarrinho = calcularFreteNoCarrinho;
+window.calcularFretePorBairroNoCarrinho = calcularFretePorBairroNoCarrinho;

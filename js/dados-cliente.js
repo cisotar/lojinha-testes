@@ -6,7 +6,6 @@ function validarDadosCliente() {
     const nome = elemento('nome-cliente').value.trim();
     const whatsapp = elemento('whatsapp-cliente').value.trim();
     
-    // Validação básica
     if (!nome || nome.length < 3) {
         alert('Por favor, digite seu nome completo.');
         elemento('nome-cliente').focus();
@@ -15,29 +14,31 @@ function validarDadosCliente() {
     
     const whatsappNumeros = whatsapp.replace(/\D/g, '');
     if (whatsappNumeros.length !== 11) {
-        alert('Por favor, digite um WhatsApp válido (11 dígitos).');
+        alert('Por favor, digite um WhatsApp válido com DDD (11 dígitos).');
         elemento('whatsapp-cliente').focus();
         return;
     }
     
-    // 🔥 NOVA PARTE: Validação do endereço usando AddressManager
     if (estadoAplicativo.modoEntrega === 'entrega') {
-        // Usa o AddressManager para validar
-        if (!window.AddressManager || !window.AddressManager.validar()) {
+        if (estadoAplicativo.cepCalculado) {
+            const campoCEP = elemento('codigo-postal-cliente');
+            if (campoCEP && !campoCEP.value) {
+                campoCEP.value = estadoAplicativo.cepCalculado.substring(0,5) + '-' + estadoAplicativo.cepCalculado.substring(5);
+                
+                setTimeout(() => {
+                    buscarEnderecoPorCodigoPostal(estadoAplicativo.cepCalculado);
+                }, 500);
+            }
+        }
+        
+        if (!window.AddressManager || !window.AddressManager.validar().valido) {
             alert('Por favor, preencha todos os campos de endereço obrigatórios.');
             return;
         }
         
-        // Atualiza a variável global com os dados do AddressManager
         enderecoCliente = window.AddressManager.getEndereco();
-        
-        // Calcula frete se necessário
-        if (enderecoCliente.bairro && !estadoAplicativo.taxaEntrega) {
-            calcularFretePorBairro(enderecoCliente.bairro);
-        }
     }
     
-    // Prosseguir para pagamento (código existente)
     fecharModal('modal-dados-cliente');
     abrirModalPagamento();
 }

@@ -29,6 +29,10 @@
     --amarelo-alerta: #ffc107;
     --sombra-suave: rgba(0, 0, 0, 0.1);
     --sombra-media: rgba(0, 0, 0, 0.15);
+    /* ADICIONE ESTAS LINhas */
+    --bege-claro: #f9f5f0;
+    --marrim-detalhe: #8b7355;  /* Corrigindo typo e definindo cor */
+}
 }
 
 /* ===================== RESET E ESTILOS GERAIS ===================== */
@@ -1621,4 +1625,87 @@ select:focus {
 .aviso-cep i {
     margin-right: 5px;
     color: var(--verde-militar);
+}
+
+.secao-cep-carrinho {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    border: 1px solid #eee;
+}
+
+.grupo-cep-carrinho {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.campo-cep-carrinho {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.botao-calcular-frete {
+    background: var(--verde-militar);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.botao-calcular-frete:hover {
+    background: #3a5a24;
+}
+
+.resultado-frete {
+    margin-top: 15px;
+    padding: 12px;
+    background: #e8f5e9;
+    border-radius: 8px;
+    border: 1px solid #c8e6c9;
+    text-align: center; /* Adicione esta linha para centralizar tudo dentro */
+}
+
+.frete-info {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Adicione esta linha */
+    gap: 15px;
+}
+
+.frete-info i {
+    font-size: 1.5rem;
+    color: #2e7d32;
+    /* Remove o flex-shrink se existir */
+}
+
+.frete-detalhes {
+    flex: 1;
+    text-align: center; /* Adicione esta linha para centralizar o texto */
+}
+
+.frete-titulo {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #1b5e20;
+    display: block;
+    text-align: center; /* Adicione esta linha */
+}
+
+.frete-valor {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #2e7d32;
+    display: block; /* Adicione esta linha */
+    text-align: center; /* Adicione esta linha */
 }
