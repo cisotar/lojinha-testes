@@ -29,10 +29,9 @@
     --amarelo-alerta: #ffc107;
     --sombra-suave: rgba(0, 0, 0, 0.1);
     --sombra-media: rgba(0, 0, 0, 0.15);
-    /* ADICIONE ESTAS LINhas */
+    /* ADICIONE ESTAS LINHAS */
     --bege-claro: #f9f5f0;
     --marrim-detalhe: #8b7355;  /* Corrigindo typo e definindo cor */
-}
 }
 
 /* ===================== RESET E ESTILOS GERAIS ===================== */
@@ -653,6 +652,7 @@ body {
 
 /* BADGE NO MODAL DE PRODUTO - VERSÃO MELHORADA */
 .imagem-produto-container .badge-quantidade {
+    display: none;
     position: absolute;
     bottom: 10px;
     right: 10px;
@@ -671,6 +671,10 @@ body {
     animation: badgeAppear 0.3s ease-out;
     /* Novas melhorias */
     transition: all 0.3s ease;
+}
+
+.imagem-produto-container .badge-quantidade[style*="display: flex"] {
+    display: flex !important;
 }
 
 .imagem-produto-container .badge-quantidade.updated {

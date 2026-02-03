@@ -98,3 +98,4 @@ window.testarAddressManager = testarAddressManager;*/
 
 // EXPORTAR FUNÇÕES
 window.validarDadosCliente = validarDadosCliente;
+window.testarAddressManager = testarAddressManager;  // (descomente se quiser)

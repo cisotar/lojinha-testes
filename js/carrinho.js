@@ -115,10 +115,16 @@ function gerarHTMLItemCarrinho(item) {
 }
 
 function gerarHTMLOpcoesEntregaCupom() {
-    console.log("📦 Renderizando opções de entrega e cupom...");
-    
-    // Usar o estado atual para determinar se mostra ou não
+    // Determinar se deve mostrar a seção CEP baseado no estado atual
     const mostrarCEP = estadoAplicativo.modoEntrega === 'entrega';
+    
+    // Verificar se já tem CEP calculado para pré-preencher
+    const cepValue = estadoAplicativo.cepCalculado ? 
+        estadoAplicativo.cepCalculado.substring(0,5) + '-' + estadoAplicativo.cepCalculado.substring(5) : '';
+    
+    // Verificar se deve mostrar resultado do frete
+    const mostrarResultadoFrete = estadoAplicativo.modoEntrega === 'entrega' && 
+                                  estadoAplicativo.taxaEntrega > 0;
     
     return `
         <div class="opcoes-carrinho">
@@ -130,16 +136,20 @@ function gerarHTMLOpcoesEntregaCupom() {
                 <p class="titulo-entrega">Como deseja receber seu pedido?</p>
                 <div class="opcoes-entrega">
                     <label class="opcao-entrega ${estadoAplicativo.modoEntrega === 'retirada' ? 'selecionada' : ''}">
-                        <input type="radio" name="modoEntrega" value="retirada" ${estadoAplicativo.modoEntrega === 'retirada' ? 'checked' : ''} onchange="alterarModoEntrega('retirada')">
+                        <input type="radio" name="modoEntrega" value="retirada" 
+                               ${estadoAplicativo.modoEntrega === 'retirada' ? 'checked' : ''} 
+                               onchange="alterarModoEntrega('retirada')">
                         <i class="fas fa-store"></i> <span>RETIRADA</span>
                     </label>
                     <label class="opcao-entrega ${estadoAplicativo.modoEntrega === 'entrega' ? 'selecionada' : ''}">
-                        <input type="radio" name="modoEntrega" value="entrega" ${estadoAplicativo.modoEntrega === 'entrega' ? 'checked' : ''} onchange="alterarModoEntrega('entrega')">
+                        <input type="radio" name="modoEntrega" value="entrega" 
+                               ${estadoAplicativo.modoEntrega === 'entrega' ? 'checked' : ''} 
+                               onchange="alterarModoEntrega('entrega')">
                         <i class="fas fa-motorcycle"></i> <span>ENTREGA</span>
                     </label>
                 </div>
                 
-                <!-- 🔥 CORREÇÃO: Removido style="display: none;" e usando variável -->
+                <!-- SEÇÃO CEP - Controlada pelo estado -->
                 <div id="secao-cep-carrinho" class="secao-cep-carrinho" style="${mostrarCEP ? 'display: block;' : 'display: none;'}">
                     <div class="informacao-taxa">
                         <i class="fas fa-info-circle"></i> 
@@ -152,19 +162,19 @@ function gerarHTMLOpcoesEntregaCupom() {
                                class="campo-cep-carrinho"
                                placeholder="00000-000"
                                maxlength="9"
-                               value="${enderecoCliente.cep ? formatarCEP(enderecoCliente.cep) : ''}">
+                               value="${cepValue}">
                         <button class="botao-calcular-frete" onclick="calcularFreteNoCarrinho()">
                             <i class="fas fa-calculator"></i> CALCULAR
                         </button>
                     </div>
                     
                     <!-- Display do frete calculado -->
-                    <div id="resultado-frete-carrinho" class="resultado-frete" style="display: none;">
+                    <div id="resultado-frete-carrinho" class="resultado-frete" style="${mostrarResultadoFrete ? 'display: block;' : 'display: none;'}">
                         <div class="frete-info">
                             <i class="fas fa-truck"></i>
                             <div class="frete-detalhes">
                                 <span class="frete-titulo">TAXA DE ENTREGA:</span>
-                                <span id="valor-frete-carrinho" class="frete-valor">R$ 0,00</span>
+                                <span id="valor-frete-carrinho" class="frete-valor">${formatarMoeda(estadoAplicativo.taxaEntrega || 0)}</span>
                             </div>
                         </div>
                     </div>
@@ -172,15 +182,6 @@ function gerarHTMLOpcoesEntregaCupom() {
             </div>
         </div>
     `;
-}
-
-function testarVisibilidadeCEP() {
-    console.log('=== TESTE DE VISIBILIDADE CEP ===');
-    const secaoCEP = elemento('secao-cep-carrinho');
-    console.log('Seção CEP encontrada:', !!secaoCEP);
-    console.log('Display atual:', secaoCEP?.style.display);
-    console.log('Modo entrega atual:', estadoAplicativo.modoEntrega);
-    console.log('=== FIM TESTE ===');
 }
 
 function gerarHTMLBotoesAcaoCarrinho() {
@@ -306,91 +307,137 @@ function aplicarCupom() {
 }
 
 function alterarModoEntrega(modo) {
+    console.log(`[CEP] Alterando modo entrega para: ${modo}`);
+    
     estadoAplicativo.modoEntrega = modo;
     
-    // Atualizar classes das opções
+    // Limpar dados de CEP quando mudar para retirada
+    if (modo === 'retirada') {
+        estadoAplicativo.cepCalculado = null;
+        estadoAplicativo.taxaEntrega = 0;
+        
+        const campoCEP = elemento('cep-carrinho');
+        if (campoCEP) campoCEP.value = '';
+        
+        const resultadoFrete = elemento('resultado-frete-carrinho');
+        if (resultadoFrete) resultadoFrete.style.display = 'none';
+    }
+    
+    // Atualizar classes visuais das opções
     document.querySelectorAll('.opcao-entrega').forEach(opcao => {
         opcao.classList.remove('selecionada');
     });
     
     const opcaoSelecionada = document.querySelector(`[value="${modo}"]`)?.closest('.opcao-entrega');
-    if (opcaoSelecionada) {
-        opcaoSelecionada.classList.add('selecionada');
-    }
+    if (opcaoSelecionada) opcaoSelecionada.classList.add('selecionada');
     
-    // 🔥 CORREÇÃO: Mostrar/ocultar seção CEP no carrinho
+    // Mostrar/ocultar seção CEP no carrinho
     const secaoCEP = elemento('secao-cep-carrinho');
     if (secaoCEP) {
         secaoCEP.style.display = modo === 'entrega' ? 'block' : 'none';
-        console.log(`Seção CEP ${modo === 'entrega' ? 'mostrada' : 'ocultada'}`);
+        
+        if (modo === 'entrega' && estadoAplicativo.cepCalculado) {
+            const campoCEP = elemento('cep-carrinho');
+            if (campoCEP && !campoCEP.value) {
+                campoCEP.value = estadoAplicativo.cepCalculado.substring(0,5) + '-' + estadoAplicativo.cepCalculado.substring(5);
+            }
+            
+            if (estadoAplicativo.taxaEntrega > 0) {
+                const resultadoFrete = elemento('resultado-frete-carrinho');
+                if (resultadoFrete) resultadoFrete.style.display = 'block';
+            }
+        }
     }
     
-    // Mostrar/ocultar informação da taxa
-    const infoTaxa = elemento('informacao-taxa-entrega');
-    if (infoTaxa) {
-        infoTaxa.style.display = modo === 'entrega' ? 'block' : 'none';
-    }
-    
-    // 🔥 NOVA LINHA ADICIONADA (PASSO 4)
-    // Se for entrega, inicializa o AddressManager
+    // Inicializar AddressManager se for entrega
     if (modo === 'entrega' && window.AddressManager) {
-        console.log('Inicializando AddressManager para entrega');
-        window.AddressManager.init();
+        setTimeout(() => {
+            if (window.AddressManager.init) {
+                window.AddressManager.init();
+            }
+        }, 300);
     }
     
     atualizarResumoFinanceiroCarrinho();
 }
 
-
 function prosseguirParaDadosCliente() {
+    console.log('[CEP] Prosseguindo para dados do cliente...');
+    
     if (Object.keys(carrinho).length === 0) {
         alert('Adicione itens ao carrinho antes de prosseguir.');
         return;
     }
 
     fecharModal('modal-carrinho');
-    abrirModal('modal-dados-cliente');
     
-    // Se for retirada, esconder seção de endereço
-    if (estadoAplicativo.modoEntrega === 'retirada') {
-        const secaoEndereco = elemento('secao-endereco');
-        if (secaoEndereco) {
-            secaoEndereco.style.display = 'none';
-        }
+    // 🔥 CORREÇÃO PRINCIPAL: Sincronizar CEP do carrinho para o modal de dados
+    if (estadoAplicativo.modoEntrega === 'entrega' && estadoAplicativo.cepCalculado) {
+        console.log(`[CEP] Transferindo CEP ${estadoAplicativo.cepCalculado} para modal de dados`);
+        
+        // Abrir modal primeiro
+        setTimeout(() => {
+            abrirModal('modal-dados-cliente');
+            
+            // Pequeno delay para garantir que o DOM do modal está pronto
+            setTimeout(() => {
+                if (window.AddressManager && window.AddressManager.sincronizarCEPComModalDados) {
+                    console.log('[CEP] Chamando sincronização...');
+                    window.AddressManager.sincronizarCEPComModalDados(estadoAplicativo.cepCalculado);
+                }
+            }, 300);
+        }, 100);
     } else {
+        abrirModal('modal-dados-cliente');
+    }
+    
+    // Mostrar/ocultar seção de endereço baseado no modo
+    setTimeout(() => {
         const secaoEndereco = elemento('secao-endereco');
         if (secaoEndereco) {
-            secaoEndereco.style.display = 'block';
+            secaoEndereco.style.display = estadoAplicativo.modoEntrega === 'retirada' ? 'none' : 'block';
         }
-    }
+    }, 400);
 }
 
 function calcularFreteNoCarrinho() {
+    console.log('[CEP] Calculando frete...');
+    
     const campoCEP = elemento('cep-carrinho');
     if (!campoCEP) return;
     
     const cep = campoCEP.value.replace(/\D/g, '');
+    
     if (cep.length !== 8) {
         alert('Digite um CEP válido com 8 números.');
         campoCEP.focus();
         return;
     }
     
-    // Salva o CEP no endereço global
-    enderecoCliente.cep = cep;
+    // Salva o CEP no estado da aplicação
+    estadoAplicativo.cepCalculado = cep;
+    console.log(`[CEP] CEP salvo: ${estadoAplicativo.cepCalculado}`);
     
-    // Formata o CEP no campo
+    // Formata o CEP no campo para exibição
     campoCEP.value = cep.substring(0,5) + '-' + cep.substring(5);
     
+    // Calcula o frete
     calcularFretePorBairroNoCarrinho(cep);
 }
 
 function calcularFretePorBairroNoCarrinho(cep) {
-    const freteCalculado = 8.00;
+    console.log(`[CEP] Calculando frete para CEP: ${cep}`);
     
-    estadoAplicativo.taxaEntrega = freteCalculado;
+    // Salvar o CEP nos estados
+    enderecoCliente.cep = cep;
     estadoAplicativo.cepCalculado = cep;
     
+    // Simulação de cálculo de frete
+    const freteCalculado = 8.00;
+    console.log(`[CEP] Frete calculado: R$ ${freteCalculado.toFixed(2)}`);
+    
+    // Atualizar estado e display
+    estadoAplicativo.taxaEntrega = freteCalculado;
     atualizarDisplayFreteCarrinho(freteCalculado);
     atualizarResumoFinanceiroCarrinho();
     
@@ -402,9 +449,15 @@ function atualizarDisplayFreteCarrinho(valor) {
     const valorSpan = elemento('valor-frete-carrinho');
     
     if (resultadoDiv && valorSpan) {
-        resultadoDiv.style.display = 'block';
         valorSpan.textContent = formatarMoeda(valor);
+        resultadoDiv.style.display = 'block';
     }
+    
+    // Salvar a taxa no estado
+    estadoAplicativo.taxaEntrega = valor;
+    console.log(`[CEP] Taxa salva: R$ ${valor.toFixed(2)}`);
+    
+    atualizarResumoFinanceiroCarrinho();
 }
 
 // EXPORTAR FUNÇÕES

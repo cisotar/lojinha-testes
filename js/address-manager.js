@@ -110,20 +110,27 @@ window.AddressManager = {
     },
     
     buscarEndereco: async function(cep) {
-        console.log('🔍 Buscando CEP:', cep);
+        console.log('🔍 AddressManager.buscarEndereco(): Buscando CEP:', cep);
         
         try {
             if (typeof buscarEnderecoPorCodigoPostal === 'function') {
+                console.log('✅ Chamando buscarEnderecoPorCodigoPostal()...');
                 await buscarEnderecoPorCodigoPostal(cep);
                 // Após busca, garante que campos ficam editáveis
                 this.tornarCamposEditaveis();
+                console.log('✅ Endereço buscado e campos tornados editáveis');
+            } else {
+                console.error('❌ Função buscarEnderecoPorCodigoPostal não encontrada');
             }
         } catch (error) {
-            console.error('Erro ao buscar CEP:', error);
+            console.error('❌ Erro ao buscar CEP:', error);
         }
     },
     
+    // address-manager.js - Modificar função tornarCamposEditaveis()
     tornarCamposEditaveis: function() {
+        console.log('🔓 AddressManager.tornarCamposEditaveis(): Tornando campos editáveis...');
+        
         const campos = [
             'logradouro-cliente',
             'bairro-cliente',
@@ -133,9 +140,12 @@ window.AddressManager = {
         campos.forEach(id => {
             const campo = document.getElementById(id);
             if (campo) {
+                // 🔥 MANTÉM a classe 'campo-leitura' para estilo, apenas remove readonly
                 campo.readOnly = false;
-                campo.classList.remove('campo-leitura');
+                // NÃO REMOVE: campo.classList.remove('campo-leitura');
                 campo.style.backgroundColor = ''; // Remove fundo cinza
+                campo.placeholder = 'Pode editar este campo';
+                console.log(`✅ Campo ${id} tornado editável (mantido estilo)`);
             }
         });
         
@@ -143,7 +153,8 @@ window.AddressManager = {
         const campoNumero = document.getElementById('numero-residencia-cliente');
         if (campoNumero) {
             campoNumero.disabled = false;
-            campoNumero.placeholder = 'Digite o número';
+            campoNumero.placeholder = 'Digite o número (obrigatório)';
+            console.log('✅ Campo número habilitado e tornado obrigatório');
         }
     },
     
@@ -155,15 +166,27 @@ window.AddressManager = {
             campo.disabled = false;
             campo.classList.remove('campo-leitura');
             
+            // Remove placeholder de leitura se existir
+            if (idCampo === 'logradouro-cliente' || 
+                idCampo === 'bairro-cliente' || 
+                idCampo === 'cidade-cliente') {
+                campo.placeholder = 'Digite ou será preenchido pelo CEP';
+            }
+            
+            console.log(`✅ Campo ${idCampo} configurado como editável`);
+            
             // Evento para atualizar estado
             campo.addEventListener('input', () => {
                 this.enderecoAtual[nomePropriedade] = campo.value;
+                console.log(`Campo ${idCampo} atualizado para:`, campo.value);
             });
             
             // Evento para validação visual
             campo.addEventListener('blur', () => {
                 this.validarCampoIndividual(campo);
             });
+        } else {
+            console.warn(`⚠️ Campo ${idCampo} não encontrado para configuração`);
         }
     },
     
@@ -173,14 +196,18 @@ window.AddressManager = {
         if (valor) {
             campo.classList.add('campo-valido');
             campo.classList.remove('campo-invalido');
+            console.log(`✅ Campo ${campo.id} válido: "${valor}"`);
         } else {
             campo.classList.remove('campo-valido');
             campo.classList.remove('campo-invalido');
+            console.log(`ℹ️ Campo ${campo.id} vazio (não obrigatório)`);
         }
     },
     
     // 🔥 VALIDAÇÃO MODIFICADA: Apenas Rua, Cidade e Número obrigatórios
     validar: function() {
+        console.log('🔍 AddressManager.validar(): Validando endereço...');
+        
         const camposObrigatorios = [
             { id: 'logradouro-cliente', nome: 'Rua' },
             { id: 'cidade-cliente', nome: 'Cidade' },
@@ -198,9 +225,11 @@ window.AddressManager = {
                 elemento.classList.add('campo-invalido');
                 valido = false;
                 mensagensErro.push(campo.nome);
+                console.log(`❌ Campo obrigatório faltando: ${campo.nome} (${campo.id})`);
             } else {
                 elemento.classList.remove('campo-invalido');
                 elemento.classList.add('campo-valido');
+                console.log(`✅ Campo obrigatório preenchido: ${campo.nome} = "${valor}"`);
             }
         });
         
@@ -219,17 +248,20 @@ window.AddressManager = {
             }
         });
         
-        return {
+        const resultado = {
             valido: valido,
             camposFaltantes: mensagensErro,
             mensagem: mensagensErro.length > 0 
                 ? `Preencha: ${mensagensErro.join(', ')}` 
                 : 'Endereço válido'
         };
+        
+        console.log('📊 Resultado da validação:', resultado);
+        return resultado;
     },
     
     getEndereco: function() {
-        return {
+        const endereco = {
             cep: document.getElementById('codigo-postal-cliente')?.value || '',
             logradouro: document.getElementById('logradouro-cliente')?.value || '',
             bairro: document.getElementById('bairro-cliente')?.value || '',
@@ -238,10 +270,15 @@ window.AddressManager = {
             complemento: document.getElementById('complemento-residencia-cliente')?.value || '',
             referencia: document.getElementById('ponto-referencia-entrega')?.value || ''
         };
+        
+        console.log('📦 AddressManager.getEndereco():', endereco);
+        return endereco;
     },
     
     // Nova função para limpar tudo
     limparTudo: function() {
+        console.log('🗑️ AddressManager.limparTudo(): Limpando todos os campos...');
+        
         const campos = [
             'codigo-postal-cliente',
             'logradouro-cliente',
@@ -251,7 +288,7 @@ window.AddressManager = {
             'complemento-residencia-cliente',
             'ponto-referencia-entrega'
         ];
-        
+            
         campos.forEach(id => {
             const campo = document.getElementById(id);
             if (campo) {
@@ -267,10 +304,64 @@ window.AddressManager = {
                     campo.disabled = false;
                     campo.placeholder = 'Digite o número';
                 }
-            }
+                
+                console.log(`✅ Campo ${id} limpo`);
+            } 
         });
         
         this.enderecoAtual = {};
         this.cepAnterior = '';
+        console.log('✅ Todos os campos limpos e estado resetado');
+    },
+    
+    // 🔥 PRIMEIRA CORREÇÃO: Função para sincronizar CEP do carrinho para modal de dados
+    sincronizarCEPComModalDados: function(cep) {
+        console.log('🔄 AddressManager.sincronizarCEPComModalDados(): Sincronizando CEP:', cep);
+        
+        // Verificar se o modal de dados está aberto
+        const modalDados = elemento('modal-dados-cliente');
+        if (!modalDados || modalDados.style.display !== 'block') {
+            console.log('⚠️ Modal de dados não está aberto. Aguardando...');
+            return false;
+        }
+        
+        // Atualizar campo CEP no modal de dados
+        const campoCEPDados = elemento('codigo-postal-cliente');
+        if (campoCEPDados) {
+            console.log('✅ Campo CEP encontrado no modal de dados');
+            
+            // Formatar CEP
+            let cepFormatado = cep.replace(/\D/g, '');
+            if (cepFormatado.length > 8) cepFormatado = cepFormatado.substring(0, 8);
+            if (cepFormatado.length > 5) {
+                cepFormatado = cepFormatado.substring(0, 5) + '-' + cepFormatado.substring(5);
+            }
+            
+            // Atualizar valor
+            campoCEPDados.value = cepFormatado;
+            this.enderecoAtual.cep = cepFormatado.replace(/\D/g, '');
+            this.cepAnterior = this.enderecoAtual.cep;
+            
+            console.log('📝 CEP definido no campo:', cepFormatado);
+            
+            // Disparar eventos para buscar endereço automaticamente
+            setTimeout(() => {
+                console.log('🎯 Disparando busca automática de endereço...');
+                
+                // Simular eventos de input e blur
+                campoCEPDados.dispatchEvent(new Event('input', { bubbles: true }));
+                campoCEPDados.dispatchEvent(new Event('blur', { bubbles: true }));
+                
+                // Chamar busca diretamente se tiver 8 dígitos
+                if (this.enderecoAtual.cep.length === 8) {
+                    this.buscarEndereco(this.enderecoAtual.cep);
+                }
+            }, 500);
+            
+            return true;
+        } else {
+            console.error('❌ Campo CEP não encontrado no modal de dados');
+            return false;
+        }
     }
 };
