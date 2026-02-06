@@ -47,6 +47,8 @@ body {
     color: var(--cinza-escuro);
     line-height: 1.6;
     padding-bottom: 80px;
+    max-width: 100%;
+    overflow-x: hidden; /* Garante que o site não role horizontalmente */
 }
 
 .container {
@@ -134,7 +136,7 @@ body {
     background: var(--verde-militar);
     padding: 15px 20px;
     color: var(--branco);
-    position: sticky;
+    position: relative; /* Mudado de sticky para relative para não travar no topo */
     top: 0;
     z-index: 1000;
     box-shadow: 0 2px 10px var(--sombra-suave);
@@ -147,6 +149,7 @@ body {
     gap: 20px;
     max-width: 500px;
     margin: 0 auto;
+    flex-direction: row !important; /* Força o alinhamento lado a lado em todas as telas */
 }
 
 .logo-cabecalho {
@@ -499,11 +502,11 @@ body {
     z-index: 1001;
     max-width: 500px;
     width: 90%;
-    max-height: 95vh; /* Aumentado de 90vh para 95vh para ser mais flexível */
+    max-height: 95vh;
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: modalEntrada 0.3s ease-out;
-    padding-bottom: 15px; /* Respiro extra no final */
+    padding-bottom: 15px;
 }
 
 .botao-fechar-modal {
@@ -1119,11 +1122,10 @@ body {
 }
 
 /* ===================== BOTÕES ===================== */
-/* Base para todos os botões de modal */
 .botao-acao {
     width: 100%;
-    padding: 14px 20px; /* Equilíbrio entre os 16px e 12px que você tinha */
-    border-radius: 8px;   /* Um meio termo elegante entre 5px e 12px */
+    padding: 14px 20px;
+    border-radius: 8px;
     font-weight: 700;
     font-size: 0.9rem;
     cursor: pointer;
@@ -1137,7 +1139,6 @@ body {
     margin-top: 10px;
 }
 
-/* BOTÃO DE AVANÇO (Verde Militar) */
 .botao-verde-militar {
     background-color: var(--verde-militar);
     color: var(--branco);
@@ -1145,12 +1146,11 @@ body {
 }
 
 .botao-verde-militar:hover:not(:disabled) {
-    background-color: #3a5a24; /* O tom que você sugeriu no hover */
+    background-color: #3a5a24;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(45, 58, 39, 0.3);
 }
 
-/* BOTÃO DE RETROCESSO (Bege) */
 .botao-bege {
     background-color: var(--bege-escuro);
     color: var(--marrom-cafe);
@@ -1163,7 +1163,6 @@ body {
     box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
 }
 
-/* ESTADO DESABILITADO */
 .botao-acao:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -1251,7 +1250,7 @@ body {
     gap: 8px;
 }
 
-/* ===================== CARD DE FRETE (CORREÇÃO DE CENTRALIZAÇÃO) ===================== */
+/* ===================== CARD DE FRETE ===================== */
 .card-informacao-frete {
     background: var(--bege-claro);
     border: 2px dashed var(--verde-militar);
@@ -1260,24 +1259,24 @@ body {
     margin-top: 15px;
     display: flex;
     align-items: center;
-    justify-content: center; /* Centraliza horizontalmente */
+    justify-content: center;
     gap: 15px;
     animation: pulseFrete 2s infinite;
-    text-align: center; /* Centraliza o texto */
+    text-align: center;
 }
 
 .card-informacao-frete i {
     font-size: 1.5rem;
     color: var(--verde-militar);
-    flex-shrink: 0; /* Evita que o ícone encolha */
+    flex-shrink: 0;
 }
 
 .info-frete-conteudo {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centraliza os itens */
+    align-items: center;
     justify-content: center;
-    text-align: center; /* Centraliza o texto */
+    text-align: center;
 }
 
 .info-frete-titulo {
@@ -1285,8 +1284,8 @@ body {
     font-weight: 700;
     color: var(--cinza-escuro);
     display: block;
-    text-align: center; /* Garante centralização */
-    margin-bottom: 5px; /* Espaço entre título e valor */
+    text-align: center;
+    margin-bottom: 5px;
 }
 
 .info-frete-valor {
@@ -1294,7 +1293,7 @@ body {
     font-weight: 900;
     color: var(--verde-militar);
     display: block;
-    text-align: center; /* Garante centralização */
+    text-align: center;
 }
 
 .botoes-acao {
@@ -1355,124 +1354,51 @@ body {
     font-size: 1.2rem;
 }
 
-.notificacao-flutuante {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #4CAF50;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 9999;
-    transform: translateX(120%);
-    transition: transform 0.3s ease;
-    max-width: 300px;
-    font-weight: 500;
-}
+/* ===================== ACESSIBILIDADE E SCROLL ===================== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--verde-militar); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3a5a24; }
 
-.notificacao-flutuante.ativo {
-    transform: translateX(0);
-}
-
-.notificacao-error {
-    background: #f44336;
-}
-
-.notificacao-info {
-    background: #2196F3;
-}
-
-.notificacao-warning {
-    background: #ff9800;
-}
-
-/* ===================== CLASSES DE ESTADO ===================== */
-.visivel, .mostrar {
-    display: block !important;
-}
-
-.escondido, .esconder {
-    display: none !important;
-}
-
-.campo-valido {
-    border-color: var(--verde-sucesso) !important;
-    background-color: rgba(40, 167, 69, 0.05) !important;
-}
-
-.campo-invalido {
-    border-color: var(--vermelho-alerta) !important;
-    background-color: rgba(204, 0, 0, 0.05) !important;
-}
-
-.texto-centralizado {
-    text-align: center;
-}
-
-.margem-superior {
-    margin-top: 20px;
-}
-
-.margem-inferior {
-    margin-bottom: 20px;
-}
-
-/* ===================== SCROLL PERSONALIZADO ===================== */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--verde-militar);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #3a5a24;
+button:focus, input:focus, select:focus {
+    outline: 3px solid rgba(74, 108, 47, 0.4);
+    outline-offset: 2px;
 }
 
 /* ===================== RESPONSIVIDADE ===================== */
 
-/* AJUSTE GLOBAL: REMOVE BOTÃO + E DESCRIÇÕES (PC e Celular) */
 .botao-adicionar-card, 
 .card-descricao {
     display: none !important;
 }
 
-/* TORNA O CARD CLICÁVEL (Já que o botão sumiu) */
-.card {
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.card:hover {
-    transform: translateY(-3px);
-}
-
 @media (max-width: 768px) {
+    /* CABEÇALHO NO CELULAR - CENTRALIZADO VERTICALMENTE */
     .cabecalho-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
+        flex-direction: row !important;
+        align-items: center !important; /* Centraliza verticalmente */
+        justify-content: center !important; /* Centraliza horizontalmente */
+        gap: 15px !important;
+        max-width: 100% !important; /* Ocupa toda largura disponível */
     }
     
-    .logo-cabecalho {
-        width: 60px;
-        height: 60px;
+    .cabecalho-info {
+        text-align: center !important; /* Centraliza o texto */
     }
     
     .titulo-cabecalho {
-        font-size: 1.4rem;
+        text-align: center !important; /* Centraliza o título */
+        font-size: 1.3rem !important; /* Tamanho ajustado para mobile */
     }
     
     .contatos-cabecalho {
-        align-items: center;
+        align-items: center !important; /* Centraliza os contatos */
+        text-align: center !important;
+    }
+    
+    .link-contato {
+        justify-content: center !important; /* Centraliza os links */
+        text-align: center !important;
     }
     
     /* PRODUTOS EM DUAS COLUNAS NO CELULAR */
@@ -1482,33 +1408,14 @@ body {
         padding: 0 8px !important;
     }
     
-    .modal {
-        width: 95%;
-        max-height: 85vh;
-    }
-    
-    .grupo-duplo {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .barra-direita {
-        font-size: 0.8rem;
-    }
-    
-    .titulo-secao {
-        font-size: 1.2rem;
-        margin: 20px 0 15px 10px;
-    }
-    
     .card-imagem-wrapper {
-        height: 140px; /* Altura reduzida para as 2 colunas */
+        height: 140px;
     }
 }
 
 @media (max-width: 480px) {
     .card-imagem-wrapper {
-        height: 120px; /* Ainda mais compacto em telas pequenas */
+        height: 120px;
     }
     
     .card-content {
@@ -1517,7 +1424,7 @@ body {
     }
     
     .card-nome {
-        font-size: 0.85rem; /* Fonte menor para caber no lado a lado */
+        font-size: 0.85rem;
         min-height: 35px;
         line-height: 1.2;
         margin-bottom: 4px;
@@ -1530,63 +1437,11 @@ body {
         display: block;
     }
 
-    /* REMOVE O PADDING EXCESSIVO DO RODAPÉ DO CARD */
     .card-footer {
         padding: 0;
         justify-content: center;
     }
-
-    .opcional-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    .controles-opcional {
-        align-self: flex-end;
-    }
 }
-/* ===================== ACESSIBILIDADE ===================== */
-button:focus,
-input:focus,
-select:focus {
-    outline: 3px solid rgba(74, 108, 47, 0.4);
-    outline-offset: 2px;
-}
-
-/* ===================== TOOLTIPS BÁSICOS ===================== */
-[title] {
-    position: relative;
-}
-
-[title]:hover::after {
-    content: attr(title);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--preto);
-    color: var(--branco);
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    z-index: 1000;
-}
-
-/* Adicione no final do style.css */
-.aviso-cep {
-    display: block;
-    margin-top: 5px;
-    color: var(--cinza-escuro);
-    font-size: 0.75rem;
-    font-style: italic;
-    opacity: 0.8;
-}
-
-.aviso-cep i {
-    margin-right: 5px;
-    color: var(--verde-militar);
 }
 
 .secao-cep-carrinho {
@@ -1625,59 +1480,19 @@ select:focus {
     gap: 8px;
 }
 
-.botao-calcular-frete:hover {
-    background: #3a5a24;
-}
-
 .resultado-frete {
     margin-top: 15px;
     padding: 12px;
     background: #e8f5e9;
     border-radius: 8px;
     border: 1px solid #c8e6c9;
-    text-align: center; /* Adicione esta linha para centralizar tudo dentro */
-}
-
-.frete-info {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Adicione esta linha */
-    gap: 15px;
-}
-
-.frete-info i {
-    font-size: 1.5rem;
-    color: #2e7d32;
-    /* Remove o flex-shrink se existir */
-}
-
-.frete-detalhes {
-    flex: 1;
-    text-align: center; /* Adicione esta linha para centralizar o texto */
-}
-
-.frete-titulo {
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: #1b5e20;
-    display: block;
-    text-align: center; /* Adicione esta linha */
+    text-align: center;
 }
 
 .frete-valor {
     font-size: 1.3rem;
     font-weight: 900;
     color: #2e7d32;
-    display: block; /* Adicione esta linha */
-    text-align: center; /* Adicione esta linha */
-}
-
-/* ===================== CORREÇÃO DE FOCO NO MODAL ===================== */
-.modal[data-modal="dados"] .grupo-campo:first-child .campo-entrada {
-    animation: fadeIn 0.5s ease;
-}
-
-.modal[data-modal="dados"] .grupo-campo:first-child .campo-entrada:focus {
-    border-color: var(--verde-militar);
-    box-shadow: 0 0 0 3px rgba(74, 108, 47, 0.2);
+    display: block;
+    text-align: center;
 }
