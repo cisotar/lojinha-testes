@@ -96,6 +96,26 @@ function validarDadosCliente() {
 // Exporta a função para uso global
 window.testarAddressManager = testarAddressManager;*/
 
+// ===================== DIAGNOSTICAR PROBLEMA DE CEP =====================
+function diagnosticarCep() {
+    console.log("=== 🩺 DIAGNÓSTICO CEP ===");
+    console.log("1. CEP no estado:", estadoAplicativo.cepCalculado);
+    console.log("2. Modo entrega:", estadoAplicativo.modoEntrega);
+    console.log("3. Endereço salvo:", enderecoCliente);
+    console.log("4. Campos visíveis no modal:");
+    
+    const campos = ['codigo-postal-cliente', 'logradouro-cliente', 'bairro-cliente', 'cidade-cliente'];
+    campos.forEach(id => {
+        const campo = elemento(id);
+        if (campo) {
+            console.log(`   ${id}: "${campo.value}"`);
+        }
+    });
+    console.log("=== FIM DIAGNÓSTICO ===");
+}
+
+window.diagnosticarCep = diagnosticarCep;
+
 // EXPORTAR FUNÇÕES
 window.validarDadosCliente = validarDadosCliente;
-window.testarAddressManager = testarAddressManager;  // (descomente se quiser)
+// window.testarAddressManager = testarAddressManager;

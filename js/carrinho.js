@@ -460,6 +460,101 @@ function atualizarDisplayFreteCarrinho(valor) {
     atualizarResumoFinanceiroCarrinho();
 }
 
+// ============================================
+// RECUPERAÇÃO DE CARRINHO - PÃO DO CISO
+// ============================================
+
+// ===================== VERIFICAR CARRINHO RECUPERADO =====================
+function verificarCarrinhoRecuperado() {
+    console.log('🔍 Verificando carrinho salvo...');
+    
+    // 1. Contar itens no carrinho atual
+    const itensCarrinho = Object.keys(window.carrinho).length;
+    console.log(`   Itens encontrados: ${itensCarrinho}`);
+    
+    // 2. Verificar se já mostramos o modal nesta sessão
+    const modalJaMostrado = sessionStorage.getItem('modalCarrinhoMostrado');
+    console.log(`   Modal já mostrado? ${modalJaMostrado}`);
+    
+    // 3. Mostrar modal apenas se tiver itens E não tiver mostrado ainda
+    if (itensCarrinho > 0 && !modalJaMostrado) {
+        console.log(`🛒 ${itensCarrinho} itens no carrinho. Mostrando opções...`);
+        
+        // Atualizar número no modal
+        const elementoQuantidade = elemento('quantidade-itens-recuperados');
+        if (elementoQuantidade) {
+            elementoQuantidade.textContent = itensCarrinho;
+            console.log(`   Contador atualizado: ${itensCarrinho} itens`);
+        }
+        
+        // Mostrar modal depois de 2 segundos (tempo para página carregar)
+        setTimeout(() => {
+            abrirModal('modal-recuperar-carrinho');
+            console.log('✅ Modal de continuação exibido');
+        }, 2000);
+        
+        // Marcar como mostrado (não mostrar de novo nesta sessão)
+        sessionStorage.setItem('modalCarrinhoMostrado', 'true');
+        console.log('   Modal marcado como "mostrado" para esta sessão');
+    } else {
+        console.log('✅ Nenhuma ação necessária para carrinho recuperado.');
+    }
+}
+
+// ===================== LIMPAR CARRINHO RECUPERADO =====================
+function limparCarrinhoRecuperado() {
+    console.log('🗑️ Cliente escolheu limpar carrinho.');
+    
+    // 1. Limpar dados do carrinho
+    window.carrinho = {};
+    console.log('   Carrinho limpo na memória');
+    
+    // 2. Salvar no localStorage
+    if (typeof salvarCarrinho === 'function') {
+        salvarCarrinho();
+        console.log('   Carrinho salvo no localStorage (vazio)');
+    }
+    
+    // 3. Limpar badges visuais
+    const todosBadges = document.querySelectorAll('.badge-quantidade');
+    console.log(`   Removendo ${todosBadges.length} badges visuais`);
+    todosBadges.forEach(badge => badge.remove());
+    
+    // 4. Atualizar barra do carrinho (vai sumir automaticamente)
+    if (typeof atualizarBarraCarrinho === 'function') {
+        atualizarBarraCarrinho();
+        console.log('   Barra do carrinho atualizada');
+    }
+    
+    // 5. Fechar modal
+    fecharModal('modal-recuperar-carrinho');
+    console.log('   Modal fechado');
+    
+    // 6. Feedback para o usuário
+    if (typeof mostrarNotificacao === 'function') {
+        mostrarNotificacao('🛒 Carrinho limpo! Você pode começar uma nova compra.');
+        console.log('   Notificação exibida');
+    }
+}
+
+// ===================== INICIALIZAR VERIFICAÇÃO =====================
+// A função será chamada após tudo carregar
+function inicializarRecuperacaoCarrinho() {
+    console.log('🔄 Inicializando sistema de recuperação de carrinho...');
+    
+    // Aguardar um pouco para garantir que tudo carregou
+    setTimeout(() => {
+        verificarCarrinhoRecuperado();
+    }, 2000);
+}
+
+// ===================== EXPORTAR FUNÇÕES =====================
+window.verificarCarrinhoRecuperado = verificarCarrinhoRecuperado;
+window.limparCarrinhoRecuperado = limparCarrinhoRecuperado;
+window.inicializarRecuperacaoCarrinho = inicializarRecuperacaoCarrinho;
+
+console.log('✅ recuperacao-carrinho.js carregado');
+
 // EXPORTAR FUNÇÕES
 window.atualizarBarraCarrinho = atualizarBarraCarrinho;
 window.abrirModalCarrinho = abrirModalCarrinho;

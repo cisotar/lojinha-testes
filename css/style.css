@@ -1248,6 +1248,7 @@ body {
     gap: 8px;
 }
 
+/* ===================== CARD DE FRETE (CORREÇÃO DE CENTRALIZAÇÃO) ===================== */
 .card-informacao-frete {
     background: var(--bege-claro);
     border: 2px dashed var(--verde-militar);
@@ -1256,17 +1257,24 @@ body {
     margin-top: 15px;
     display: flex;
     align-items: center;
+    justify-content: center; /* Centraliza horizontalmente */
     gap: 15px;
     animation: pulseFrete 2s infinite;
+    text-align: center; /* Centraliza o texto */
 }
 
 .card-informacao-frete i {
     font-size: 1.5rem;
     color: var(--verde-militar);
+    flex-shrink: 0; /* Evita que o ícone encolha */
 }
 
 .info-frete-conteudo {
-    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza os itens */
+    justify-content: center;
+    text-align: center; /* Centraliza o texto */
 }
 
 .info-frete-titulo {
@@ -1274,12 +1282,16 @@ body {
     font-weight: 700;
     color: var(--cinza-escuro);
     display: block;
+    text-align: center; /* Garante centralização */
+    margin-bottom: 5px; /* Espaço entre título e valor */
 }
 
 .info-frete-valor {
     font-size: 1.2rem;
     font-weight: 900;
     color: var(--verde-militar);
+    display: block;
+    text-align: center; /* Garante centralização */
 }
 
 .botoes-acao {
@@ -1712,4 +1724,14 @@ select:focus {
     color: #2e7d32;
     display: block; /* Adicione esta linha */
     text-align: center; /* Adicione esta linha */
+}
+
+/* ===================== CORREÇÃO DE FOCO NO MODAL ===================== */
+.modal[data-modal="dados"] .grupo-campo:first-child .campo-entrada {
+    animation: fadeIn 0.5s ease;
+}
+
+.modal[data-modal="dados"] .grupo-campo:first-child .campo-entrada:focus {
+    border-color: var(--verde-militar);
+    box-shadow: 0 0 0 3px rgba(74, 108, 47, 0.2);
 }

@@ -70,6 +70,17 @@ function inicializarSistema() {
         }
     }, 500); // 500ms de delay
     
+    // ===================== RECUPERAÇÃO DE CARRINHO =====================
+    setTimeout(() => {
+        console.log('🔄 Timer de recuperação disparado...');
+        if (window.iniciarRecuperacaoCarrinho) {
+            console.log('✅ Função encontrada, executando...');
+            window.iniciarRecuperacaoCarrinho();
+        } else {
+            console.log('⚠️ Função não encontrada');
+        }
+    }, 800);
+
     console.log('✅ Sistema inicializado. Carrinho:', carrinho);
 }
 

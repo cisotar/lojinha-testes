@@ -76,6 +76,53 @@
     <!-- ===================== OVERLAY PARA MODAIS ===================== -->
     <div id="overlay-modal" class="overlay-modal" onclick="fecharTodosModais()"></div>
 
+    <!-- ===================== MODAL 7: CONTINUAR COMPRA ===================== -->
+    <div id="modal-recuperar-carrinho" class="modal">
+        <div class="conteudo-modal" style="text-align: center; padding: 30px 25px;">
+            <div style="background: #f0f8f0; border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; border: 3px solid var(--verde-militar);">
+                <i class="fas fa-shopping-basket" style="font-size: 2.5rem; color: var(--verde-militar);"></i>
+            </div>
+            
+            <h3 class="titulo-modal" style="color: var(--marrom-cafe); margin-bottom: 15px;">
+                CONTINUAR COMPRA ANTERIOR?
+            </h3>
+            
+            <div class="texto-modal" style="margin: 20px 0; background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
+                <p style="font-size: 1.1rem; margin-bottom: 10px;">
+                    <i class="fas fa-exclamation-circle" style="color: var(--verde-militar); margin-right: 8px;"></i>
+                    <strong style="color: var(--verde-militar);" id="quantidade-itens-recuperados">0</strong> 
+                    <span style="color: var(--cinza-escuro);">itens no seu carrinho</span>
+                </p>
+                <p style="color: var(--cinza-escuro); font-size: 0.9rem; line-height: 1.4;">
+                    O que você quer fazer com esses itens?
+                </p>
+            </div>
+            
+            <div class="botoes-recuperacao" style="display: flex; gap: 15px; margin-top: 25px;">
+                <button id="botao-manter-carrinho" 
+                        class="botao-acao"
+                        style="flex: 1; background: var(--verde-militar); color: white; border: none; padding: 16px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;"
+                        onclick="fecharModal('modal-recuperar-carrinho'); mostrarNotificacao('Carrinho mantido! Continue sua compra.');">
+                    <i class="fas fa-check-circle"></i> 
+                    <span>MANTER ITENS<br><small style="font-size: 0.7rem; opacity: 0.9;">(Continuar comprando)</small></span>
+                </button>
+                
+                <button id="botao-limpar-carrinho" 
+                        class="botao-acao"
+                        style="flex: 1; background: #f8f8f8; color: var(--cinza-escuro); border: 2px solid #ddd; padding: 16px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;"
+                        onclick="limparCarrinhoRecuperado()">
+                    <i class="fas fa-trash-alt"></i> 
+                    <span>LIMPAR TUDO<br><small style="font-size: 0.7rem; opacity: 0.9;">(Começar do zero)</small></span>
+                </button>
+            </div>
+            
+            <p style="font-size: 0.75rem; color: #888; margin-top: 25px; line-height: 1.4;">
+                <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
+                Você pode remover itens um por um depois, se preferir.
+            </p>
+        </div>
+    </div>
+
     <!-- ===================== MODAL 1: INFORMAÇÕES DA FORNADA ===================== -->
     <div id="modal-informacoes-fornada" class="modal">
         <button class="botao-fechar-modal" onclick="fecharModal('modal-informacoes-fornada')">&times;</button>
@@ -318,20 +365,20 @@
     <div id="modal-pagamento" class="modal">
         <button class="botao-fechar-modal" onclick="fecharTodosModais()">&times;</button>
         
-        <div class="conteudo-modal">
-            <h3 class="titulo-modal">Forma de Pagamento</h3>
+        <div class="conteudo-modal" style="padding: 20px;">
+            <h3 style="margin-bottom: 25px; color: var(--marrom-cafe); text-align: center; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Forma de Pagamento</h3>
             
             <!-- Resumo do Pedido -->
-            <div class="resumo-pedido">
-                <div class="resumo-item">
+            <div class="resumo-pedido" style="background: var(--cinza-claro); padding: 15px; border-radius: 12px; border: 1px solid var(--cinza-medio); margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--cinza-escuro); margin-bottom: 8px;">
                     <span>Itens no Carrinho:</span>
                     <span id="quantidade-itens-pagamento">0</span>
                 </div>
-                <div class="resumo-item">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--cinza-escuro); margin-bottom: 8px;">
                     <span>Taxa de Entrega:</span>
                     <span id="taxa-entrega-pagamento">R$ 0,00</span>
                 </div>
-                <div class="resumo-total">
+                <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; color: var(--marrom-cafe); padding-top: 10px; margin-top: 10px; border-top: 2px solid var(--cinza-medio);">
                     <span>TOTAL:</span>
                     <span id="total-geral-pagamento">R$ 0,00</span>
                 </div>
@@ -340,65 +387,63 @@
             <!-- Opções de Pagamento -->
             <div class="opcoes-pagamento">
                 <!-- Opção 1: PIX -->
-                <div class="opcao-pagamento" onclick="selecionarPagamento('PIX', this)">
-                    <div class="opcao-cabecalho">
-                        <i class="fa-brands fa-pix"></i>
+                <div class="opcao-pagamento" onclick="selecionarPagamento('PIX', this)" style="position: relative; border-radius: 12px; border: 2px solid #eee; background: #fff; padding: 15px; cursor: pointer; margin-bottom: 12px; transition: 0.3s; text-align: center;">
+                    <span class="opcao-recomendado" style="position: absolute; top: -10px; left: 80%; transform: translateX(-50%); background: var(--verde-militar); color: white; font-size: 0.6rem; padding: 3px 10px; border-radius: 4px; font-weight: bold;">RECOMENDADO</span>
+                    
+                    <div class="opcao-cabecalho" style="font-weight: 900; color: #333; font-size: 1rem; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-brands fa-pix" style="color: #555; margin-right: 8px;"></i>
                         <span class="opcao-titulo">PIX</span>
-                        <span class="opcao-recomendado">RECOMENDADO</span>
                     </div>
                     
-                    <div class="opcao-conteudo" style="display: none;">
-                        <div class="pix-valor">
+                    <div class="opcao-conteudo" style="display: none; margin-top: 15px;">
+                        <div class="pix-valor" style="background: #fdf8f3; border: 1px solid var(--verde-militar); padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; color: var(--verde-militar); text-align: center;">
                             VALOR: <span id="valor-pix">R$ 0,00</span>
                         </div>
                         
-                        <div class="pix-qrcode">
-                            <div style="width:160px;height:160px;background:#f5f5f5;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;border-radius:10px;margin:0 auto;flex-direction:column;">
-                                <div style="background:black;width:140px;height:140px;display:grid;grid-template-columns:repeat(21, 1fr);grid-template-rows:repeat(21, 1fr);padding:10px;">
-                                    <!-- Simula um QR Code -->
-                                </div>
-                                <span style="color:#666;font-size:12px;text-align:center;margin-top:10px;">QR Code PIX</span>
-                            </div>
-                            <p class="pix-legenda">Escaneie o QR Code ou copie a chave abaixo:</p>
+                        <div class="pix-qrcode" style="text-align: center; margin-bottom: 15px;">
+                            <img src="img/qrcode-pix.png" alt="QR Code PIX" style="width:160px; margin-bottom: 10px; border: 1px solid #eee; padding: 5px; border-radius: 10px;">
+                            <p class="pix-legenda" style="font-weight: bold; font-size: 0.75rem; color: #666; margin: 5px 0;">
+                                CLIQUE PARA COPIAR A CHAVE:
+                            </p>
                         </div>
                         
-                        <div class="pix-chave" onclick="copiarChavePix()">
-                            <span id="texto-chave-pix">paodociso@gmail.com</span>
-                            <i class="far fa-copy"></i>
+                        <div class="pix-chave" onclick="copiarChavePix()" style="border: 2px dashed var(--verde-militar); background: #f9fdfa; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 5px;">
+                            <span id="texto-chave-pix" style="font-family: monospace; font-size: 0.85rem; color: var(--verde-militar); font-weight: bold; word-break: break-all;">paodociso@gmail.com</span>
+                            <i class="far fa-copy" style="color: var(--verde-militar);"></i>
                         </div>
                         
-                        <div id="mensagem-copiado" class="mensagem-sucesso" style="display: none;">
+                        <div id="mensagem-copiado" class="mensagem-sucesso" style="display: none; color: #28a745; font-size: 0.75rem; font-weight: bold; margin-top: 5px; text-align: center;">
                             ✅ Chave PIX copiada!
                         </div>
                     </div>
                 </div>
                 
                 <!-- Opção 2: Cartão -->
-                <div class="opcao-pagamento" onclick="selecionarPagamento('Cartão', this)">
-                    <div class="opcao-cabecalho">
-                        <i class="fas fa-credit-card"></i>
+                <div class="opcao-pagamento" onclick="selecionarPagamento('Cartão', this)" style="border-radius: 12px; border: 2px solid #eee; background: #fff; padding: 15px; cursor: pointer; margin-bottom: 12px; text-align: center;">
+                    <div class="opcao-cabecalho" style="font-weight: 900; color: #333; font-size: 1rem; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-credit-card" style="color: #555; margin-right: 8px;"></i>
                         <span class="opcao-titulo">CARTÃO (CRÉDITO/DÉBITO)</span>
                     </div>
                     
-                    <div class="opcao-conteudo" style="display: none;">
+                    <div class="opcao-conteudo" style="display: none; font-size: 0.8rem; margin-top: 10px; color: #666; border-top: 1px solid #eee; padding-top: 10px;">
                         <p class="opcao-descricao">
-                            Pague por aproximação na entrega ou solicite o link de pagamento via WhatsApp.
+                            Pague por aproximação na entrega ou peça o link via WhatsApp.
                         </p>
                     </div>
                 </div>
                 
                 <!-- Opção 3: Dinheiro -->
-                <div class="opcao-pagamento" onclick="selecionarPagamento('Dinheiro', this)">
-                    <div class="opcao-cabecalho">
-                        <i class="fas fa-money-bill-wave"></i>
+                <div class="opcao-pagamento" onclick="selecionarPagamento('Dinheiro', this)" style="border-radius: 12px; border: 2px solid #eee; background: #fff; padding: 15px; cursor: pointer; margin-bottom: 25px; text-align: center;">
+                    <div class="opcao-cabecalho" style="font-weight: 900; color: #333; font-size: 1rem; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-money-bill-wave" style="color: #555; margin-right: 8px;"></i>
                         <span class="opcao-titulo">DINHEIRO</span>
                     </div>
                     
-                    <div class="opcao-conteudo" style="display: none;">
+                    <div class="opcao-conteudo" style="display: none; font-size: 0.8rem; margin-top: 10px; color: #666; border-top: 1px solid #eee; padding-top: 10px;">
                         <p class="opcao-descricao">
-                            Pagamento em espécie no momento da entrega/retirada.
+                            Pagamento em espécie no ato da entrega.
                         </p>
-                        <p class="opcao-observacao">
+                        <p class="opcao-observacao" style="font-size: 0.75rem; color: var(--marrom-detalhe); margin-top: 8px; display: flex; align-items: center; gap: 5px; justify-content: center;">
                             <i class="fas fa-info-circle"></i> Tenha o troco preparado, por favor.
                         </p>
                     </div>
@@ -407,17 +452,18 @@
             
             <!-- Botões de Ação -->
             <div class="botoes-acao" style="display: flex; flex-direction: column; gap: 10px;">
-                
                 <button id="botao-finalizar-pedido" 
                         class="botao-acao botao-verde-militar"
                         onclick="finalizarPedido()"
-                        disabled>
+                        disabled
+                        style="background-color: var(--verde-militar); color: var(--branco); border: none; padding: 14px 20px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;">
                     FINALIZAR PEDIDO <i class="fab fa-whatsapp"></i>
                 </button>
                 
                 <button class="botao-acao botao-bege"
-                        onclick="fecharModal('modal-pagamento'); abrirModal('modal-dados-cliente');">
-                    <i class="fas fa-arrow-left"></i> VOLTAR AOS DADOS
+                        onclick="fecharModal('modal-pagamento'); abrirModal('modal-dados-cliente');"
+                        style="background-color: var(--bege-escuro); color: var(--marrom-cafe); border: 1px solid var(--marrom-detalhe); padding: 14px 20px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;">
+                    <i class="fas fa-arrow-left"></i> VOLTAR PARA MEUS DADOS
                 </button>
             </div>
         </div>
@@ -485,10 +531,12 @@
     <script src="js/opcionais.js"></script>
     <script src="js/carrinho.js"></script>
     <script src="js/dados-cliente.js"></script>
-    <script src="js/cep-frete.js"></script>
+    <script src="js/cep-frete.js"></script>     
     <script src="js/pagamento.js"></script>
     <script src="js/envio.js"></script>
     <script src="js/address-manager.js"></script>
+    <!-- ADICIONE ESTA LINHA -->
+    <script src="js/recuperacao-carrinho.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

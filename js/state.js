@@ -23,7 +23,20 @@ window.estadoAplicativo = {
     taxaEntrega: 0,
     bairroEntrega: null,
     cupomAplicado: null,
-    descontoCupom: 0
+    descontoCupom: 0,
+    // ADICIONE ESTA LINHA:
+    dadosCliente: {
+        nome: '',
+        telefone: '',
+        cep: '',
+        logradouro: '',
+        bairro: '',
+        cidade: '',
+        estado: '',
+        numero: '',
+        complemento: '',
+        referencia: ''
+    }
 };
 
 // FUNÇÕES DE ESTADO
@@ -73,7 +86,20 @@ function resetarEstado() {
         taxaEntrega: 0,
         bairroEntrega: null,
         cupomAplicado: null,
-        descontoCupom: 0
+        descontoCupom: 0,
+        // ADICIONE ESTA LINHA:
+        dadosCliente: {
+            nome: '',
+            telefone: '',
+            cep: '',
+            logradouro: '',
+            bairro: '',
+            cidade: '',
+            estado: '',
+            numero: '',
+            complemento: '',
+            referencia: ''
+        }
     };
     
     localStorage.removeItem('carrinho_pao_do_ciso');
