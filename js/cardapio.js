@@ -7,19 +7,15 @@
 function criarCardProduto(sessao, indiceSessao, item, indiceItem) {
     const identificador = `item-${indiceSessao}-${indiceItem}`;
     const quantidadeNoCarrinho = carrinho[identificador]?.quantidade || 0;
-    
-    // 1. Definir se o item está bloqueado
     const estaEsgotado = !!item.esgotado; 
     
-    console.log(`   📦 Criando card: "${item.nome}" - ${quantidadeNoCarrinho} no carrinho ${estaEsgotado ? '[ESGOTADO]' : ''}`);
-    
     const card = document.createElement('div');
-    // 2. Adiciona a classe 'esgotado' que o CSS vai usar para o overlay e carimbo
     card.className = `card ${estaEsgotado ? 'esgotado' : ''}`;
     card.dataset.sessao = indiceSessao;
     card.dataset.item = indiceItem;
     card.dataset.identificador = identificador;
     
+    // HTML Limpo: Sem descrição, sem divisor e sem botão +
     card.innerHTML = `
         <div class="card-imagem-wrapper">
             ${quantidadeNoCarrinho > 0 ? `
@@ -32,32 +28,19 @@ function criarCardProduto(sessao, indiceSessao, item, indiceItem) {
         
         <div class="card-content">
             <div class="card-nome">${item.nome}</div>
-            <hr class="divisor-card">
-            <div class="card-desc">${item.descricao || ''}</div>
             <div class="card-footer">
                 <span class="card-preco">${formatarMoeda(item.preco)}</span>
-                ${!estaEsgotado ? '<button class="btn-adicionar" type="button">+</button>' : ''}
             </div>
         </div>
     `;
     
-    // 3. Evento de clique: Só adicionamos se NÃO estiver esgotado
+    // Evento de clique no CARD TODO (apenas se não estiver esgotado)
     if (!estaEsgotado) {
-        card.addEventListener('click', (e) => {
-            if (!e.target.closest('.btn-adicionar')) {
-                configurarProduto(indiceSessao, indiceItem);
-            }
+        card.style.cursor = 'pointer'; // Garante o cursor de clique
+        card.addEventListener('click', () => {
+            configurarProduto(indiceSessao, indiceItem);
         });
-        
-        const btnAdicionar = card.querySelector('.btn-adicionar');
-        if (btnAdicionar) {
-            btnAdicionar.addEventListener('click', (e) => {
-                e.stopPropagation();
-                adicionarRapido(indiceSessao, indiceItem);
-            });
-        }
     } else {
-        // Se estiver esgotado, garantimos que o cursor seja o de proibido
         card.style.cursor = 'not-allowed';
     }
     

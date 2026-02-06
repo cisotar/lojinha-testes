@@ -75,9 +75,11 @@ function gerarHTMLSecaoOpcionais(produto) {
     const opcionaisParaExibir = obterOpcionaisAtivos(produto);
     if (opcionaisParaExibir.length === 0) return '';
 
+    // Layout mais compacto - título + lista sem scroll
     const listaHTML = opcionaisParaExibir.map(opcional => {
         const qtdAtual = produtoAtual.opcionais[opcional.nome] ? produtoAtual.opcionais[opcional.nome].quantidade : 0;
         const idOpcional = opcional.nome.replace(/\s+/g, '-');
+        
         return `
             <div class="opcional-item">
                 <div class="opcional-info">
@@ -100,6 +102,8 @@ function gerarHTMLSecaoOpcionais(produto) {
     `;
 }
 
+
+
 function gerarHTMLSubtotal() {
     const subtotal = calcularSubtotalProduto();
     console.log(`💰 Renderizando Subtotal centralizado: ${formatarMoeda(subtotal)}`);
@@ -112,26 +116,53 @@ function gerarHTMLSubtotal() {
     `;
 }
 
-// --- FUNÇÃO PRINCIPAL REESCRITA ---
-
+// FUNÇÃO PRINCIPAL REESCRITA - VERSÃO COMPACTA
 function renderizarModalProduto(produto) {
-    console.log('🔄 Renderizando Modal (Modularizado) para:', produto.nome);
+    console.log('🔄 Renderizando Modal Compacto para:', produto.nome);
     
     const container = elemento('corpo-modal-produto');
     if (!container) return console.error('❌ Container do modal não encontrado!');
 
-    // Montagem do HTML usando as funções auxiliares
+    // Montagem do HTML mais compacto
     container.innerHTML = `
-        ${gerarHTMLImagemProduto(produto)}
-        ${gerarHTMLInfoProduto(produto)}
-        ${gerarHTMLControleQuantidade(produto)}
+        <!-- IMAGEM DO PRODUTO -->
+        <div class="imagem-produto-container">
+            <img src="${produto.imagem}" alt="${produto.nome}" class="imagem-produto-modal">
+        </div>
+        
+        <!-- INFORMAÇÕES DO PRODUTO -->
+        <div class="info-produto-modal">
+            <h2 class="nome-produto-modal">${produto.nome}</h2>
+            <p class="descricao-produto-modal">${produto.descricao || ''}</p>
+        </div>
+        
+        <!-- CONTROLE DE QUANTIDADE -->
+        <div class="controle-quantidade-produto">
+            <div class="preco-produto">${formatarMoeda(produto.preco)}</div>
+            <div class="controles-quantidade">
+                <button class="botao-quantidade" onclick="alterarQuantidadeProduto(-1)">-</button>
+                <span id="quantidade-produto-modal" class="quantidade-display">${produtoAtual.quantidade}</span>
+                <button class="botao-quantidade" onclick="alterarQuantidadeProduto(1)">+</button>
+            </div>
+        </div>
+        
+        <!-- OPCIONAIS (APENAS SE HOUVER QUANTIDADE) -->
         ${gerarHTMLSecaoOpcionais(produto)}
-        ${gerarHTMLSubtotal()}
+        
+        <!-- SUBTOTAL -->
+        <div id="container-subtotal-produto" class="${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}" style="margin-top: 10px;">
+            <div class="subtitulo-subtotal">SUBTOTAL DO ITEM</div>
+            <div id="valor-subtotal-produto" class="valor-subtotal">${formatarMoeda(calcularSubtotalProduto())}</div>
+        </div>
     `;
 
-    console.log('✅ Modal renderizado com sucesso.');
+    console.log('✅ Modal renderizado com sucesso (layout compacto).');
     verificarVisibilidadeBotoesModal();
+    
+    // Ajustar layout após renderização (para garantir alinhamento perfeito)
+    setTimeout(ajustarAlinhamentoOpcionais, 50);
 }
+
 function obterOpcionaisAtivos(produto) {
     const opcionaisParaExibir = [];
     
@@ -335,10 +366,42 @@ function removerItemDoCarrinho(identificador) {
     }
 }
 
-// EXPORTAR FUNÇÕES
+// FUNÇÃO AUXILIAR PARA GARANTIR ALINHAMENTO PERFEITO
+function ajustarAlinhamentoOpcionais() {
+    const opcionaisItems = document.querySelectorAll('.opcional-item');
+    
+    opcionaisItems.forEach(item => {
+        const controles = item.querySelector('.controles-opcional');
+        const info = item.querySelector('.opcional-info');
+        
+        if (controles && info) {
+            // Forçar alinhamento vertical centralizado
+            controles.style.display = 'flex';
+            controles.style.alignItems = 'center';
+            controles.style.justifyContent = 'center';
+        }
+    });
+    
+    console.log('✅ Alinhamento dos opcionais ajustado.');
+}
+
+// ===================== EXPORTAÇÕES GLOBAIS =====================
+
+// Função de alinhamento visual
+window.ajustarAlinhamentoOpcionais = ajustarAlinhamentoOpcionais;
+
+// Funções de controle do modal e produto
 window.configurarProduto = configurarProduto;
+window.renderizarModalProduto = renderizarModalProduto; // Adicionado para segurança
 window.alterarQuantidadeProduto = alterarQuantidadeProduto;
+
+// Funções de lógica de opcionais e HTML
+window.gerarHTMLSecaoOpcionais = gerarHTMLSecaoOpcionais; 
+window.obterOpcionaisAtivos = obterOpcionaisAtivos;
+
+// Funções de ação do carrinho
 window.adicionarItemAoCarrinho = adicionarItemAoCarrinho;
 window.adicionarEIrParaCarrinho = adicionarEIrParaCarrinho;
-window.obterOpcionaisAtivos = obterOpcionaisAtivos;
 window.removerItemDoCarrinho = removerItemDoCarrinho;
+
+console.log('✅ Exportações de produto-modal.js concluídas com sucesso.');

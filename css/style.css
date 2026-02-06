@@ -499,10 +499,11 @@ body {
     z-index: 1001;
     max-width: 500px;
     width: 90%;
-    max-height: 90vh;
+    max-height: 95vh; /* Aumentado de 90vh para 95vh para ser mais flexível */
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: modalEntrada 0.3s ease-out;
+    padding-bottom: 15px; /* Respiro extra no final */
 }
 
 .botao-fechar-modal {
@@ -763,27 +764,29 @@ body {
     color: #000;
 }
 
+/* Diminuir o título dos opcionais */
 .titulo-opcionais {
-    font-size: 0.9rem;
+    font-size: 0.8rem;    /* Reduzido de 0.9rem */
     font-weight: 900;
-    margin-bottom: 15px;
+    margin-bottom: 10px;  /* Reduzido de 15px */
     color: #333;
     text-align: center;
     text-transform: uppercase;
 }
 
 .lista-opcionais {
-    max-height: 200px;
-    overflow-y: auto;
-    padding-right: 5px;
+    max-height: none; /* Remove o limite de altura */
+    overflow-y: visible; /* Elimina a barra de rolagem interna */
+    padding-right: 0;
 }
 
+/* Diminuir o espaço entre os itens opcionais */
 .opcional-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
+    margin-bottom: 8px;   /* Reduzido de 12px */
+    padding-bottom: 8px;  /* Reduzido de 12px */
     border-bottom: 1px solid #eee;
 }
 
@@ -797,7 +800,7 @@ body {
     flex-grow: 1;
 }
 
-.opcional-nome {
+.opcional-nome {    
     font-size: 0.95rem;
     font-weight: 600;
     color: #111;
@@ -846,13 +849,13 @@ body {
 
 #container-subtotal-produto {
     background: #ffeded;
-    padding: 15px;
+    padding: 10px;        /* Reduzido de 15px */
     border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 15px 0;
+    margin: 10px 0;       /* Reduzido de 15px */
     border: 1px solid #ffcccc;
     transition: all 0.3s;
 }
@@ -866,10 +869,10 @@ body {
 }
 
 .valor-subtotal {
-    font-size: 1.4rem;
+    font-size: 1.2rem;    /* Reduzido de 1.4rem para ser mais compacto */
     font-weight: 900;
     color: #cc0000;
-    margin-top: 5px;
+    margin-top: 2px;      /* Reduzido de 5px */
 }
 
 .botoes-modal-produto {
@@ -1435,6 +1438,23 @@ body {
 }
 
 /* ===================== RESPONSIVIDADE ===================== */
+
+/* AJUSTE GLOBAL: REMOVE BOTÃO + E DESCRIÇÕES (PC e Celular) */
+.botao-adicionar-card, 
+.card-descricao {
+    display: none !important;
+}
+
+/* TORNA O CARD CLICÁVEL (Já que o botão sumiu) */
+.card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
 @media (max-width: 768px) {
     .cabecalho-container {
         flex-direction: column;
@@ -1455,9 +1475,11 @@ body {
         align-items: center;
     }
     
+    /* PRODUTOS EM DUAS COLUNAS NO CELULAR */
     .grid-produtos {
-        grid-template-columns: 1fr;
-        padding: 0 10px;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        padding: 0 8px !important;
     }
     
     .modal {
@@ -1476,109 +1498,44 @@ body {
     
     .titulo-secao {
         font-size: 1.2rem;
+        margin: 20px 0 15px 10px;
     }
     
-    .imagem-produto-container {
-        max-height: 200px;
-        overflow: visible !important;
-    }
-    
-    .imagem-produto-modal {
-        max-width: 200px;
-        max-height: 180px;
-    }
-    
-    .controle-quantidade-produto {
-        flex-direction: column;
-        gap: 15px;
-        align-items: stretch;
-    }
-    
-    .controles-quantidade {
-        justify-content: center;
-    }
-    
-    /* RESPONSIVIDADE PARA BADGE NOS CARDS */
     .card-imagem-wrapper {
-        height: 180px; /* Reduz altura em telas menores */
-    }
-    
-    .card-imagem-wrapper .badge-quantidade,
-    .imagem-produto-container .badge-quantidade {
-        width: 26px;
-        height: 26px;
-        font-size: 0.8rem;
+        height: 140px; /* Altura reduzida para as 2 colunas */
     }
 }
 
 @media (max-width: 480px) {
-    .conteudo-modal {
-        padding: 20px 15px;
-    }
-    
-    .botao-acao {
-        padding: 14px;
-        font-size: 0.8rem;
-    }
-    
     .card-imagem-wrapper {
-        height: 160px; /* Reduz ainda mais em telas pequenas */
-    }
-    
-    .fornada-titulo {
-        font-size: 0.8rem;
-    }
-    
-    .fornada-subtitulo {
-        font-size: 0.7rem;
-    }
-    
-    .conteudo-modal-produto {
-        padding: 15px;
-    }
-    
-    .imagem-produto-container {
-        max-height: 180px;
-        padding: 8px;
-        overflow: visible !important;
-    }
-    
-    .imagem-produto-modal {
-        max-width: 180px;
-        max-height: 160px;
+        height: 120px; /* Ainda mais compacto em telas pequenas */
     }
     
     .card-content {
-        padding: 12px;
+        padding: 8px;
+        text-align: center;
     }
     
     .card-nome {
-        font-size: 1rem;
+        font-size: 0.85rem; /* Fonte menor para caber no lado a lado */
+        min-height: 35px;
+        line-height: 1.2;
+        margin-bottom: 4px;
     }
     
     .card-preco {
-        font-size: 1.2rem;
-    }
-    
-    .botoes-acao {
-        gap: 8px;
-    }
-    
-    .controles-quantidade {
-        gap: 10px;
-    }
-    
-    .botao-quantidade {
-        width: 35px;
-        height: 35px;
         font-size: 1rem;
+        font-weight: 800;
+        width: 100%;
+        display: block;
     }
-    
-    .quantidade-display {
-        font-size: 1.2rem;
-        min-width: 35px;
+
+    /* REMOVE O PADDING EXCESSIVO DO RODAPÉ DO CARD */
+    .card-footer {
+        padding: 0;
+        justify-content: center;
     }
-    
+
     .opcional-item {
         flex-direction: column;
         align-items: flex-start;
@@ -1588,18 +1545,7 @@ body {
     .controles-opcional {
         align-self: flex-end;
     }
-    
-    /* RESPONSIVIDADE PARA BADGE EM TELAS MUITO PEQUENAS */
-    .card-imagem-wrapper .badge-quantidade,
-    .imagem-produto-container .badge-quantidade {
-        width: 24px;
-        height: 24px;
-        font-size: 0.75rem;
-        top: 8px;
-        right: 8px;
-    }
 }
-
 /* ===================== ACESSIBILIDADE ===================== */
 button:focus,
 input:focus,

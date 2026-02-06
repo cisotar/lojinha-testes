@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Badges - Pão do Ciso</title>
+    <style>
+        /* Estilos mínimos para teste */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f0e6;
+        }
+        
+        .teste-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2 {
+            color: #4a6c2f;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .area-teste {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .card-teste {
+            border: 2px solid #4a6c2f;
+            border-radius: 10px;
+            padding: 20px;
+            background: white;
+        }
+        
+        .card-teste h3 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        
+        .simulador-card {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin: 20px auto;
+            overflow: hidden;
+            background: #f9f9f9;
+        }
+        
+        .card-imagem-wrapper {
+            position: relative;
+            height: 150px;
+            overflow: hidden;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .badge-quantidade {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4a6c2f;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.9rem;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: 2px solid white;
+            animation: badgeAppear 0.3s ease-out;
+        }
+        
+        .badge-quantidade.updated {
+            animation: badgeUpdate 0.3s ease-out;
+        }
+        
+        @keyframes badgeAppear {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes badgeUpdate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .card-content {
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .controles-teste {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #4a6c2f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #3a5a24;
+        }
+        
+        .btn-vermelho {
+            background: #cc0000;
+        }
+        
+        .btn-vermelho:hover {
+            background: #a30000;
+        }
+        
+        .estado-carrinho {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .logs {
+            background: #222;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .sucesso { color: #4CAF50; }
+        .erro { color: #f44336; }
+        .info { color: #2196F3; }
+        
+        .instrucoes {
+            background: #fff8e1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .instrucoes h4 {
+            color: #ff9800;
+            margin-bottom: 10px;
+        }
+        
+        .instrucoes ul {
+            padding-left: 20px;
+        }
+        
+        .instrucoes li {
+            margin-bottom: 5px;
+        }
+        
+        .resultado-teste {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .sucesso-teste {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .falha-teste {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="teste-container">
+        <h1>🧪 TESTE DE BADGES - PÃO DO CISO</h1>
+        
+        <div class="area-teste">
+            <!-- Card de Simulação -->
+            <div class="card-teste">
+                <h3>🎯 SIMULAÇÃO DO BADGE</h3>
+                
+                <div class="simulador-card">
+                    <div class="card-imagem-wrapper">
+                        <div class="badge-quantidade" id="badge-teste">0</div>
+                        <div style="color: #666; font-size: 14px;">[Imagem do Produto]</div>
+                    </div>
+                    <div class="card-content">
+                        <strong>Pão de Campanha</strong>
+                        <div style="color: #4a6c2f; font-weight: bold; margin-top: 5px;">R$ 12,90</div>
+                    </div>
+                </div>
+                
+                <div class="controles-teste">
+                    <button onclick="adicionarItem()">➕ Adicionar</button>
+                    <button onclick="removerItem()">➖ Remover</button>
+                    <button class="btn-vermelho" onclick="limparCarrinho()">🗑️ Limpar</button>
+                </div>
+                
+                <div class="estado-carrinho">
+                    <strong>Estado do Carrinho:</strong><br>
+                    <span id="estado-carrinho">Quantidade: 0 | Badge visível: NÃO</span>
+                </div>
+                
+                <div class="resultado-teste" id="resultado-teste"></div>
+            </div>
+            
+            <!-- Console de Logs -->
+            <div class="card-teste">
+                <h3>📊 CONSOLE DE LOGS</h3>
+                
+                <div class="controles-teste">
+                    <button onclick="testarBadge()">🧪 Executar Teste Automático</button>
+                    <button onclick="limparLogs()">🗑️ Limpar Logs</button>
+                </div>
+                
+                <div class="logs" id="console-logs">
+                    <div class="info">🚀 Sistema de teste inicializado...</div>
+                    <div class="info">✅ CSS carregado com animações de badge</div>
+                    <div class="info">🔄 Aguardando interações...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Instruções -->
+        <div class="instrucoes">
+            <h4>📋 INSTRUÇÕES DO TESTE</h4>
+            <ul>
+                <li><strong>Teste Manual:</strong> Use os botões "Adicionar" e "Remover" para ver o badge aparecer/sumir</li>
+                <li><strong>Teste Automático:</strong> Clique em "Executar Teste Automático" para verificar todas as funcionalidades</li>
+                <li><strong>O que testar:</strong>
+                    <ul>
+                        <li>✅ Badge aparece quando quantidade > 0</li>
+                        <li>✅ Badge some quando quantidade = 0</li>
+                        <li>✅ Número no badge corresponde à quantidade</li>
+                        <li>✅ Animação quando badge aparece/atualiza</li>
+                        <li>✅ Responsividade do badge (tente redimensionar a janela)</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Estado do carrinho de teste
+        let carrinhoTeste = {
+            quantidade: 0,
+            badgeVisivel: false
+        };
+        
+        // Elementos DOM
+        const badgeElement = document.getElementById('badge-teste');
+        const estadoCarrinho = document.getElementById('estado-carrinho');
+        const consoleLogs = document.getElementById('console-logs');
+        const resultadoTeste = document.getElementById('resultado-teste');
+        
+        // Adicionar log ao console
+        function adicionarLog(mensagem, tipo = 'info') {
+            const logDiv = document.createElement('div');
+            logDiv.className = tipo;
+            logDiv.innerHTML = `[${new Date().toLocaleTimeString()}] ${mensagem}`;
+            consoleLogs.appendChild(logDiv);
+            consoleLogs.scrollTop = consoleLogs.scrollHeight;
+        }
+        
+        // Limpar logs
+        function limparLogs() {
+            consoleLogs.innerHTML = '<div class="info">🗑️ Logs limpos...</div>';
+            adicionarLog('Console limpo');
+        }
+        
+        // Atualizar badge
+        function atualizarBadge() {
+            const quantidade = carrinhoTeste.quantidade;
+            
+            adicionarLog(`🔄 Atualizando badge - Quantidade: ${quantidade}`, 'info');
+            
+            if (quantidade > 0) {
+                // Mostrar badge
+                badgeElement.textContent = quantidade;
+                badgeElement.style.display = 'flex';
+                carrinhoTeste.badgeVisivel = true;
+                
+                // Adicionar animação de atualização
+                badgeElement.classList.add('updated');
+                setTimeout(() => {
+                    badgeElement.classList.remove('updated');
+                }, 300);
+                
+                adicionarLog(`✅ Badge MOSTRADO com valor: ${quantidade}`, 'sucesso');
+            } else {
+                // Esconder badge
+                badgeElement.style.display = 'none';
+                carrinhoTeste.badgeVisivel = false;
+                adicionarLog(`✅ Badge ESCONDIDO (quantidade = 0)`, 'sucesso');
+            }
+            
+            // Atualizar estado visível
+            atualizarEstadoCarrinho();
+        }
+        
+        // Atualizar estado do carrinho
+        function atualizarEstadoCarrinho() {
+            const visivelTexto = carrinhoTeste.badgeVisivel ? 'SIM' : 'NÃO';
+            estadoCarrinho.textContent = `Quantidade: ${carrinhoTeste.quantidade} | Badge visível: ${visivelTexto}`;
+        }
+        
+        // Adicionar item
+        function adicionarItem() {
+            carrinhoTeste.quantidade += 1;
+            adicionarLog(`➕ Item adicionado. Nova quantidade: ${carrinhoTeste.quantidade}`, 'info');
+            atualizarBadge();
+            
+            // Mostrar resultado do teste
+            mostrarResultado(`✅ Item adicionado com sucesso! Badge atualizado para: ${carrinhoTeste.quantidade}`, true);
+        }
+        
+        // Remover item
+        function removerItem() {
+            if (carrinhoTeste.quantidade > 0) {
+                carrinhoTeste.quantidade -= 1;
+                adicionarLog(`➖ Item removido. Nova quantidade: ${carrinhoTeste.quantidade}`, 'info');
+                atualizarBadge();
+                
+                if (carrinhoTeste.quantidade === 0) {
+                    mostrarResultado('✅ Último item removido. Badge escondido!', true);
+                } else {
+                    mostrarResultado(`✅ Item removido. Badge atualizado para: ${carrinhoTeste.quantidade}`, true);
+                }
+            } else {
+                adicionarLog('⚠️ Não há itens para remover', 'erro');
+                mostrarResultado('⚠️ Não há itens para remover!', false);
+            }
+        }
+        
+        // Limpar carrinho
+        function limparCarrinho() {
+            carrinhoTeste.quantidade = 0;
+            adicionarLog('🗑️ Carrinho limpo', 'info');
+            atualizarBadge();
+            mostrarResultado('✅ Carrinho limpo! Badge escondido.', true);
+        }
+        
+        // Mostrar resultado do teste
+        function mostrarResultado(mensagem, sucesso) {
+            resultadoTeste.textContent = mensagem;
+            resultadoTeste.className = `resultado-teste ${sucesso ? 'sucesso-teste' : 'falha-teste'}`;
+            resultadoTeste.style.display = 'block';
+            
+            // Esconder após 3 segundos
+            setTimeout(() => {
+                resultadoTeste.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Teste automático completo
+        function testarBadge() {
+            adicionarLog('🧪 INICIANDO TESTE AUTOMÁTICO DE BADGE', 'info');
+            
+            // Inicializar
+            carrinhoTeste.quantidade = 0;
+            atualizarBadge();
+            
+            // Teste 1: Adicionar primeiro item
+            setTimeout(() => {
+                adicionarLog('📋 TESTE 1: Adicionar primeiro item (deve mostrar badge)', 'info');
+                carrinhoTeste.quantidade = 1;
+                atualizarBadge();
+            }, 500);
+            
+            // Teste 2: Adicionar mais itens
+            setTimeout(() => {
+                adicionarLog('📋 TESTE 2: Adicionar mais itens (deve atualizar número)', 'info');
+                carrinhoTeste.quantidade = 3;
+                atualizarBadge();
+            }, 1500);
+            
+            // Teste 3: Remover itens
+            setTimeout(() => {
+                adicionarLog('📋 TESTE 3: Remover itens (deve atualizar número)', 'info');
+                carrinhoTeste.quantidade = 2;
+                atualizarBadge();
+            }, 2500);
+            
+            // Teste 4: Remover todos (badge deve sumir)
+            setTimeout(() => {
+                adicionarLog('📋 TESTE 4: Remover todos os itens (badge deve sumir)', 'info');
+                carrinhoTeste.quantidade = 0;
+                atualizarBadge();
+            }, 3500);
+            
+            // Teste 5: Testar animações
+            setTimeout(() => {
+                adicionarLog('📋 TESTE 5: Testar animação de atualização', 'info');
+                carrinhoTeste.quantidade = 5;
+                atualizarBadge();
+                
+                // Mostrar resultado final
+                setTimeout(() => {
+                    if (carrinhoTeste.badgeVisivel && carrinhoTeste.quantidade === 5) {
+                        adicionarLog('🎉 TODOS OS TESTES PASSARAM! Sistema de badges funcionando corretamente.', 'sucesso');
+                        mostrarResultado('🎉 TESTE COMPLETO: Todos os testes passaram! Badges funcionando perfeitamente.', true);
+                    } else {
+                        adicionarLog('❌ ALGUNS TESTES FALHARAM: Verifique o comportamento do badge.', 'erro');
+                        mostrarResultado('❌ TESTE FALHOU: Verifique o comportamento do badge.', false);
+                    }
+                }, 500);
+            }, 4500);
+        }
+        
+        // Inicializar teste
+        adicionarLog('🎯 Sistema de teste de badges inicializado', 'info');
+        atualizarEstadoCarrinho();
+        
+        // Teste de responsividade (simulado)
+        window.addEventListener('resize', () => {
+            const largura = window.innerWidth;
+            if (largura < 768) {
+                badgeElement.style.width = '26px';
+                badgeElement.style.height = '26px';
+                badgeElement.style.fontSize = '0.8rem';
+            } else if (largura < 480) {
+                badgeElement.style.width = '24px';
+                badgeElement.style.height = '24px';
+                badgeElement.style.fontSize = '0.75rem';
+            } else {
+                badgeElement.style.width = '30px';
+                badgeElement.style.height = '30px';
+                badgeElement.style.fontSize = '0.9rem';
+            }
+            adicionarLog(`📱 Responsividade: Largura da tela ${largura}px - Badge ajustado`, 'info');
+        });
+        
+        // Exemplo de como seria no código real:
+        adicionarLog('💡 DICA: No código real, use atualizarBadgeNoCard(indiceSessao, indiceItem)', 'info');
+    </script>
+</body>
+</html>

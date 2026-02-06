@@ -33,38 +33,37 @@ function verificarCarrinhoRecuperado() {
 }
 
 // ===================== LIMPAR CARRINHO RECUPERADO =====================
+// ===================== LIMPAR CARRINHO RECUPERADO =====================
 function limparCarrinhoRecuperado() {
-    console.log('🗑️ LIMPAR CARRINHO: Iniciando...');
+    console.log('🗑️ LIMPAR CARRINHO: Iniciando limpeza completa...');
     
-    // 1. Limpar dados do carrinho
+    // 1. Limpar dados do objeto global
     window.carrinho = {};
-    console.log('   ✅ Carrinho limpo na memória');
     
-    // 2. Salvar no localStorage
+    // 2. Sincronizar com o localStorage (Garante que não volte ao atualizar a página)
     if (typeof salvarCarrinho === 'function') {
         salvarCarrinho();
-        console.log('   ✅ Carrinho vazio salvo no localStorage');
+        console.log('   ✅ LocalStorage atualizado (vazio)');
     }
     
-    // 3. Limpar badges visuais
+    // 3. Limpar elementos visuais (Badges de quantidade no cardápio)
     const todosBadges = document.querySelectorAll('.badge-quantidade');
-    console.log(`   🏷️ Removendo ${todosBadges.length} badges visuais`);
     todosBadges.forEach(badge => badge.remove());
+    console.log(`   🏷️ ${todosBadges.length} badges removidos.`);
     
-    // 4. Atualizar barra do carrinho
+    // 4. Atualizar a barra inferior do carrinho
     if (typeof atualizarBarraCarrinho === 'function') {
         atualizarBarraCarrinho();
-        console.log('   📊 Barra do carrinho atualizada');
     }
     
-    // 5. Fechar modal
+    // 5. FECHAR O MODAL E ESPECIALMENTE O OVERLAY
+    // Usamos fecharModal que já gerencia o estado do body e do overlay
     fecharModal('modal-recuperar-carrinho');
-    console.log('   ❌ Modal fechado');
+    console.log('   ❌ Modal de recuperação encerrado.');
     
-    // 6. Feedback para o usuário
+    // 6. Feedback visual para o usuário
     if (typeof mostrarNotificacao === 'function') {
         mostrarNotificacao('🛒 Carrinho limpo! Comece uma nova compra.');
-        console.log('   💬 Notificação exibida');
     }
 }
 
