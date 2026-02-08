@@ -6,7 +6,7 @@
 window.dadosIniciais = {
     // INFORMAÇÕES DA FORNADA (do arquivo fornecido)
     fornada: {
-        dataISO: "2026-02-011",
+        dataISO: "2026-02-11",
         diasAntecedencia: 2,
         horaLimite: "23:59h"
     },

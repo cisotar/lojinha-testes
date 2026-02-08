@@ -65,7 +65,7 @@ function gerarHTMLControleQuantidade(produto) {
             <div class="controles-quantidade">
                 <button class="botao-quantidade" onclick="alterarQuantidadeProduto(-1)">-</button>
                 <span id="quantidade-produto-modal" class="quantidade-display">${produtoAtual.quantidade}</span>
-                <button class="botao-quantidade" onclick="alterarQuantidadeProduto(1)">+</button>z
+                <button class="botao-quantidade" onclick="alterarQuantidadeProduto(1)">+</button>
             </div>
         </div>
     `;
@@ -138,22 +138,25 @@ function renderizarModalProduto(produto) {
         
         <div class="moldura-padrao-modal">
             <div class="linha-flex-modal">
-                <span class="preco-produto-destaque">${formatarMoeda(produto.preco)}</span>
-                <div class="controles-quantidade">
-                    <button class="botao-quantidade" onclick="alterarQuantidadeProduto(-1)">-</button>
-                    <span id="quantidade-produto-modal" class="quantidade-display">${produtoAtual.quantidade}</span>
-                    <button class="botao-quantidade" onclick="alterarQuantidadeProduto(1)">+</button>
+                <div class="opcional-texto-lado-a-lado">
+                    <span class="opcional-nome">Quantidade</span>
+                    <span class="preco-produto-destaque">${formatarMoeda(produto.preco)}</span>
+                </div>
+                <div class="controles-opcional">
+                    <button class="botao-quantidade-pequeno" onclick="alterarQuantidadeProduto(-1)">-</button>
+                    <span id="quantidade-produto-modal" class="quantidade-opcional">${produtoAtual.quantidade}</span>
+                    <button class="botao-quantidade-pequeno" onclick="alterarQuantidadeProduto(1)">+</button>
                 </div>
             </div>
         </div>
         
-        <div id="container-opcionais-dinamico">
+        <div id="secao-opcionais-dinamica">
             ${gerarHTMLSecaoOpcionais(produto)}
         </div>
         
         <div id="container-subtotal-produto" class="moldura-padrao-modal ${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}" style="background-color: #e8e8e8 !important;">
             <div class="linha-flex-modal">
-                <span class="subtitulo-subtotal">SUBTOTAL</span>
+                <span class="subtitulo-subtotal">SUBTOTAL DO ITEM</span>
                 <span id="valor-subtotal-produto" class="valor-subtotal">${formatarMoeda(calcularSubtotalProduto())}</span>
             </div>
         </div>
@@ -276,15 +279,6 @@ function verificarVisibilidadeBotoesModal() {
     } else {
         if (containerOpcionais) containerOpcionais.classList.replace('visivel', 'escondido');
         if (containerSubtotal) containerSubtotal.classList.replace('visivel', 'escondido');
-    }
-
-        // 3. BOTÃO BEGE (RETROCEDER): Continuar Comprando
-    if (btnBege) {
-        btnBege.className = 'botao-acao botao-bege';
-        btnBege.innerHTML = '<i class="fas fa-arrow-left"></i> CONTINUAR COMPRANDO';
-        // Ação de apenas fechar o modal
-        btnBege.onclick = function() { fecharModal('modal-produto'); };
-        btnBege.style.display = 'flex';
     }
 
     // 2. BOTÃO VERDE (AVANÇAR): Abrir Carrinho
