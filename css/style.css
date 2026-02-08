@@ -488,7 +488,6 @@ body {
     background: rgba(0, 0, 0, 0.7);
     z-index: 1000;
     backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
 }
 
 /* ESTILO GERAL DOS MODAIS */
@@ -503,61 +502,11 @@ body {
     z-index: 1001;
     max-width: 500px;
     width: 90%;
-    max-height: 90vh;
+    max-height: 95vh;
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: modalEntrada 0.3s ease-out;
-    padding: 0;
-    -webkit-overflow-scrolling: touch;
-}
-
-/* ESTILOS ESPECÍFICOS PARA MOBILE */
-@media (max-width: 768px) {
-    .modal {
-        width: 95vw !important;
-        max-width: 95vw !important;
-        left: 2.5vw !important;
-        transform: none !important;
-        top: 50% !important;
-        transform: translateY(-50%) !important;
-        margin: 0 !important;
-        border-radius: 15px !important;
-        max-height: 85vh !important;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-    }
-    
-    .botao-fechar-modal {
-        top: 10px !important;
-        right: 10px !important;
-        width: 35px !important;
-        height: 35px !important;
-        font-size: 1.5rem !important;
-        background: rgba(255, 255, 255, 0.9) !important;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
-    }
-    
-    .conteudo-modal {
-        padding: 20px 15px !important;
-    }
-    
-    .titulo-modal {
-        font-size: 1.1rem !important;
-        margin-bottom: 15px !important;
-        padding: 0 10px !important;
-    }
-    
-    .texto-modal {
-        font-size: 0.9rem !important;
-        line-height: 1.5 !important;
-        margin: 15px 0 !important;
-        padding: 0 5px !important;
-    }
-    
-    .icone-modal {
-        font-size: 2rem !important;
-        margin-bottom: 10px !important;
-    }
+    padding-bottom: 15px;
 }
 
 .botao-fechar-modal {
@@ -1425,77 +1374,31 @@ button:focus, input:focus, select:focus {
 
 @media (max-width: 768px) {
     /* CABEÇALHO NO CELULAR - CENTRALIZADO VERTICALMENTE */
-    /* CABEÇALHO NO CELULAR - CENTRALIZADO VERTICALMENTE */
     .cabecalho-container {
         flex-direction: row !important;
-        align-items: center !important;
-        justify-content: center !important;
+        align-items: center !important; /* Centraliza verticalmente */
+        justify-content: center !important; /* Centraliza horizontalmente */
         gap: 15px !important;
-        max-width: 100% !important;
-        padding: 0 15px !important;
+        max-width: 100% !important; /* Ocupa toda largura disponível */
     }
     
     .cabecalho-info {
-        text-align: center !important;
-        max-width: calc(100% - 70px) !important;
+        text-align: center !important; /* Centraliza o texto */
     }
     
     .titulo-cabecalho {
-        text-align: center !important;
-        font-size: 1.3rem !important;
-        white-space: normal !important;
-        word-wrap: break-word !important;
+        text-align: center !important; /* Centraliza o título */
+        font-size: 1.3rem !important; /* Tamanho ajustado para mobile */
     }
     
     .contatos-cabecalho {
-        align-items: center !important;
+        align-items: center !important; /* Centraliza os contatos */
         text-align: center !important;
-        max-width: 100% !important;
     }
     
     .link-contato {
-        justify-content: center !important;
+        justify-content: center !important; /* Centraliza os links */
         text-align: center !important;
-        font-size: 0.85rem !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-    
-    /* TÍTULOS DAS SEÇÕES - CORREÇÃO PARA MOBILE (ADICIONE ESTE BLOCO) */
-    /* TÍTULOS DAS SEÇÕES - CORREÇÃO DEFINITIVA PARA MOBILE */
-    .titulo-secao-wrapper {
-        display: flex;
-        align-items: center;
-        margin: 25px 5px 15px !important;
-        padding: 0 2px !important;
-        gap: 5px !important;
-        width: calc(100% - 10px) !important;
-    }
-    
-    .titulo-secao {
-        font-size: 1.05rem !important;
-        font-weight: 700 !important;
-        color: var(--marrim-detalhe) !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-        white-space: normal !important; /* ⬅️ MUDANÇA CRÍTICA: agora é NORMAL */
-        text-align: center !important;
-        padding: 0 8px !important;
-        line-height: 1.3 !important;
-        word-break: break-word !important; /* ⬅️ NOVO: quebra palavras */
-        overflow-wrap: break-word !important; /* ⬅️ NOVO: quebra overflow */
-        hyphens: auto !important; /* ⬅️ NOVO: hifena automaticamente */
-        flex-shrink: 0 !important;
-        /* REMOVIDO: overflow: hidden, text-overflow: ellipsis, max-width: 70% */
-    }
-    
-    .linha-solida {
-        flex: 1 !important;
-        height: 2px !important;
-        background: linear-gradient(90deg, transparent, var(--marrom-cafe), transparent) !important;
-        min-width: 10px !important;
-        margin: 0 !important;
     }
     
     /* PRODUTOS EM DUAS COLUNAS NO CELULAR */
@@ -1539,115 +1442,7 @@ button:focus, input:focus, select:focus {
         justify-content: center;
     }
 }
-
-/* ===================== CORREÇÃO DE ZOOM NO MOBILE ===================== */
-html {
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    touch-action: pan-y;
 }
-
-body {
-    overflow-x: hidden;
-    max-width: 100vw;
-    position: relative;
-}
-
-/* 1. EVITA ZOOM AUTOMÁTICO EM INPUTS (iOS) */
-input, select, textarea {
-    font-size: 16px !important;
-    -webkit-appearance: none;
-    appearance: none;
-}
-
-/* 2. CORREÇÃO DE VIEWPORT */
-@viewport {
-    width: device-width;
-    zoom: 1.0;
-    min-zoom: 1.0;
-    max-zoom: 2.0;
-    user-zoom: zoom;
-}
-
-@-webkit-viewport {
-    width: device-width;
-    zoom: 1.0;
-    min-zoom: 1.0;
-    max-zoom: 2.0;
-    user-zoom: zoom;
-}
-
-@-moz-viewport {
-    width: device-width;
-    zoom: 1.0;
-    min-zoom: 1.0;
-    max-zoom: 2.0;
-    user-zoom: zoom;
-}
-
-@-ms-viewport {
-    width: device-width;
-    zoom: 1.0;
-    min-zoom: 1.0;
-    max-zoom: 2.0;
-    user-zoom: zoom;
-}
-
-/* 3. PREVENÇÃO DE COMPORTAMENTOS INDESEJADOS */
-html {
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-}
-
-body {
-    overflow-x: hidden;
-    width: 100%;
-    max-width: 100%;
-    position: relative;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-/* 4. GARANTE QUE TUDO CAIBA NA TELA */
-.container, main, .grid-produtos, .modal {
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
-}
-
-/* 5. CORREÇÃO ESPECÍFICA PARA iOS SAFARI */
-@supports (-webkit-touch-callout: none) {
-    .modal {
-        max-height: -webkit-fill-available !important;
-    }
-    
-    body {
-        height: -webkit-fill-available;
-    }
-}
-
-/* 6. BLOQUEIA ZOOM EM ELEMENTOS ESPECÍFICOS (opcional) */
-@media (max-width: 768px) {
-    .cabecalho-principal,
-    .barra-carrinho-fixa,
-    .modal {
-        touch-action: pan-y;
-    }
-    
-    /* Garante que inputs não ativem zoom */
-    input[type="text"],
-    input[type="tel"],
-    input[type="number"],
-    textarea {
-        font-size: 16px !important;
-    }
-}
-
-/* ===================== CONTINUAÇÃO ===================== */
-
 
 .secao-cep-carrinho {
     margin-top: 15px;
@@ -1701,4 +1496,3 @@ body {
     display: block;
     text-align: center;
 }
-

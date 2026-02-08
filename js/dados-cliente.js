@@ -1,47 +1,33 @@
 // ============================================
 // VALIDAÇÃO DE DADOS DO CLIENTE - PÃO DO CISO
 // ============================================
-
 function validarDadosCliente() {
     const nome = elemento('nome-cliente').value.trim();
     const whatsapp = elemento('whatsapp-cliente').value.trim();
     
+    // Validações básicas
     if (!nome || nome.length < 3) {
         alert('Por favor, digite seu nome completo.');
         elemento('nome-cliente').focus();
         return;
     }
     
-    const whatsappNumeros = whatsapp.replace(/\D/g, '');
-    if (whatsappNumeros.length !== 11) {
-        alert('Por favor, digite um WhatsApp válido com DDD (11 dígitos).');
-        elemento('whatsapp-cliente').focus();
-        return;
+    // SALVAMENTO OBRIGATÓRIO (Chama a função que salva no localStorage)
+    if (typeof salvarDadosCliente === 'function') {
+        salvarDadosCliente();
     }
-    
+
     if (estadoAplicativo.modoEntrega === 'entrega') {
-        if (estadoAplicativo.cepCalculado) {
-            const campoCEP = elemento('codigo-postal-cliente');
-            if (campoCEP && !campoCEP.value) {
-                campoCEP.value = estadoAplicativo.cepCalculado.substring(0,5) + '-' + estadoAplicativo.cepCalculado.substring(5);
-                
-                setTimeout(() => {
-                    buscarEnderecoPorCodigoPostal(estadoAplicativo.cepCalculado);
-                }, 500);
-            }
-        }
-        
         if (!window.AddressManager || !window.AddressManager.validar().valido) {
             alert('Por favor, preencha todos os campos de endereço obrigatórios.');
             return;
         }
-        
         enderecoCliente = window.AddressManager.getEndereco();
     }
     
     fecharModal('modal-dados-cliente');
     abrirModalPagamento();
-}
+} 
 
 // ===================== FUNÇÃO DE TESTE DO ADDRESSMANAGER =====================
 /*function testarAddressManager() {
@@ -96,6 +82,61 @@ function validarDadosCliente() {
 // Exporta a função para uso global
 window.testarAddressManager = testarAddressManager;*/
 
+// ===================== SALVAR E CARREGAR DADOS DO CLIENTE =====================
+function salvarDadosCliente() {
+    const nomeCampo = elemento('nome-cliente');
+    const telefoneCampo = elemento('whatsapp-cliente');
+    const cepCampo = elemento('codigo-postal-cliente');
+    const ruaCampo = elemento('logradouro-cliente');
+    const bairroCampo = elemento('bairro-cliente');
+    const numeroCampo = elemento('numero-residencia-cliente');
+
+    if (!nomeCampo || !telefoneCampo) return;
+    
+    const dados = {
+        nome: nomeCampo.value.trim(),
+        telefone: telefoneCampo.value.trim(),
+        endereco: {
+            cep: cepCampo ? cepCampo.value.trim() : '',
+            rua: ruaCampo ? ruaCampo.value.trim() : '',
+            bairro: bairroCampo ? bairroCampo.value.trim() : '',
+            numero: numeroCampo ? numeroCampo.value.trim() : ''
+        },
+        timestamp: new Date().getTime()
+    };
+    
+    localStorage.setItem('dados_cliente_pao_do_ciso', JSON.stringify(dados));
+    console.log('💾 Dados do cliente e endereço salvos no LocalStorage');
+}
+
+function carregarDadosCliente() {
+    console.log('📂 Tentando recuperar dados do LocalStorage...');
+    try {
+        const dadosSalvos = localStorage.getItem('dados_cliente_pao_do_ciso');
+        if (dadosSalvos) {
+            const dados = JSON.parse(dadosSalvos);
+            console.log('✅ Dados encontrados:', dados);
+
+            if (dados.nome) document.getElementById('nome-cliente').value = dados.nome;
+            if (dados.telefone) document.getElementById('whatsapp-cliente').value = dados.telefone;
+            
+            // Se houver endereço salvo e estivermos em modo entrega
+            if (dados.endereco) {
+                if (dados.endereco.cep) document.getElementById('codigo-postal-cliente').value = dados.endereco.cep;
+                if (dados.endereco.rua) document.getElementById('logradouro-cliente').value = dados.endereco.rua;
+                if (dados.endereco.bairro) document.getElementById('bairro-cliente').value = dados.endereco.bairro;
+                if (dados.endereco.numero) document.getElementById('numero-residencia-cliente').value = dados.endereco.numero;
+            }
+            return true;
+        }
+        console.log('ℹ️ Nenhum dado salvo anteriormente.');
+    } catch (error) {
+        console.error('❌ Erro no carregamento de dados:', error);
+    }
+    return false;
+}   
+
+
 // ===================== DIAGNOSTICAR PROBLEMA DE CEP =====================
 function diagnosticarCep() {
     console.log("=== 🩺 DIAGNÓSTICO CEP ===");
@@ -114,8 +155,11 @@ function diagnosticarCep() {
     console.log("=== FIM DIAGNÓSTICO ===");
 }
 
+// ===================== EXPORTAR FUNÇÕES GLOBAIS =====================
 window.diagnosticarCep = diagnosticarCep;
-
-// EXPORTAR FUNÇÕES
 window.validarDadosCliente = validarDadosCliente;
+window.salvarDadosCliente = salvarDadosCliente;
+window.carregarDadosCliente = carregarDadosCliente;
+
+// Função de debug/teste (manter comentada para produção)
 // window.testarAddressManager = testarAddressManager;

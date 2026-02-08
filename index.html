@@ -480,8 +480,8 @@
             
             <div class="mensagem-sucesso">
                 <p>✅ Seu pedido foi registrado em nosso sistema.</p>
-                <p>📱 Você será redirecionado para o WhatsApp em instantes...</p>
-                <p>💬 Confirme o pagamento e combine os detalhes da entrega.</p>
+                <p>📱 O WhatsApp deve abrir em uma nova aba em instantes...</p>
+                <p>💬 Caso não tenha aberto, use o botão abaixo:</p>
             </div>
             
             <div class="detalhes-pedido">
@@ -495,9 +495,17 @@
                 </div>
             </div>
             
+            <button id="botao-reenviar-whatsapp" 
+                    class="botao-acao botao-verde-militar" 
+                    onclick="reenviarPedidoWhatsapp()"
+                    style="margin-bottom: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                REENVIAR PEDIDO PELO WHATSAPP <i class="fab fa-whatsapp"></i>
+            </button>
+
             <button id="botao-fechar-sucesso" 
-                    class="botao-acao botao-verde"
-                    onclick="reiniciarSistema()">
+                    class="botao-acao botao-contorno"
+                    onclick="reiniciarFluxoCompra()"
+                    style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
                 <i class="fas fa-home"></i> VOLTAR AO CARDÁPIO
             </button>
             
@@ -506,6 +514,7 @@
             </p>
         </div>
     </div>
+
 
     <!-- ===================== RODAPÉ ===================== -->
     <footer class="rodape">

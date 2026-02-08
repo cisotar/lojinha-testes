@@ -40,60 +40,44 @@ function formatarCodigoPostal(input) {
 
 // ===================== BUSCA DE ENDEREÇO VIA CEP =====================
 async function buscarEnderecoPorCodigoPostal(cep) {
-    // Validar CEP
-    if (!cep || cep.length !== 8 || !/^\d+$/.test(cep)) {
-        mostrarErroCEP('CEP inválido. Digite 8 números.');
-        return;
-    }
-    
-    // Mostrar indicador de carregamento
-    mostrarCarregamentoCEP(true);
-    
+    if (!cep || cep.length !== 8) return;
+
+    if (typeof mostrarCarregamentoCEP === 'function') mostrarCarregamentoCEP(true);
+
     try {
-        // Fazer requisição para ViaCEP
         const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-        
-        if (!resposta.ok) {
-            throw new Error(`Erro na requisição: ${resposta.status}`);
-        }
-        
         const dados = await resposta.json();
-        
-        // Verificar se CEP foi encontrado
+
         if (dados.erro) {
-            mostrarErroCEP('CEP não encontrado. Verifique o número digitado.');
+            alert("CEP não encontrado.");
             return;
         }
-        
-        // Preencher campos com os dados retornados
-        preencherCamposEndereco(dados);
-        
-        // Calcular frete baseado no bairro
-        if (dados.bairro) {
-            calcularFretePorBairro(dados.bairro);
-        }
-        
-        // Feedback de sucesso
-        mostrarSucessoCEP('Endereço encontrado!');
-        
-        // Focar no campo de número
+
+        // Preenchimento imediato
+        if (typeof preencherCamposEndereco === 'function') preencherCamposEndereco(dados);
+        if (dados.bairro && typeof calcularFretePorBairro === 'function') calcularFretePorBairro(dados.bairro);
+
+        // === CORREÇÃO DO CURSOR E DESTAQUE ===
+        // Usamos 1.5 segundos para garantir que o AddressManager terminou de processar
         setTimeout(() => {
-            const campoNumero = elemento('numero-residencia-cliente');
-            if (campoNumero) {
-                campoNumero.focus();
+            const campoNumero = document.getElementById('numero-residencia-cliente');
+            const campoNome = document.getElementById('nome-cliente');
+
+            if (campoNumero && !campoNumero.value.trim()) {
+                campoNumero.style.border = '2px solid #e74c3c';
+                campoNumero.style.backgroundColor = '#fff5f5';
             }
-        }, 300);
-        
+
+            if (campoNome) {
+                campoNome.focus(); // O cursor vai para o NOME
+                console.log("🎯 Foco forçado no campo Nome após carregamento do endereço.");
+            }
+        }, 1500);
+
     } catch (erro) {
         console.error('Erro ao buscar CEP:', erro);
-        mostrarErroCEP('Erro ao buscar endereço. Tente novamente.');
-        
-        // Permitir preenchimento manual
-        habilitarCamposManuais();
-        
     } finally {
-        // Esconder indicador de carregamento
-        mostrarCarregamentoCEP(false);
+        if (typeof mostrarCarregamentoCEP === 'function') mostrarCarregamentoCEP(false);
     }
 }
 
@@ -527,6 +511,37 @@ function limparEnderecoCliente() {
         cardFrete.style.display = 'none';
     }
 }
+
+// ===================== REMOVER DESTAQUE AO DIGITAR =====================
+function configurarRemocaoDestaqueCampos() {
+    const campoNumero = elemento('numero-residencia-cliente');
+    if (campoNumero) {
+        campoNumero.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                this.classList.remove('campo-invalido');
+                this.style.border = '';
+                this.style.backgroundColor = '';
+            }
+        });
+    }
+    
+    // Pode adicionar para outros campos também se quiser
+    const campoNome = elemento('nome-cliente');
+    const campoWhatsapp = elemento('whatsapp-cliente');
+    
+    [campoNome, campoWhatsapp].forEach(campo => {
+        if (campo) {
+            campo.addEventListener('input', function() {
+                this.classList.remove('campo-invalido');
+                this.style.border = '';
+                this.style.backgroundColor = '';
+            });
+        }
+    });
+}
+
+// Chame esta função na inicialização (no main.js)
+window.configurarRemocaoDestaqueCampos = configurarRemocaoDestaqueCampos;
 
 // ===================== EXPORTAÇÃO DE FUNÇÕES =====================
 window.formatarCodigoPostal = formatarCodigoPostal;

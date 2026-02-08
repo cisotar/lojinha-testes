@@ -316,47 +316,29 @@ window.AddressManager = {
     
     // 🔥 PRIMEIRA CORREÇÃO: Função para sincronizar CEP do carrinho para modal de dados
     sincronizarCEPComModalDados: function(cep) {
-        console.log('🔄 AddressManager.sincronizarCEPComModalDados(): Sincronizando CEP:', cep);
+        console.log('🔄 AddressManager: Sincronizando CEP:', cep);
         
-        // Verificar se o modal de dados está aberto
-        const modalDados = elemento('modal-dados-cliente');
-        if (!modalDados || modalDados.style.display !== 'block') {
-            console.log('⚠️ Modal de dados não está aberto. Aguardando...');
-            return false;
-        }
-        
-        // Atualizar campo CEP no modal de dados
-        const campoCEPDados = elemento('codigo-postal-cliente');
+        const campoCEPDados = document.getElementById('codigo-postal-cliente');
         if (campoCEPDados) {
-            console.log('✅ Campo CEP encontrado no modal de dados');
-            
-            // Formatar CEP
+            // 1. Formatar o CEP para o campo
             let cepFormatado = cep.replace(/\D/g, '');
-            if (cepFormatado.length > 8) cepFormatado = cepFormatado.substring(0, 8);
             if (cepFormatado.length > 5) {
-                cepFormatado = cepFormatado.substring(0, 5) + '-' + cepFormatado.substring(5);
+                cepFormatado = cepFormatado.substring(0, 5) + '-' + cepFormatado.substring(5, 8);
             }
             
-            // Atualizar valor
+            // 2. Atualizar o valor do campo SILENCIOSAMENTE (sem disparar eventos)
             campoCEPDados.value = cepFormatado;
-            this.enderecoAtual.cep = cepFormatado.replace(/\D/g, '');
+            this.enderecoAtual.cep = cep.replace(/\D/g, '');
             this.cepAnterior = this.enderecoAtual.cep;
             
             console.log('📝 CEP definido no campo:', cepFormatado);
             
-            // Disparar eventos para buscar endereço automaticamente
-            setTimeout(() => {
-                console.log('🎯 Disparando busca automática de endereço...');
-                
-                // Simular eventos de input e blur
-                campoCEPDados.dispatchEvent(new Event('input', { bubbles: true }));
-                campoCEPDados.dispatchEvent(new Event('blur', { bubbles: true }));
-                
-                // Chamar busca diretamente se tiver 8 dígitos
-                if (this.enderecoAtual.cep.length === 8) {
-                    this.buscarEndereco(this.enderecoAtual.cep);
-                }
-            }, 500);
+            // 3. Em vez de disparar eventos de 'input' ou 'blur' (que causam o loop),
+            // chamamos a busca de endereço DIRETAMENTE apenas uma vez.
+            if (this.enderecoAtual.cep.length === 8) {
+                console.log('🎯 Chamando busca direta para evitar loop...');
+                this.buscarEndereco(this.enderecoAtual.cep);
+            }
             
             return true;
         } else {

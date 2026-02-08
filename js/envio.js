@@ -50,12 +50,24 @@ function processarFinalizacaoPedido() {
     // Gerar mensagem para WhatsApp
     const mensagem = gerarMensagemWhatsApp(nome, whatsappNumeros, enderecoTexto, metodoPagamento);
     
-    // Abrir WhatsApp
+// Abrir WhatsApp
     const linkWhatsApp = `https://wa.me/5511982391781?text=${encodeURIComponent(mensagem)}`;
     window.open(linkWhatsApp, '_blank');
-    
-    // Mostrar modal de sucesso
-    abrirModal('modal-sucesso');
+
+    // Salvar o link para o botão de reenvio
+    window.ultimoLinkWhatsapp = linkWhatsApp; 
+
+    // 1. Fecha TUDO (pagamento, dados, carrinho e overlay) de uma vez só
+    if (typeof fecharTodosModais === 'function') {
+        fecharTodosModais();
+    }
+
+    // 2. Abre o sucesso com um pequeno atraso para garantir a transição visual
+    setTimeout(() => {
+        if (typeof abrirModal === 'function') {
+            abrirModal('modal-sucesso');
+        }
+    }, 300);
 }
 
 function gerarMensagemWhatsApp(nome, whatsapp, endereco, metodoPagamento) {
@@ -124,36 +136,21 @@ function gerarMensagemWhatsApp(nome, whatsapp, endereco, metodoPagamento) {
     return mensagem;
 }
 
-function reiniciarSistema() {
-    // Limpar carrinho
-    carrinho = {};
+function reiniciarFluxoCompra() {
+    console.log('🔄 Reiniciando sistema com reload...');
     localStorage.removeItem('carrinho_pao_do_ciso');
-    
-    // Resetar estado
-    estadoAplicativo.formaPagamento = null;
-    estadoAplicativo.totalGeral = 0;
-    estadoAplicativo.modoEntrega = 'retirada';
-    estadoAplicativo.taxaEntrega = 0;
-    estadoAplicativo.bairroEntrega = null;
-    estadoAplicativo.cupomAplicado = null;
-    estadoAplicativo.descontoCupom = 0;
-    
-    // Limpar endereço
-    if (typeof limparEnderecoCliente === 'function') {
-        limparEnderecoCliente();
-    }
-    
-    // Fechar todos os modais
-    fecharTodosModais();
-    
-    // Recarregar cardápio
-    renderizarCardapio();
-    atualizarBarraCarrinho();
-    
-    // Mostrar feedback
-    mostrarNotificacao('Pedido finalizado! Obrigado!');
+    window.location.reload();
 }
 
-// EXPORTAR FUNÇÕES
+function reenviarPedidoWhatsapp() {
+    if (window.ultimoLinkWhatsapp) {
+        window.open(window.ultimoLinkWhatsapp, '_blank');
+    } else {
+        alert("Link do pedido não encontrado. Tente enviar novamente.");
+    }
+}
+
+// Exportações
 window.processarFinalizacaoPedido = processarFinalizacaoPedido;
-window.reiniciarSistema = reiniciarSistema;
+window.reiniciarFluxoCompra = reiniciarFluxoCompra;
+window.reenviarPedidoWhatsapp = reenviarPedidoWhatsapp;
