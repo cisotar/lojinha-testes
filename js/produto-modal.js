@@ -65,7 +65,7 @@ function gerarHTMLControleQuantidade(produto) {
             <div class="controles-quantidade">
                 <button class="botao-quantidade" onclick="alterarQuantidadeProduto(-1)">-</button>
                 <span id="quantidade-produto-modal" class="quantidade-display">${produtoAtual.quantidade}</span>
-                <button class="botao-quantidade" onclick="alterarQuantidadeProduto(1)">+</button>
+                <button class="botao-quantidade" onclick="alterarQuantidadeProduto(1)">+</button>z
             </div>
         </div>
     `;
@@ -73,18 +73,20 @@ function gerarHTMLControleQuantidade(produto) {
 
 function gerarHTMLSecaoOpcionais(produto) {
     const opcionaisParaExibir = obterOpcionaisAtivos(produto);
-    if (opcionaisParaExibir.length === 0) return '';
+    
+    if (opcionaisParaExibir.length === 0 || produtoAtual.quantidade <= 0) {
+        return '';
+    }
 
-    // Layout mais compacto - título + lista sem scroll
-    const listaHTML = opcionaisParaExibir.map(opcional => {
+    const itensHTML = opcionaisParaExibir.map(opcional => {
         const qtdAtual = produtoAtual.opcionais[opcional.nome] ? produtoAtual.opcionais[opcional.nome].quantidade : 0;
         const idOpcional = opcional.nome.replace(/\s+/g, '-');
         
         return `
-            <div class="opcional-item">
-                <div class="opcional-info">
-                    <div class="opcional-nome">${opcional.nome}</div>
-                    <div class="opcional-preco">${formatarMoeda(opcional.preco)}</div>
+            <div class="opcional-item-moldura">
+                <div class="opcional-texto-lado-a-lado">
+                    <span class="opcional-nome">${opcional.nome}</span>
+                    <span class="opcional-preco">${formatarMoeda(opcional.preco)}</span>
                 </div>
                 <div class="controles-opcional">
                     <button class="botao-quantidade-pequeno" onclick="alterarQuantidadeOpcional('${opcional.nome}', ${opcional.preco}, -1)">-</button>
@@ -95,13 +97,14 @@ function gerarHTMLSecaoOpcionais(produto) {
     }).join('');
 
     return `
-        <div id="contener-opcionais-produto" class="${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}">
-            <h4 class="titulo-opcionais"><i class="fas fa-list"></i> OPCIONAIS</h4>
-            <div class="lista-opcionais">${listaHTML}</div>
+        <div id="contener-opcionais-produto" class="visivel">
+            <h4 class="titulo-opcionais"><i class="fas fa-list"></i> ADICIONAR OPCIONAIS</h4>
+            <div class="moldura-agrupadora-opcionais">
+                ${itensHTML}
+            </div>
         </div>
     `;
 }
-
 
 
 function gerarHTMLSubtotal() {
@@ -118,49 +121,45 @@ function gerarHTMLSubtotal() {
 
 // FUNÇÃO PRINCIPAL REESCRITA - VERSÃO COMPACTA
 function renderizarModalProduto(produto) {
-    console.log('🔄 Renderizando Modal Compacto para:', produto.nome);
+    console.log('🔄 Renderizando Modal Padronizado para:', produto.nome);
     
     const container = elemento('corpo-modal-produto');
-    if (!container) return console.error('❌ Container do modal não encontrado!');
+    if (!container) return;
 
-    // Montagem do HTML mais compacto
     container.innerHTML = `
-        <!-- IMAGEM DO PRODUTO -->
         <div class="imagem-produto-container">
             <img src="${produto.imagem}" alt="${produto.nome}" class="imagem-produto-modal">
         </div>
         
-        <!-- INFORMAÇÕES DO PRODUTO -->
-        <div class="info-produto-modal">
+        <div class="moldura-padrao-modal">
             <h2 class="nome-produto-modal">${produto.nome}</h2>
             <p class="descricao-produto-modal">${produto.descricao || ''}</p>
         </div>
         
-        <!-- CONTROLE DE QUANTIDADE -->
-        <div class="controle-quantidade-produto">
-            <div class="preco-produto">${formatarMoeda(produto.preco)}</div>
-            <div class="controles-quantidade">
-                <button class="botao-quantidade" onclick="alterarQuantidadeProduto(-1)">-</button>
-                <span id="quantidade-produto-modal" class="quantidade-display">${produtoAtual.quantidade}</span>
-                <button class="botao-quantidade" onclick="alterarQuantidadeProduto(1)">+</button>
+        <div class="moldura-padrao-modal">
+            <div class="linha-flex-modal">
+                <span class="preco-produto-destaque">${formatarMoeda(produto.preco)}</span>
+                <div class="controles-quantidade">
+                    <button class="botao-quantidade" onclick="alterarQuantidadeProduto(-1)">-</button>
+                    <span id="quantidade-produto-modal" class="quantidade-display">${produtoAtual.quantidade}</span>
+                    <button class="botao-quantidade" onclick="alterarQuantidadeProduto(1)">+</button>
+                </div>
             </div>
         </div>
         
-        <!-- OPCIONAIS (APENAS SE HOUVER QUANTIDADE) -->
-        ${gerarHTMLSecaoOpcionais(produto)}
+        <div id="container-opcionais-dinamico">
+            ${gerarHTMLSecaoOpcionais(produto)}
+        </div>
         
-        <!-- SUBTOTAL -->
-        <div id="container-subtotal-produto" class="${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}" style="margin-top: 10px;">
-            <div class="subtitulo-subtotal">SUBTOTAL DO ITEM</div>
-            <div id="valor-subtotal-produto" class="valor-subtotal">${formatarMoeda(calcularSubtotalProduto())}</div>
+        <div id="container-subtotal-produto" class="moldura-padrao-modal ${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}" style="background-color: #e8e8e8 !important;">
+            <div class="linha-flex-modal">
+                <span class="subtitulo-subtotal">SUBTOTAL</span>
+                <span id="valor-subtotal-produto" class="valor-subtotal">${formatarMoeda(calcularSubtotalProduto())}</span>
+            </div>
         </div>
     `;
 
-    console.log('✅ Modal renderizado com sucesso (layout compacto).');
     verificarVisibilidadeBotoesModal();
-    
-    // Ajustar layout após renderização (para garantir alinhamento perfeito)
-    setTimeout(ajustarAlinhamentoOpcionais, 50);
 }
 
 function obterOpcionaisAtivos(produto) {
@@ -185,42 +184,37 @@ function obterOpcionaisAtivos(produto) {
 
 // ===================== CONTROLE DE QUANTIDADE DO PRODUTO =====================
 // produto-modal.js
-
 function alterarQuantidadeProduto(valor) {
     console.log(`--- ALTERANDO QUANTIDADE PRODUTO ---`);
-    const novaQuantidade = produtoAtual.quantidade + valor;
+    
+    // Garantimos que a conta seja feita e o mínimo seja 0
+    const novaQuantidade = Math.max(0, (produtoAtual.quantidade || 0) + valor);
 
-    if (novaQuantidade < 0) return;
+    // Se a quantidade for a mesma (ex: clicar no menos quando já está em 0), interrompe
+    if (novaQuantidade === produtoAtual.quantidade) return;
 
     produtoAtual.quantidade = novaQuantidade;
     console.log(`✅ Nova quantidade definida: ${produtoAtual.quantidade}`);
 
-    // CORREÇÃO PONTO 1: Se zerar o produto, limpa os dados e a TELA dos opcionais
+    // Regra: Se zerar o produto, limpa os opcionais
     if (produtoAtual.quantidade === 0) {
-        console.log('🗑️ Produto zerado. Resetando interface de opcionais.');
-        
-        // Limpa os dados
+        console.log('🗑️ Produto zerado. Resetando opcionais.');
         produtoAtual.opcionais = {};
-        
-        // Limpa a interface: busca todos os spans de quantidade de opcional e bota 0
-        const displaysOpcionais = document.querySelectorAll('.quantidade-opcional');
-        displaysOpcionais.forEach(span => {
-            span.textContent = '0';
-        });
     }
 
-    // 1. Atualiza a interface do modal (produto principal)
-    const elementoQtd = elemento('quantidade-produto-modal');
-    if (elementoQtd) elementoQtd.textContent = produtoAtual.quantidade;
+    // 1. Atualiza o número no modal (O display central)
+    const elementoQtd = document.getElementById('quantidade-produto-modal');
+    if (elementoQtd) {
+        elementoQtd.textContent = produtoAtual.quantidade;
+    }
 
-    // 2. Atualiza visibilidade e subtotal
-    verificarVisibilidadeBotoesModal();
-    
-    const subtotal = calcularSubtotalProduto();
-    const elementoSubtotal = elemento('valor-subtotal-produto');
-    if (elementoSubtotal) elementoSubtotal.textContent = formatarMoeda(subtotal);
+    // 2. ATUALIZA A VISIBILIDADE DOS OPCIONAIS
+    // Em vez de "redesenhar" o HTML, vamos apenas chamar a função de renderizar o modal inteiro novamente.
+    // É a forma mais segura de garantir que tudo (opcionais, preços, botões) se ajuste ao novo número.
+    const produtoBase = dadosIniciais.secoes[produtoAtual.indiceSessao].itens[produtoAtual.indiceItem];
+    renderizarModalProduto(produtoBase);
 
-    // 3. Sincroniza com o carrinho
+    // 3. Sincroniza com o carrinho global
     sincronizarProdutoNoCarrinho();
 }
 
@@ -405,3 +399,4 @@ window.adicionarEIrParaCarrinho = adicionarEIrParaCarrinho;
 window.removerItemDoCarrinho = removerItemDoCarrinho;
 
 console.log('✅ Exportações de produto-modal.js concluídas com sucesso.');
+

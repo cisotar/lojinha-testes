@@ -29,7 +29,11 @@ function criarCardProduto(sessao, indiceSessao, item, indiceItem) {
         <div class="card-content">
             <div class="card-nome">${item.nome}</div>
             <div class="card-footer">
-                <span class="card-preco">${formatarMoeda(item.preco)}</span>
+                <span class="coluna-preco">
+                    <span class="card-preco">${formatarMoeda(item.preco)}</span>
+                </span>
+                <span class="coluna-controles">
+                    </span>
             </div>
         </div>
     `;

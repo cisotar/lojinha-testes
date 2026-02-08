@@ -369,9 +369,24 @@ body {
 
 .card-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Preço na esquerda, botões na direita */
+    align-items: center;           /* Centraliza verticalmente preço e botões */
+    padding: 10px 12px;
+    min-height: 45px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.coluna-preco {
+    display: flex;
     align-items: center;
-    margin-top: 10px;
+}
+
+.coluna-controles {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 .card-preco {
@@ -1420,7 +1435,8 @@ button:focus, input:focus, select:focus {
     
     .card-content {
         padding: 8px;
-        text-align: center;
+        /* Mudamos para left para alinhar com o novo layout de preço/botão */
+        text-align: left; 
     }
     
     .card-nome {
@@ -1433,15 +1449,18 @@ button:focus, input:focus, select:focus {
     .card-preco {
         font-size: 1rem;
         font-weight: 800;
-        width: 100%;
-        display: block;
+        /* IMPORTANTE: Removemos o width 100% e o display block */
+        width: auto;
+        display: inline-block;
     }
 
     .card-footer {
-        padding: 0;
-        justify-content: center;
+        padding: 4px 0;
+        /* Garante que fiquem um em cada ponta, ou centralizados verticalmente */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
-}
 }
 
 .secao-cep-carrinho {
@@ -1495,4 +1514,144 @@ button:focus, input:focus, select:focus {
     color: #2e7d32;
     display: block;
     text-align: center;
+}
+
+/* --- ESTRUTURA DOS OPCIONAIS NO MODAL (ESTILO ORIGINAL) --- */
+
+.opcional-linha-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Alinhamento vertical perfeito */
+    width: 100%;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.coluna-preco-opcional {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Moldura idêntica à do seletor de quantidade do produto */
+.controles-quantidade-opcional {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #f0f0f0; /* Mesmo background que você usa no principal */
+    padding: 8px 12px;
+    border-radius: 50px; /* Moldura arredondada (pílula) */
+}
+
+/* Botões Redondos Originais */
+.botao-quantidade-pequeno {
+    background: var(--marrom-detalhe); /* Ou a cor que você usa nos botões originais */
+    color: white;
+    border: none;
+    width: 28px;  /* Tamanho fixo para ser redondo */
+    height: 28px;
+    border-radius: 50%; /* Garante que seja um círculo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+}
+
+.quantidade-opcional {
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+    font-size: 1rem;
+    color: var(--texto);
+}
+
+/* O FRAME CINZA */
+.moldura-agrupadora-opcionais {
+    background-color: #f2f2f2 !important; /* Cinza claro */
+    border-radius: 12px !important;
+    padding: 10px 15px !important;
+    margin: 15px 0 !important;
+    border: 1px solid #e0e0e0 !important;
+}
+
+/* ALINHAMENTO OPOSTO (NOME VS BOTÕES) */
+.opcional-item-moldura {
+    display: flex !important;
+    justify-content: space-between !important; /* Joga um para cada ponta */
+    align-items: center !important;
+    padding: 12px 0 !important;
+}
+
+.opcional-item-moldura:not(:last-child) {
+    border-bottom: 1px solid #dcdcdc !important;
+}
+
+/* NOME E PREÇO JUNTOS NO CANTO ESQUERDO */
+.opcional-texto-lado-a-lado {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.opcional-nome {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+.opcional-preco {
+    font-size: 12px;
+    color: #666;
+}
+
+/* BOTÕES NO CANTO DIREITO */
+.controles-opcional {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px;
+}
+
+/* CLASSE UNIFICADA PARA TODOS OS FRAMES DO MODAL */
+.moldura-padrao-modal, .moldura-agrupadora-opcionais {
+    background-color: #f2f2f2 !important;
+    border-radius: 12px !important;
+    padding: 15px !important;
+    margin: 10px 0 !important;
+    border: 1px solid #e0e0e0 !important;
+}
+
+/* AJUSTE PARA NOME E DESCRIÇÃO */
+.nome-produto-modal {
+    margin: 0 0 5px 0 !important;
+    font-size: 1.3rem !important;
+    color: #333;
+}
+
+.descricao-produto-modal {
+    margin: 0 !important;
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* LINHA LADO A LADO (Preço vs Botões / Subtotal) */
+.linha-flex-modal {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100%;
+}
+
+.preco-produto-destaque, .valor-subtotal {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #2e2e2e;
+}
+
+.subtitulo-subtotal {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
 }

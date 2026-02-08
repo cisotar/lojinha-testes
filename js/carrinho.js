@@ -548,19 +548,94 @@ function inicializarRecuperacaoCarrinho() {
     }, 2000);
 }
 
-// ===================== EXPORTAR FUNÇÕES =====================
-window.verificarCarrinhoRecuperado = verificarCarrinhoRecuperado;
-window.limparCarrinhoRecuperado = limparCarrinhoRecuperado;
-window.inicializarRecuperacaoCarrinho = inicializarRecuperacaoCarrinho;
+function calcularTotalFinal() {
+    // 1. Soma dos itens (subtotal bruto)
+    let subtotalItens = 0;
+    Object.values(carrinho).forEach(item => {
+        const produto = dadosIniciais.secoes[item.indiceSessao].itens[item.indiceItem];
+        let precoBase = produto.preco * item.quantidade;
+        
+        for (let nomeOpcional in item.opcionais) {
+            const opcional = item.opcionais[nomeOpcional];
+            precoBase += opcional.quantidade * opcional.preco;
+        }
+        subtotalItens += precoBase;
+    });
 
-console.log('✅ recuperacao-carrinho.js carregado');
+    // 2. Recupera o desconto do estado global (conforme definido no seu envio.js)
+    const valorDesconto = estadoAplicativo.descontoCupom || 0;
 
-// EXPORTAR FUNÇÕES
+    // 3. Recupera a taxa de entrega (conforme definido no seu envio.js)
+    const taxaEntrega = estadoAplicativo.taxaEntrega || 0;
+
+    // 4. Cálculo final
+    const totalGeral = Math.max(0, subtotalItens - valorDesconto) + taxaEntrega;
+
+    return {
+        itens: subtotalItens,
+        desconto: valorDesconto,
+        taxa: taxaEntrega,
+        total: totalGeral
+    };
+}
+
+function atualizarResumoPagamentoFinal() {
+    console.log('💰 Atualizando resumo de valores no modal de pagamento...');
+    
+    // 1. Obtém os valores calculados
+    const valores = calcularTotalFinal();
+    
+    // 2. Localiza o container no modal (Certifique-se que este ID existe no seu HTML)
+    const container = document.getElementById('resumo-valores-pagamento'); 
+    if (!container) {
+        console.error('❌ Elemento "resumo-valores-pagamento" não encontrado no HTML.');
+        return;
+    }
+
+    // 3. Monta o HTML seguindo o padrão de frames (molduras) que você aprovou
+    container.innerHTML = `
+        <div class="moldura-padrao-modal">
+            <div class="linha-flex-modal">
+                <span>Subtotal Itens:</span>
+                <span>${formatarMoeda(valores.itens)}</span>
+            </div>
+            
+            ${valores.desconto > 0 ? `
+            <div class="linha-flex-modal" style="color: #d9534f; font-weight: bold; margin-top: 5px;">
+                <span><i class="fas fa-tag"></i> Desconto Cupom:</span>
+                <span>- ${formatarMoeda(valores.desconto)}</span>
+            </div>` : ''}
+            
+            <div class="linha-flex-modal" style="margin-top: 5px;">
+                <span>Taxa de Entrega:</span>
+                <span>${valores.taxa > 0 ? formatarMoeda(valores.taxa) : '<span style="color: #28a745;">Grátis</span>'}</span>
+            </div>
+            
+            <div class="linha-flex-modal" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ccc; background-color: #e8e8e8; border-radius: 8px; padding: 10px;">
+                <span style="font-weight: bold;">TOTAL A PAGAR:</span>
+                <span style="font-weight: bold; font-size: 1.25rem; color: #333;">${formatarMoeda(valores.total)}</span>
+            </div>
+        </div>
+    `;
+}
+
+// Não esqueça de adicionar esta exportação ao final do arquivo:
+window.atualizarResumoPagamentoFinal = atualizarResumoPagamentoFinal;
+
+// ===================== EXPORTAR FUNÇÕES (FIM DO ARQUIVO) =====================
+
+// Funções principais do carrinho
 window.atualizarBarraCarrinho = atualizarBarraCarrinho;
 window.abrirModalCarrinho = abrirModalCarrinho;
 window.removerItemDoCarrinho = removerItemDoCarrinho;
+window.sincronizarProdutoNoCarrinho = sincronizarProdutoNoCarrinho; // Importante estar aqui
+
+// Funções de lógica financeira e entrega
 window.aplicarCupom = aplicarCupom;
 window.alterarModoEntrega = alterarModoEntrega;
 window.prosseguirParaDadosCliente = prosseguirParaDadosCliente;
 window.calcularFreteNoCarrinho = calcularFreteNoCarrinho;
 window.calcularFretePorBairroNoCarrinho = calcularFretePorBairroNoCarrinho;
+window.calcularTotalFinal = calcularTotalFinal; // A que acabamos de criar
+
+console.log('✅ carrinho.js: Funções exportadas com sucesso');

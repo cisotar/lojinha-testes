@@ -1,31 +1,71 @@
 // ============================================
 // SISTEMA DE PAGAMENTO - PÃO DO CISO
 // ============================================
-
 function abrirModalPagamento() {
-    // Atualizar valores no modal
+    // 1. Calcula os valores consolidados (Produtos, Desconto e Taxa)
+    // Esta função deve estar exportada no seu carrinho.js
+    const valores = typeof calcularTotalFinal === 'function' ? calcularTotalFinal() : {
+        itens: 0, desconto: 0, taxa: 0, total: 0
+    };
+    
+    // 2. Recuperar elementos do seu HTML
     const quantidadeElemento = elemento('quantidade-itens-pagamento');
     const taxaElemento = elemento('taxa-entrega-pagamento');
     const totalElemento = elemento('total-geral-pagamento');
     const valorPixElemento = elemento('valor-pix');
     
+    // 3. Atualizar Quantidade de itens
     if (quantidadeElemento) {
         const totalItens = Object.values(carrinho).reduce((total, item) => total + item.quantidade, 0);
         quantidadeElemento.textContent = totalItens;
     }
     
+    // 4. Atualizar Taxa de Entrega
     if (taxaElemento) {
-        taxaElemento.textContent = formatarMoeda(estadoAplicativo.taxaEntrega || 0);
+        taxaElemento.textContent = formatarMoeda(valores.taxa);
+    }
+
+    // 5. LÓGICA DO DESCONTO: Criar ou atualizar a linha de desconto
+    let linhaDesconto = document.getElementById('linha-desconto-pagamento');
+    
+    if (valores.desconto > 0) {
+        if (!linhaDesconto && totalElemento) {
+            // Se a linha não existe, cria ela dinamicamente
+            linhaDesconto = document.createElement('div');
+            linhaDesconto.id = 'linha-desconto-pagamento';
+            linhaDesconto.style.display = 'flex';
+            linhaDesconto.style.justifyContent = 'space-between';
+            linhaDesconto.style.color = '#d9534f'; // Vermelho para destaque
+            linhaDesconto.style.fontWeight = 'bold';
+            linhaDesconto.style.margin = '8px 0';
+            
+            // Insere a linha de desconto logo ANTES do Total
+            totalElemento.closest('.linha-resumo, div').before(linhaDesconto);
+        }
+        
+        if (linhaDesconto) {
+            linhaDesconto.innerHTML = `<span><i class="fas fa-tag"></i> Desconto Cupom:</span><span>-${formatarMoeda(valores.desconto)}</span>`;
+            linhaDesconto.style.display = 'flex';
+        }
+    } else if (linhaDesconto) {
+        // Se não houver desconto, remove a linha da visualização
+        linhaDesconto.style.display = 'none';
     }
     
+    // 6. Atualizar os Totais (Total Geral e Valor do PIX)
     if (totalElemento) {
-        totalElemento.textContent = formatarMoeda(estadoAplicativo.totalGeral);
+        totalElemento.textContent = formatarMoeda(valores.total);
     }
     
     if (valorPixElemento) {
-        valorPixElemento.textContent = formatarMoeda(estadoAplicativo.totalGeral);
+        valorPixElemento.textContent = formatarMoeda(valores.total);
     }
     
+    // 7. Sincroniza com o estado global para o envio do WhatsApp
+    if (typeof estadoAplicativo !== 'undefined') {
+        estadoAplicativo.totalGeral = valores.total;
+    }
+
     abrirModal('modal-pagamento');
 }
 
