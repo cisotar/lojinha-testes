@@ -124,5 +124,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
 });
 
+// No seu main.js ou modais.js
+function ajustarAlturaModal() {
+    if (window.innerWidth <= 768) {
+        const modais = document.querySelectorAll('.modal');
+        modais.forEach(modal => {
+            // Calcula altura baseada no conteúdo
+            const conteudo = modal.querySelector('.conteudo-modal, .conteudo-modal-produto, .conteudo-modal-carrinho');
+            if (conteudo) {
+                const alturaConteudo = conteudo.scrollHeight;
+                const alturaMaxima = window.innerHeight * 0.8; // 80% da tela
+                
+                if (alturaConteudo > alturaMaxima) {
+                    modal.style.maxHeight = '80vh';
+                    conteudo.style.maxHeight = 'calc(80vh - 60px)';
+                } else {
+                    modal.style.maxHeight = 'auto';
+                    conteudo.style.maxHeight = 'auto';
+                }
+            }
+        });
+    }
+}
+
+// Executar ao abrir modal e redimensionar janela
+window.addEventListener('resize', ajustarAlturaModal);
+
 // Exportar funções globais
 window.inicializarSistema = inicializarSistema;
