@@ -2485,35 +2485,57 @@ img {
 
 /* ===================== CORREÇÃO FORÇADA PARA ALTURA DOS MODAIS NO CELULAR ===================== */
 
-/* SOBRESCREVE TODAS AS REGRAS ANTERIORES PARA MODAIS NO MOBILE */
+/* ===================== CORREÇÕES FINAIS PARA MODAIS ===================== */
+
+/* SOBRESCREVE REGRAS PARA MODAIS NO MOBILE COM ALTURA AJUSTADA */
 @media (max-width: 768px) {
-    /* FORÇAR altura menor para todos os modais */
+    /* ALTURA DOS MODAIS - VERSÃO BALANCEADA (88vh em vez de 75vh) */
     .modal[style*="display: block"],
-    .modal:not([style*="display: none"]) {
-        max-height: 75vh !important; /* REDUZIDO drasticamente */
+    .modal:not([style*="display: none"]),
+    .modal {
+        max-height: 88vh !important; /* Balanceado: não muito alto, não muito baixo */
         height: auto !important;
         top: 50% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
         position: fixed !important;
-        overflow: hidden !important;
+        overflow-y: auto !important; /* Scroll em TODO o modal */
     }
     
-    /* FORÇAR altura menor para conteúdo */
+    /* SCROLL COMPLETO DO MODAL - não apenas conteúdo */
+    #modal-produto,
+    #modal-carrinho,
+    #modal-pagamento,
+    #modal-dados-cliente {
+        overflow-y: auto !important;
+        padding-bottom: 20px !important; /* Espaço para botões */
+    }
+    
+    /* CONTEÚDO DOS MODAIS - sem altura máxima fixa para scroll completo */
     .conteudo-modal,
     .conteudo-modal-produto,
     .conteudo-modal-carrinho,
     .conteudo-modal-sucesso,
     #corpo-modal-produto,
     #conteudo-carrinho {
-        max-height: 65vh !important; /* Conteúdo ainda menor */
+        max-height: none !important; /* Remove limite para scroll completo */
         height: auto !important;
-        overflow-y: auto !important;
-        padding: 15px 12px !important;
+        overflow-y: visible !important; /* Remove scroll interno */
+        padding: 20px 15px !important;
         margin: 0 !important;
     }
     
-    /* Remover qualquer min-height que possa estar forçando altura */
+    /* ESPECÍFICO PARA MODAL PRODUTO - botões fazem parte do scroll */
+    #modal-produto .botoes-modal-produto {
+        position: relative !important; /* Não fixo */
+        margin-top: 20px !important;
+        padding: 0 15px 15px !important;
+        bottom: auto !important;
+        background: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* REMOVER ALTURAS MÍNIMAS FORÇADAS */
     .modal,
     .conteudo-modal,
     .conteudo-modal-produto,
@@ -2521,7 +2543,7 @@ img {
         min-height: unset !important;
     }
     
-    /* Ajustar imagens para caber no modal menor */
+    /* AJUSTES DE IMAGENS */
     .imagem-produto-container {
         max-height: 150px !important;
         height: 150px !important;
@@ -2533,7 +2555,7 @@ img {
         height: auto !important;
     }
     
-    /* Reduzir todos os paddings internos */
+    /* REDUÇÃO DE PADDINGS (mantido do anterior) */
     .moldura-padrao-modal,
     .moldura-agrupadora-opcionais,
     .info-produto-modal,
@@ -2542,7 +2564,7 @@ img {
         margin: 5px 0 !important;
     }
     
-    /* Reduzir tamanho de fontes */
+    /* REDUÇÃO DE FONTES (mantido do anterior) */
     .titulo-modal,
     .nome-produto-modal {
         font-size: 1.1rem !important;
@@ -2555,7 +2577,7 @@ img {
         line-height: 1.4 !important;
     }
     
-    /* Botões mais compactos */
+    /* BOTÕES COMPACTOS (mantido do anterior) */
     .botao-acao {
         padding: 10px !important;
         font-size: 0.8rem !important;
@@ -2563,7 +2585,7 @@ img {
         min-height: unset !important;
     }
     
-    /* Controles de quantidade menores */
+    /* CONTROLES DE QUANTIDADE (mantido do anterior) */
     .controles-quantidade {
         gap: 5px !important;
     }
@@ -2579,21 +2601,105 @@ img {
         min-width: 30px !important;
     }
     
-    /* Especificamente para modal de carrinho */
-    #modal-carrinho {
-        max-height: 70vh !important;
+    /* CORREÇÃO DA BADGE "RECOMENDADO" NO MODAL PAGAMENTO (NOVO) */
+    .opcao-recomendado {
+        position: absolute !important;
+        top: -8px !important; /* Posiciona acima do container */
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        background: var(--verde-militar) !important;
+        color: white !important;
+        font-size: 0.6rem !important;
+        padding: 3px 12px !important;
+        border-radius: 10px !important;
+        font-weight: bold !important;
+        white-space: nowrap !important;
+        z-index: 10 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
     }
     
-    #modal-carrinho .conteudo-modal {
-        max-height: 60vh !important;
+    /* ESPAÇO PARA A BADGE "RECOMENDADO" */
+    .opcao-pagamento:first-child {
+        position: relative !important;
+        padding-top: 20px !important; /* Espaço extra no topo */
+        margin-top: 15px !important;
+        overflow: visible !important; /* Importante para badge não ser cortada */
     }
     
-    /* Especificamente para modal de produto */
+    /* AJUSTAR ÍCONE PIX */
+    .opcao-pagamento:first-child .fa-pix {
+        margin-top: 5px !important;
+    }
+    
+    /* QR CODE PARA MOBILE */
+    .pix-qrcode img {
+        width: 150px !important;
+        height: 150px !important;
+    }
+    
+    /* REMOVER ALTURAS ESPECÍFICAS CONFLITANTES (substitui as antigas) */
+    #modal-carrinho,
     #modal-produto {
-        max-height: 70vh !important;
+        max-height: 88vh !important; /* Usa a altura padrão */
     }
     
+    #modal-carrinho .conteudo-modal,
     #corpo-modal-produto {
-        max-height: 60vh !important;
+        max-height: none !important; /* Remove limites específicos */
     }
+}
+
+/* CORREÇÕES PARA DESKTOP (se necessário) */
+@media (min-width: 769px) {
+    /* GARANTIR QUE BADGE "RECOMENDADO" NÃO SEJA CORTADA NO DESKTOP */
+    .opcao-pagamento:first-child {
+        position: relative !important;
+        overflow: visible !important;
+    }
+    
+    .opcao-recomendado {
+        top: -10px !important;
+        left: auto !important;
+        right: 20px !important;
+        transform: none !important;
+    }
+    
+    /* MODAL PRODUTO - SCROLL COMPLETO NO DESKTOP TAMBÉM */
+    #modal-produto {
+        overflow-y: auto !important;
+    }
+    
+    #modal-produto .botoes-modal-produto {
+        position: relative !important;
+        margin-top: 20px !important;
+    }
+}
+
+/* CORREÇÕES GERAIS PARA TODOS OS DISPOSITIVOS */
+/* REMOVER POSITION FIXED/STICKY DOS BOTÕES */
+.modal .botoes-modal-produto,
+.modal .botoes-acao {
+    position: relative !important;
+    bottom: auto !important;
+    background: none !important;
+    box-shadow: none !important;
+    margin-top: 20px !important;
+}
+
+/* SCROLL SUAVE PARA MODAIS (especialmente iOS) */
+.modal {
+    -webkit-overflow-scrolling: touch !important;
+}
+
+/* BOTÃO FECHAR SEM SOBREPOR CONTEÚDO */
+.botao-fechar-modal {
+    z-index: 1002 !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(5px) !important;
+}
+
+/* GARANTIR QUE BADGE "RECOMENDADO" SEJA SEMPRE VISÍVEL */
+.opcao-pagamento {
+    position: relative !important;
+    overflow: visible !important; /* ESSENCIAL para não cortar a badge */
 }
