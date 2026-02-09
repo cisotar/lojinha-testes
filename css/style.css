@@ -9,7 +9,7 @@
     --bg-creme: #fdf5e6;
     --verde-militar: #2d3a27;
     --marrom-cafe: #2e2610;
-    --marrom-detalhe: #7d4f39;
+    --marrim-detalhe: #7d4f39;
     --borda-nav: #dccbb0;
     --texto: #3e2723;
     --red: #b22222;
@@ -29,9 +29,7 @@
     --amarelo-alerta: #ffc107;
     --sombra-suave: rgba(0, 0, 0, 0.1);
     --sombra-media: rgba(0, 0, 0, 0.15);
-    /* ADICIONE ESTAS LINHAS */
     --bege-claro: #f9f5f0;
-    --marrim-detalhe: #8b7355;  /* Corrigindo typo e definindo cor */
 }
 
 /* ===================== RESET E ESTILOS GERAIS ===================== */
@@ -48,17 +46,13 @@ body {
     line-height: 1.6;
     padding-bottom: 80px;
     max-width: 100%;
-    overflow-x: hidden !important;
-    width: 100% !important;
-    position: relative !important;
+    overflow-x: hidden;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 15px;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
 }
 
 /* ===================== ANIMAÇÕES ===================== */
@@ -140,7 +134,7 @@ body {
     background: var(--verde-militar);
     padding: 15px 20px;
     color: var(--branco);
-    position: relative; /* Mudado de sticky para relative para não travar no topo */
+    position: relative;
     top: 0;
     z-index: 1000;
     box-shadow: 0 2px 10px var(--sombra-suave);
@@ -153,7 +147,7 @@ body {
     gap: 20px;
     max-width: 500px;
     margin: 0 auto;
-    flex-direction: row !important; /* Força o alinhamento lado a lado em todas as telas */
+    flex-direction: row !important;
 }
 
 .logo-cabecalho {
@@ -257,7 +251,6 @@ body {
     flex: 1;
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--marrom-cafe), transparent);
-    min-width: 0;
 }
 
 .titulo-secao {
@@ -330,7 +323,6 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     border: 2px solid var(--branco);
     animation: badgeAppear 0.3s ease-out;
-    /* Novas melhorias */
     transition: all 0.3s ease;
 }
 
@@ -404,7 +396,7 @@ body {
 .card.esgotado {
     position: relative;
     cursor: not-allowed !important;
-    overflow: hidden; /* Mantém o carimbo dentro do card */
+    overflow: hidden;
 }
 
 /* 2. A Película Opaca (Overlay) */
@@ -415,9 +407,9 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Película branca clara */
-    backdrop-filter: grayscale(1); /* Deixa o fundo cinza */
-    z-index: 5; /* Fica acima da foto, mas abaixo do carimbo */
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: grayscale(1);
+    z-index: 5;
 }
 
 /* 3. O Carimbo (Forte e por cima de tudo) */
@@ -428,9 +420,9 @@ body {
     left: 50%;
     transform: translate(-50%, -50%) rotate(-25deg);
     
-    background-color: #8B4513; /* Seu Marrom Café */
+    background-color: #8B4513;
     color: #FFFFFF;
-    opacity: 1 !important; /* Força a opacidade total */
+    opacity: 1 !important;
     
     padding: 10px 80px;
     font-weight: 900;
@@ -439,7 +431,7 @@ body {
     border: 2px solid #FFFFFF;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     
-    z-index: 10; /* O nível mais alto */
+    z-index: 10;
     white-space: nowrap;
     pointer-events: none;
 }
@@ -460,8 +452,6 @@ body {
     transition: all 0.3s;
     align-items: center;
     justify-content: space-between;
-    width: 100vw !important;
-    box-sizing: border-box !important;
 }
 
 .barra-carrinho-fixa:hover {
@@ -517,23 +507,18 @@ body {
     display: none;
     position: fixed;
     top: 50%;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) translateY(-50%) !important;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: var(--branco);
     border-radius: 20px;
     z-index: 1001;
     max-width: 500px;
-    width: 95vw !important;
-    max-width: 95vw !important;
+    width: 90%;
     max-height: 95vh;
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: modalEntrada 0.3s ease-out;
     padding-bottom: 15px;
-    box-sizing: border-box !important;
-    margin: 0 !important;
-    padding: 0 !important;
 }
 
 .botao-fechar-modal {
@@ -586,8 +571,6 @@ body {
     line-height: 1.6;
     color: var(--cinza-escuro);
     margin: 20px 0;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
 }
 
 /* MODAL DE FORNADA */
@@ -631,8 +614,6 @@ body {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
 }
 
 .informacoes-fornada i {
@@ -704,7 +685,6 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     border: 2px solid var(--branco);
     animation: badgeAppear 0.3s ease-out;
-    /* Novas melhorias */
     transition: all 0.3s ease;
 }
 
@@ -773,8 +753,8 @@ body {
     height: 40px;
     border-radius: 50%;
     border: 2px solid var(--verde-militar);
-    background: white;
-    color: var(--verde-militar);
+    background: var(--verde-militar); /* ALTERADO: verde por padrão */
+    color: white; /* ALTERADO: texto branco */
     font-size: 1.2rem;
     font-weight: 900;
     cursor: pointer;
@@ -785,8 +765,9 @@ body {
 }
 
 .botao-quantidade:hover {
-    background: var(--verde-militar);
+    background: #3a5a24; /* ALTERADO: verde mais escuro no hover */
     color: white;
+    border-color: #3a5a24; /* ALTERADO: borda também mais escura */
     transform: scale(1.1);
 }
 
@@ -865,8 +846,8 @@ body {
     height: 30px;
     border-radius: 50%;
     border: 1px solid var(--verde-militar);
-    background: white;
-    color: var(--verde-militar);
+    background: var(--verde-militar); /* ALTERADO: verde por padrão */
+    color: white; /* ALTERADO: texto branco */
     font-size: 1rem;
     font-weight: 900;
     cursor: pointer;
@@ -877,8 +858,9 @@ body {
 }
 
 .botao-quantidade-pequeno:hover {
-    background: var(--verde-militar);
+    background: #3a5a24; /* ALTERADO: verde mais escuro no hover */
     color: white;
+    border-color: #3a5a24; /* ALTERADO: borda também mais escura */
 }
 
 #container-subtotal-produto {
@@ -1003,8 +985,6 @@ body {
 
 .opcao-titulo {
     flex-grow: 1;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
 }
 
 .opcao-recomendado {
@@ -1085,8 +1065,6 @@ body {
     font-size: 0.8rem;
     color: var(--cinza-escuro);
     line-height: 1.4;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
 }
 
 .opcao-observacao {
@@ -1408,47 +1386,60 @@ button:focus, input:focus, select:focus {
 }
 
 @media (max-width: 768px) {
+    /* PREVENIR SCROLL HORIZONTAL NO MOBILE */
+    body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        position: relative;
+    }
+    
     /* PREVENIR ZOOM EM INPUTS NO iOS */
     input, select, textarea {
         font-size: 16px !important;
     }
     
-    /* GARANTIR QUE MODAIS FIQUEM CENTRALIZADOS */
+    /* MODAIS CENTRALIZADOS E SEM CORTES NO MOBILE */
     .modal {
-        position: fixed !important;
-        top: 50% !important;
         left: 50% !important;
-        transform: translate(-50%, -50%) !important;
+        transform: translateX(-50%) translateY(-50%) !important;
         width: calc(100% - 20px) !important;
-        max-height: 90vh !important;
-        overflow-y: auto !important;
+        max-width: calc(100% - 20px) !important;
+        box-sizing: border-box;
+        margin: 0 !important;
     }
     
-    /* AJUSTAR CONTEÚDO INTERNO DOS MODAIS */
+    /* CONTEÚDO DOS MODAIS AJUSTADO PARA MOBILE */
     .conteudo-modal {
         padding: 20px 15px !important;
-        box-sizing: border-box !important;
+        box-sizing: border-box;
     }
     
     .conteudo-modal-produto {
         padding: 15px !important;
-        box-sizing: border-box !important;
+        box-sizing: border-box;
     }
     
     .conteudo-modal-carrinho {
         padding: 15px !important;
-        box-sizing: border-box !important;
+        box-sizing: border-box;
     }
     
-    /* CABEÇALHO NO CELULAR - CENTRALIZADO VERTICALMENTE */
+    /* CABEÇALHO NO CELULAR - MANTENDO LOGO REDONDA */
     .cabecalho-container {
         flex-direction: row !important;
         align-items: center !important;
         justify-content: center !important;
         gap: 15px !important;
         max-width: 100% !important;
-        padding: 0 10px !important;
-        box-sizing: border-box !important;
+        padding: 0 15px !important;
+    }
+    
+    /* MANTENDO A LOGO REDONDA */
+    .logo-cabecalho {
+        width: 60px !important;
+        height: 60px !important;
+        border-radius: 50% !important;
+        object-fit: cover !important;
     }
     
     .cabecalho-info {
@@ -1471,13 +1462,14 @@ button:focus, input:focus, select:focus {
         justify-content: center !important;
         text-align: center !important;
         white-space: normal !important;
+        font-size: 0.9rem !important;
     }
     
     /* BANNER DE FORNADA AJUSTADO */
     .banner-fornada {
         margin: 15px 10px 0 !important;
         padding: 10px !important;
-        box-sizing: border-box !important;
+        box-sizing: border-box;
     }
     
     .fornada-titulo {
@@ -1496,7 +1488,7 @@ button:focus, input:focus, select:focus {
         margin-left: 10px !important;
         margin-right: 10px !important;
         overflow: hidden !important;
-        box-sizing: border-box !important;
+        box-sizing: border-box;
     }
     
     .titulo-secao {
@@ -1504,36 +1496,29 @@ button:focus, input:focus, select:focus {
         font-size: 1.2rem !important;
         padding: 0 5px !important;
         text-align: center !important;
-        max-width: 100% !important;
         word-wrap: break-word !important;
         line-height: 1.3 !important;
     }
     
     /* PRODUTOS EM DUAS COLUNAS NO CELULAR */
     .grid-produtos {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 8px !important;
-        padding: 0 5px !important;
-        width: 100vw !important;
-        box-sizing: border-box !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        padding: 0 8px !important;
+        width: 100% !important;
+        box-sizing: border-box;
     }
     
-    .card-imagem-wrapper {
-        height: 140px;
-    }
-    
-    /* CARDS DE PRODUTO COMPACTADOS */
+    /* CARDS DE PRODUTO COMPACTADOS MAS MANTENDO PROPORÇÕES */
     .card {
         margin: 0 !important;
         width: 100% !important;
         min-width: 0 !important;
-        box-sizing: border-box !important;
+        box-sizing: border-box;
     }
     
     .card-imagem-wrapper {
-        height: 130px !important;
+        height: 140px !important;
     }
     
     .card-content {
@@ -1543,7 +1528,7 @@ button:focus, input:focus, select:focus {
     .card-nome {
         font-size: 0.85rem !important;
         line-height: 1.2 !important;
-        min-height: 40px !important;
+        min-height: 35px !important;
         display: -webkit-box !important;
         -webkit-line-clamp: 2 !important;
         -webkit-box-orient: vertical !important;
@@ -1552,23 +1537,15 @@ button:focus, input:focus, select:focus {
     }
     
     .card-footer {
-        padding: 4px 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         padding: 6px 8px !important;
         min-height: 40px !important;
-        flex-wrap: nowrap !important;
     }
     
     .card-preco {
-        font-size: 1rem;
-        font-weight: 800;
-        width: auto;
-        display: inline-block;
+        font-size: 1rem !important;
     }
     
-    /* AJUSTAR CONTROLES DE QUANTIDADE */
+    /* AJUSTAR CONTROLES DE QUANTIDADE NO MODAL */
     .controles-quantidade {
         gap: 10px !important;
     }
@@ -1585,7 +1562,7 @@ button:focus, input:focus, select:focus {
         font-size: 0.9rem !important;
     }
     
-    /* FORMULÁRIOS EMPILHADOS VERTICALMENTE */
+    /* FORMULÁRIOS EMPILHADOS VERTICALMENTE NO MOBILE */
     .grupo-duplo {
         flex-direction: column !important;
         gap: 10px !important;
@@ -1595,7 +1572,7 @@ button:focus, input:focus, select:focus {
         width: 100% !important;
     }
     
-    /* BOTÕES DE AÇÃO MAIS COMPACTOS */
+    /* BOTÕES DE AÇÃO MAIS COMPACTOS NO MOBILE */
     .botao-acao {
         padding: 12px 15px !important;
         font-size: 0.85rem !important;
@@ -1610,29 +1587,13 @@ button:focus, input:focus, select:focus {
         font-size: 1.1rem !important;
     }
     
-    /* AJUSTAR OPCIONAIS */
-    .opcional-item-moldura {
-        padding: 10px 0 !important;
-    }
-    
-    /* BOTÕES EM GRUPO VERTICAIS NO MOBILE */
-    .botoes-recuperacao {
-        flex-direction: column !important;
-        gap: 10px !important;
-    }
-    
-    .botoes-recuperacao button {
-        width: 100% !important;
-        margin: 0 !important;
-    }
-    
-    .botoes-acao {
-        flex-direction: column !important;
-        gap: 10px !important;
-    }
-    
-    .botoes-acao button {
-        width: 100% !important;
+    /* AJUSTES PARA TEXTOS LONGOS */
+    .opcao-titulo,
+    .opcao-descricao,
+    .texto-modal,
+    .informacoes-fornada p {
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
     }
     
     /* AJUSTES PARA PIX NO MOBILE */
@@ -1647,8 +1608,17 @@ button:focus, input:focus, select:focus {
         margin-bottom: 5px !important;
     }
     
-    .coluna-controles {
-        gap: 5px !important;
+    /* BOTÕES EM GRUPO VERTICAIS NO MOBILE */
+    .botoes-recuperacao,
+    .botoes-acao {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .botoes-recuperacao button,
+    .botoes-acao button {
+        width: 100% !important;
+        margin: 0 !important;
     }
 }
 
@@ -1682,6 +1652,16 @@ button:focus, input:focus, select:focus {
         justify-content: space-between;
         align-items: center;
     }
+    
+    /* LOGO UM POUCO MENOR EM TELAS MUITO PEQUENAS */
+    .logo-cabecalho {
+        width: 55px !important;
+        height: 55px !important;
+    }
+    
+    .titulo-cabecalho {
+        font-size: 1.1rem !important;
+    }
 }
 
 /* AJUSTES PARA TELAS MUITO PEQUENAS */
@@ -1701,6 +1681,11 @@ button:focus, input:focus, select:focus {
     
     .fornada-titulo {
         font-size: 0.75rem !important;
+    }
+    
+    .logo-cabecalho {
+        width: 50px !important;
+        height: 50px !important;
     }
 }
 
@@ -1757,7 +1742,7 @@ button:focus, input:focus, select:focus {
     text-align: center;
 }
 
-/* --- ESTRUTURA DOS OPCIONAIS NO MODAL (ESTILO ORIGINAL) --- */
+/* --- ESTRUTURA DOS OPCIONAIS NO MODAL --- */
 
 .opcional-linha-container {
     display: flex;
@@ -1774,7 +1759,6 @@ button:focus, input:focus, select:focus {
     gap: 2px;
 }
 
-/* Moldura idêntica à do seletor de quantidade do produto */
 .controles-quantidade-opcional {
     display: flex;
     align-items: center;
@@ -1784,7 +1768,6 @@ button:focus, input:focus, select:focus {
     border-radius: 50px;
 }
 
-/* Botões Redondos Originais */
 .botao-quantidade-pequeno {
     background: var(--marrom-detalhe);
     color: white;
@@ -1897,27 +1880,68 @@ button:focus, input:focus, select:focus {
     font-size: 0.9rem;
 }
 
-/* IMPEDIR QUE ELEMENTOS ULTRAPASSEM LARGURA */
-* {
-    max-width: 100vw !important;
+/* IMPEDIR QUE IMAGENS ESTOUREM CONTAINERS */
+img {
+    max-width: 100%;
+    height: auto;
 }
 
-img, video, iframe, object, embed {
+/* GARANTIR QUE CONTAINER NÃO ESTOURE */
+.container {
     max-width: 100% !important;
-    height: auto !important;
+    overflow-x: hidden !important;
 }
 
-/* REMOVER MARGENS/PADDINGS QUE CAUSAM OVERFLOW */
+/* ===================== CORREÇÕES ESPECÍFICAS DOS BOTÕES ===================== */
+
+/* GARANTIR QUE TODOS OS BOTÕES DE QUANTIDADE FIQUEM VERDES */
+.controles-opcional .botao-quantidade-pequeno,
+.controles-quantidade .botao-quantidade {
+    background: var(--verde-militar) !important;
+    color: white !important;
+    border: none !important;
+}
+
+/* HOVER PARA BOTÕES DE QUANTIDADE */
+.controles-opcional .botao-quantidade-pequeno:hover,
+.controles-quantidade .botao-quantidade:hover {
+    background: #3a5a24 !important;
+    transform: scale(1.1);
+}
+
+/* BOTÕES DE QUANTIDADE NO MODAL DE PRODUTO ESPECÍFICO */
+#corpo-modal-produto .botao-quantidade-pequeno,
+#corpo-modal-produto .botao-quantidade {
+    background: var(--verde-militar) !important;
+    color: white !important;
+}
+
+#corpo-modal-produto .botao-quantidade-pequeno:hover,
+#corpo-modal-produto .botao-quantidade:hover {
+    background: #3a5a24 !important;
+}
+
+/* SOBRESCREVER QUALQUER ESTILO BRANCO QUE TENHA SIDO APLICADO */
+.modal .botao-quantidade-pequeno[style*="background: white"],
+.modal .botao-quantidade[style*="background: white"],
+.modal .botao-quantidade-pequeno[style*="background-color: white"],
+.modal .botao-quantidade[style*="background-color: white"] {
+    background: var(--verde-militar) !important;
+    color: white !important;
+}
+
+/* PARA MOBILE - GARANTIR VISIBILIDADE */
 @media (max-width: 768px) {
-    .modal,
-    .conteudo-modal,
-    .conteudo-modal-produto,
-    .conteudo-modal-carrinho,
-    .container,
-    .cabecalho-principal,
-    .barra-carrinho-fixa,
-    .rodape {
-        padding-left: env(safe-area-inset-left) !important;
-        padding-right: env(safe-area-inset-right) !important;
+    .botao-quantidade,
+    .botao-quantidade-pequeno {
+        background: var(--verde-militar) !important;
+        color: white !important;
+        border: 2px solid var(--verde-militar) !important;
+    }
+    
+    .botao-quantidade:hover,
+    .botao-quantidade-pequeno:hover {
+        background: #3a5a24 !important;
+        border-color: #3a5a24 !important;
     }
 }
