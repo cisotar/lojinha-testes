@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo v3.1 | Pão do Ciso</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-creme: #fdf5e6;
+            --verde-militar: #2d3a27;
+            --verde-claro: #4a5d42;
+            --marrom-cafe: #2e2610;
+            --marrom-detalhe: #7d4f39;
+            --texto: #3e2723;
+            --branco: #ffffff;
+            --red: #b22222;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            background: #f4f1ea;
+            color: var(--texto);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background: var(--verde-militar);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .logo-area {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo-area h2 {
+            color: var(--bg-creme);
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: #ccc;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: var(--branco);
+            border-left: 4px solid var(--bg-creme);
+        }
+
+        .nav-item i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .action-area {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .btn-save { background: var(--bg-creme); color: var(--verde-militar); }
+        .btn-save:hover { background: #fff; transform: translateY(-2px); }
+
+        .btn-download { background: var(--marrom-detalhe); color: white; }
+        .btn-download:hover { background: #653d2b; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 { color: var(--verde-militar); margin: 0; }
+
+        /* --- CARDS & GRID --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--verde-militar);
+        }
+
+        .stat-value { font-size: 2rem; font-weight: bold; color: var(--verde-militar); }
+        .stat-label { color: #666; font-size: 0.9rem; text-transform: uppercase; }
+
+        /* --- SEÇÕES & TABELAS (CORRIGIDO PARA ALINHAMENTO) --- */
+        .secao-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid #eee;
+        }
+
+        .secao-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--bg-creme);
+            margin-bottom: 15px;
+            cursor: move;
+        }
+
+        .secao-titulo { font-size: 1.2rem; font-weight: bold; color: var(--verde-militar); display: flex; align-items: center; gap: 10px; }
+
+        /* Tabela Fixa para Alinhamento */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            table-layout: fixed; /* Força colunas iguais entre tabelas diferentes */
+        }
+        
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; vertical-align: middle; }
+        th { color: var(--verde-militar); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; }
+        
+        /* Larguras fixas das colunas */
+        .col-drag { width: 40px; text-align: center; }
+        .col-prod { width: auto; } /* Flexível */
+        .col-preco { width: 100px; }
+        .col-status { width: 160px; text-align: center; }
+        .col-acoes { width: 120px; text-align: right; }
+
+        /* --- BADGES E BOTÕES --- */
+        .btn-icon {
+            background: none; border: none; cursor: pointer; color: #666; font-size: 1.1rem; transition: 0.2s; padding: 5px;
+        }
+        .btn-icon:hover { color: var(--marrom-detalhe); transform: scale(1.1); }
+        .btn-add { background: var(--verde-militar); color: white; padding: 8px 15px; border-radius: 5px; font-size: 0.9rem; border: none; cursor: pointer;}
+
+        /* Botões de Status (Toggle) */
+        .btn-toggle {
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            background: white;
+            color: #999;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+            margin: 0 2px;
+        }
+
+        .btn-toggle:hover { background: #f5f5f5; }
+
+        .btn-toggle.ativo {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-color: #c8e6c9;
+            font-weight: bold;
+        }
+        
+        .btn-toggle.esgotado {
+            background: #ffebee;
+            color: #c62828;
+            border-color: #ffcdd2;
+            font-weight: bold;
+        }
+
+        /* Tags de Opcionais (Lista) */
+        .tag-mini {
+            display: inline-block;
+            font-size: 0.7rem;
+            background: #f0f0f0;
+            color: #555;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 4px;
+            margin-top: 4px;
+        }
+
+        /* --- MODAIS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            padding: 30px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: var(--verde-militar); }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;
+            box-sizing: border-box; font-family: inherit;
+        }
+        
+        /* BALÕES DE SELEÇÃO (MODAL) */
+        .badges-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .badge-select {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #666;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge-select:hover { transform: translateY(-2px); border-color: #999; }
+        
+        .badge-select.selected {
+            background: var(--verde-militar);
+            color: white;
+            border-color: var(--verde-militar);
+            font-weight: 500;
+        }
+
+        .modal-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel { background: #eee; color: #333; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-confirm { background: var(--verde-militar); color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+
+        /* --- LOGISTICA --- */
+        .taxa-geral-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #bbdefb;
+            color: #0d47a1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo-area">
+            <h2><i class="fas fa-bread-slice"></i> Gestor V3.1</h2>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item" id="nav-dashboard" onclick="navegarPara('dashboard')">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </div>
+            <div class="nav-item" id="nav-produtos" onclick="navegarPara('produtos')">
+                <i class="fas fa-utensils"></i> Produtos
+            </div>
+            <div class="nav-item" id="nav-logistica" onclick="navegarPara('logistica')">
+                <i class="fas fa-motorcycle"></i> Logística
+            </div>
+            <div class="nav-item" id="nav-cupons" onclick="navegarPara('cupons')">
+                <i class="fas fa-ticket-alt"></i> Cupons
+            </div>
+        </nav>
+        <div class="action-area">
+            <button class="btn-action btn-save" onclick="persistir()">
+                <i class="fas fa-save"></i> Salvar Local
+            </button>
+            <button class="btn-action btn-download" onclick="baixarDados()">
+                <i class="fas fa-download"></i> Baixar dados.js
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content" id="conteudo-principal">
+        </div>
+
+    <div class="modal-overlay" id="modal-container"></div>
+
+    <script src="./dados.js"></script>
+
+
+<script>
+    // ===========================================
+    // 1. ESTADO E DADOS
+    // ===========================================
+    const estadoInicial = {
+        fornada: { dataISO: new Date().toISOString().split('T')[0], diasAntecedencia: 2, horaLimite: "23:59h" },
+        entrega: { taxaGeral: 10.00, bairros: [] },
+        cupons: [],
+        secoes: [{ nome: "Pães Artesanais", itens: [] }],
+        opcionais: { "Pães Artesanais": [] }
+    };
+
+    let db = JSON.parse(localStorage.getItem('pao_do_ciso_db')) || estadoInicial;
+    let secaoAtiva = 'dashboard';
+    
+    // Variáveis Drag & Drop
+    let dragIdx = null;
+    let dragProdutoIdx = null; 
+    let dragOrigemSecaoIdx = null;
+
+    // ===========================================
+    // 2. INICIALIZAÇÃO
+    // ===========================================
+    window.onload = function() {
+        // 1. Força a abertura no Dashboard
+        navegarPara('dashboard');
+    };
+
+    function navegarPara(secao) {
+        secaoAtiva = secao;
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById('nav-' + secao).classList.add('active');
+        renderizarAtual();
+    }
+
+    function renderizarAtual() {
+        const container = document.getElementById('conteudo-principal');
+        container.innerHTML = '';
+
+        switch(secaoAtiva) {
+            case 'dashboard': renderDashboard(container); break;
+            case 'produtos': renderProdutos(container); break;
+            case 'logistica': renderLogistica(container); break;
+            case 'cupons': renderCupons(container); break;
+        }
+    }
+
+    // ===========================================
+    // 3. RENDERIZAÇÃO
+    // ===========================================
+
+    function renderDashboard(container) {
+        const totalProdutos = db.secoes.reduce((acc, s) => acc + s.itens.length, 0);
+        
+        container.innerHTML = `
+            <header><h1><i class="fas fa-chart-line"></i> Visão Geral</h1></header>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value">${totalProdutos}</div><div class="stat-label">Produtos</div></div>
+                <div class="stat-card"><div class="stat-value">${db.cupons.length}</div><div class="stat-label">Cupons</div></div>
+                <div class="stat-card"><div class="stat-value">R$ ${parseFloat(db.entrega.taxaGeral).toFixed(2)}</div><div class="stat-label">Frete Base</div></div>
+            </div>
+            <div class="secao-container">
+                <div class="secao-header"><div class="secao-titulo"><i class="far fa-clock"></i> Configuração da Fornada</div></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <div class="form-group"><label>Data Entrega</label><input type="date" id="dash-data" value="${db.fornada.dataISO}" onchange="CRUD.atualizarFornada()"></div>
+                    <div class="form-group"><label>Antecedência (Dias)</label><input type="number" id="dash-dias" value="${db.fornada.diasAntecedencia}" onchange="CRUD.atualizarFornada()"></div>
+                    <div class="form-group"><label>Hora Limite</label><input type="text" id="dash-hora" value="${db.fornada.horaLimite}" onchange="CRUD.atualizarFornada()"></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderProdutos(container) {
+        let html = `
+            <header>
+                <h1><i class="fas fa-utensils"></i> Gerenciar Cardápio</h1>
+                <button class="btn-action btn-add" onclick="CRUD.novaSessao()" style="width: auto;"><i class="fas fa-plus"></i> Nova Categoria</button>
+            </header>
+        `;
+
+        db.secoes.forEach((sessao, sIdx) => {
+            html += `
+                <div class="secao-container" draggable="true" ondragstart="dragSessao(event, ${sIdx})" ondrop="dropSessao(event, ${sIdx})" ondragover="allowDrop(event)">
+                    <div class="secao-header">
+                        <div class="secao-titulo"><i class="fas fa-grip-vertical drag-handle"></i> ${sessao.nome}</div>
+                        <div>
+                            <button class="btn-icon" onclick="CRUD.editarSessao(${sIdx})" title="Configurar Categoria"><i class="fas fa-cog"></i></button>
+                            <button class="btn-icon" onclick="CRUD.novoProduto(${sIdx})" title="Novo Produto"><i class="fas fa-plus-circle"></i></button>
+                            <button class="btn-icon" onclick="CRUD.removerSessao(${sIdx})" title="Excluir"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-drag"></th>
+                                <th class="col-prod">Produto</th>
+                                <th class="col-preco">Preço</th>
+                                <th class="col-status">Status (Ações Rápidas)</th>
+                                <th class="col-acoes">Editar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            if (sessao.itens.length === 0) {
+                html += `<tr><td colspan="5" style="text-align:center; color:#999; padding: 20px;">Categoria vazia.</td></tr>`;
+            } else {
+                sessao.itens.forEach((item, iIdx) => {
+                    // Renderização dos Balões de Opcionais na Lista
+                    const tagsHtml = (item.opcionais_ativos || []).map(opt => `<span class="tag-mini">${opt}</span>`).join('');
+
+                    // Estado dos botões de Toggle
+                    const visivelClass = item.visivel ? 'ativo' : '';
+                    const visivelIcon = item.visivel ? 'fa-eye' : 'fa-eye-slash';
+                    const visivelText = item.visivel ? 'Visível' : 'Oculto';
+
+                    const esgotadoClass = item.esgotado ? 'esgotado' : 'ativo';
+                    const esgotadoIcon = item.esgotado ? 'fa-ban' : 'fa-check';
+                    const esgotadoText = item.esgotado ? 'Esgotado' : 'Disp.';
+
+                    html += `
+                        <tr draggable="true" ondragstart="dragProduto(event, ${sIdx}, ${iIdx})" ondrop="dropProduto(event, ${sIdx}, ${iIdx})" ondragover="allowDrop(event)">
+                            <td class="col-drag"><i class="fas fa-bars drag-handle" style="color:#ddd"></i></td>
+                            <td class="col-prod">
+                                <div style="font-weight:bold;">${item.nome}</div>
+                                <div style="font-size:0.8rem; color:#666;">${item.descricao.substring(0, 40)}...</div>
+                                <div>${tagsHtml}</div>
+                            </td>
+                            <td class="col-preco">R$ ${parseFloat(item.preco).toFixed(2)}</td>
+                            <td class="col-status">
+                                <button class="btn-toggle ${visivelClass}" onclick="CRUD.toggleVisibilidade(${sIdx}, ${iIdx})" title="Mostrar/Ocultar no site">
+                                    <i class="fas ${visivelIcon}"></i>
+                                </button>
+                                <button class="btn-toggle ${esgotadoClass}" onclick="CRUD.toggleEsgotado(${sIdx}, ${iIdx})" title="Marcar como Disponível/Esgotado">
+                                    <i class="fas ${esgotadoIcon}"></i>
+                                </button>
+                            </td>
+                            <td class="col-acoes">
+                                <button class="btn-icon" onclick="CRUD.editarProduto(${sIdx}, ${iIdx})"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon" onclick="CRUD.duplicarProduto(${sIdx}, ${iIdx})"><i class="fas fa-copy"></i></button>
+                                <button class="btn-icon" onclick="CRUD.removerProduto(${sIdx}, ${iIdx})" style="color:var(--red);"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            html += `</tbody></table></div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function renderLogistica(container) {
+        if(!db.entrega) db.entrega = { taxaGeral: 10, bairros: [] };
+        let html = `
+            <header><h1><i class="fas fa-motorcycle"></i> Logística e Frete</h1></header>
+            <div class="taxa-geral-box">
+                <div><strong>Taxa Padrão</strong> (Sem bairro)</div>
+                <div>R$ <input type="number" step="0.50" style="width:70px; padding:5px;" value="${db.entrega.taxaGeral}" onchange="CRUD.atualizarTaxaGeral(this.value)"></div>
+            </div>
+            <div class="secao-container">
+                <div class="secao-header">
+                    <div class="secao-titulo">Taxas por Bairro</div>
+                    <button class="btn-action btn-add" onclick="CRUD.modalBairro()" style="width: auto;">+ Bairro</button>
+                </div>
+                <table><thead><tr><th>Bairro</th><th>Valor</th><th width="100">Ações</th></tr></thead><tbody>
+        `;
+        db.entrega.bairros.forEach((b, idx) => {
+            html += `<tr><td>${b.nome}</td><td>R$ ${parseFloat(b.valor).toFixed(2)}</td><td><button class="btn-icon" onclick="CRUD.modalBairro(${idx})"><i class="fas fa-edit"></i></button><button class="btn-icon" onclick="CRUD.removerBairro(${idx})" style="color:var(--red)"><i class="fas fa-trash"></i></button></td></tr>`;
+        });
+        html += `</tbody></table></div>`;
+        container.innerHTML = html;
+    }
+
+    function renderCupons(container) {
+        let html = `<header><h1><i class="fas fa-ticket-alt"></i> Cupons</h1><button class="btn-action btn-add" onclick="CRUD.modalCupom()" style="width:auto;">+ Cupom</button></header><div class="secao-container"><table><thead><tr><th>Código</th><th>Tipo</th><th>Valor</th><th>Ações</th></tr></thead><tbody>`;
+        db.cupons.forEach((c, idx) => {
+            html += `<tr><td><strong>${c.codigo}</strong></td><td>${c.tipo}</td><td>${c.valor}</td><td><button class="btn-icon" onclick="CRUD.removerCupom(${idx})" style="color:var(--red)"><i class="fas fa-trash"></i></button></td></tr>`;
+        });
+        html += `</tbody></table></div>`;
+        container.innerHTML = html;
+    }
+
+    // ===========================================
+    // 4. CRUD LÓGICA
+    // ===========================================
+    const CRUD = {
+        atualizarFornada: () => {
+            db.fornada.dataISO = document.getElementById('dash-data').value;
+            db.fornada.diasAntecedencia = parseInt(document.getElementById('dash-dias').value);
+            db.fornada.horaLimite = document.getElementById('dash-hora').value;
+            persistir();
+        },
+        novaSessao: () => {
+            const nome = prompt("Nome da nova categoria:");
+            if (nome) { db.secoes.push({ nome, itens: [] }); db.opcionais[nome] = []; renderizarAtual(); persistir(); }
+        },
+        removerSessao: (idx) => { if(confirm('Apagar categoria?')) { delete db.opcionais[db.secoes[idx].nome]; db.secoes.splice(idx, 1); renderizarAtual(); persistir(); } },
+        
+        editarSessao: (idx) => {
+            const secao = db.secoes[idx];
+            const ops = db.opcionais[secao.nome] || [];
+            let listaOpsHtml = ops.map((op, i) => `
+                <div style="display:flex; gap:5px; margin-bottom:5px;">
+                    <input type="text" value="${op.nome}" id="op-nome-${i}" style="flex:2">
+                    <input type="number" step="0.5" value="${op.preco}" id="op-preco-${i}" style="width:80px;">
+                    <button onclick="CRUD.rmOpTemp(${idx}, ${i})" style="background:#ecc; border:none; cursor:pointer;">X</button>
+                </div>`).join('');
+            
+            const html = `<h2>Editar Categoria</h2><input type="text" id="edit-cat-nome" value="${secao.nome}" class="form-group" style="width:100%; padding:10px; margin-bottom:10px;">
+                <h3>Opcionais da Categoria</h3><div id="lista-ops-container">${listaOpsHtml}</div>
+                <button class="btn-action btn-add" onclick="CRUD.addOpTemp(${idx})">+ Opcional</button>
+                <div class="modal-footer"><button class="btn-cancel" onclick="fecharModal()">Cancelar</button><button class="btn-confirm" onclick="CRUD.salvarSessao(${idx})">Salvar</button></div>`;
+            abrirModalContent(html);
+        },
+        addOpTemp: (sIdx) => { 
+            const n = db.secoes[sIdx].nome; 
+            if(!db.opcionais[n]) db.opcionais[n]=[]; 
+            db.opcionais[n].push({nome:"Novo", preco:0}); 
+            CRUD.editarSessao(sIdx); 
+        },
+        rmOpTemp: (sIdx, oIdx) => { db.opcionais[db.secoes[sIdx].nome].splice(oIdx, 1); CRUD.editarSessao(sIdx); },
+        salvarSessao: (idx) => {
+            const novoNome = document.getElementById('edit-cat-nome').value;
+            const antigoNome = db.secoes[idx].nome;
+            const opsAtualizados = Array.from(document.querySelectorAll('#lista-ops-container > div')).map((div, i) => ({
+                nome: document.getElementById(`op-nome-${i}`).value,
+                preco: parseFloat(document.getElementById(`op-preco-${i}`).value)
+            }));
+            if(novoNome !== antigoNome) delete db.opcionais[antigoNome];
+            db.opcionais[novoNome] = opsAtualizados;
+            db.secoes[idx].nome = novoNome;
+            fecharModal(); renderizarAtual(); persistir();
+        },
+
+        novoProduto: (sIdx) => {
+            db.secoes[sIdx].itens.push({ nome: "Novo Produto", descricao: "", preco: 0, imagem: "img/padrao.jpg", visivel: true, esgotado: false, opcionais_ativos: [] });
+            renderizarAtual();
+            CRUD.editarProduto(sIdx, db.secoes[sIdx].itens.length - 1);
+        },
+        
+        // TOGGLES RÁPIDOS DA COLUNA STATUS
+        toggleVisibilidade: (sIdx, pIdx) => {
+            const item = db.secoes[sIdx].itens[pIdx];
+            item.visivel = !item.visivel;
+            renderizarAtual();
+            persistir();
+        },
+        toggleEsgotado: (sIdx, pIdx) => {
+            const item = db.secoes[sIdx].itens[pIdx];
+            item.esgotado = !item.esgotado;
+            renderizarAtual();
+            persistir();
+        },
+
+        editarProduto: (sIdx, pIdx) => {
+            const item = db.secoes[sIdx].itens[pIdx];
+            const todosOps = db.opcionais[db.secoes[sIdx].nome] || [];
+            
+            // GERAÇÃO DOS BALÕES CLICÁVEIS (BADGES)
+            let badgesHtml = '';
+            if (todosOps.length === 0) {
+                badgesHtml = '<p style="color:#999; font-size:0.9rem;">Nenhum opcional configurado nesta categoria.</p>';
+            } else {
+                badgesHtml = todosOps.map(op => {
+                    const isSelected = (item.opcionais_ativos || []).includes(op.nome);
+                    return `<div class="badge-select ${isSelected ? 'selected' : ''}" onclick="this.classList.toggle('selected')" data-val="${op.nome}">
+                        ${isSelected ? '<i class="fas fa-check"></i>' : '<i class="far fa-circle"></i>'} 
+                        ${op.nome} (+R$${op.preco})
+                    </div>`;
+                }).join('');
+            }
+
+            const html = `
+                <h2>Editar Produto</h2>
+                <div class="form-group"><label>Nome</label><input id="prod-nome" value="${item.nome}"></div>
+                <div class="form-group"><label>Descrição</label><textarea id="prod-desc" rows="3">${item.descricao}</textarea></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div class="form-group"><label>Preço (R$)</label><input type="number" step="0.5" id="prod-preco" value="${item.preco}"></div>
+                    <div class="form-group"><label>Imagem</label><input id="prod-img" value="${item.imagem}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Opcionais (Clique para ativar)</label>
+                    <div class="badges-container">${badgesHtml}</div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+                    <button class="btn-confirm" onclick="CRUD.salvarProduto(${sIdx}, ${pIdx})">Salvar</button>
+                </div>
+            `;
+            abrirModalContent(html);
+        },
+        
+        salvarProduto: (sIdx, pIdx) => {
+            const item = db.secoes[sIdx].itens[pIdx];
+            item.nome = document.getElementById('prod-nome').value;
+            item.descricao = document.getElementById('prod-desc').value;
+            item.preco = parseFloat(document.getElementById('prod-preco').value);
+            item.imagem = document.getElementById('prod-img').value;
+            
+            // Captura os opcionais marcados nos balões
+            const selecionados = Array.from(document.querySelectorAll('.badge-select.selected')).map(el => el.getAttribute('data-val'));
+            item.opcionais_ativos = selecionados;
+
+            fecharModal(); renderizarAtual(); persistir();
+        },
+        
+        duplicarProduto: (sIdx, pIdx) => {
+            const novo = JSON.parse(JSON.stringify(db.secoes[sIdx].itens[pIdx]));
+            novo.nome += " (Cópia)";
+            db.secoes[sIdx].itens.push(novo);
+            renderizarAtual(); persistir();
+        },
+        removerProduto: (sIdx, pIdx) => { if(confirm('Excluir?')) { db.secoes[sIdx].itens.splice(pIdx, 1); renderizarAtual(); persistir(); } },
+        
+        // Logística e Cupons (Simples)
+        atualizarTaxaGeral: (v) => { db.entrega.taxaGeral = parseFloat(v); persistir(); },
+        modalBairro: (idx=null) => {
+            const b = idx!==null ? db.entrega.bairros[idx] : {nome:'', valor:0};
+            const html = `<h2>Bairro</h2><input id="b-nome" value="${b.nome}" placeholder="Nome" class="form-group" style="width:100%; padding:10px; margin-bottom:10px;"><input id="b-val" type="number" value="${b.valor}" placeholder="Valor" class="form-group" style="width:100%; padding:10px;"><div class="modal-footer"><button class="btn-confirm" onclick="CRUD.salvarBairro(${idx})">Salvar</button></div>`;
+            abrirModalContent(html);
+        },
+        salvarBairro: (idx) => {
+            const novo = { nome: document.getElementById('b-nome').value, valor: parseFloat(document.getElementById('b-val').value) };
+            if(idx!==null) db.entrega.bairros[idx] = novo; else db.entrega.bairros.push(novo);
+            fecharModal(); renderizarAtual(); persistir();
+        },
+        removerBairro: (idx) => { db.entrega.bairros.splice(idx,1); renderizarAtual(); persistir(); },
+        modalCupom: () => {
+             const html = `<h2>Cupom</h2><input id="c-cod" placeholder="Código" style="text-transform:uppercase; width:100%; padding:10px; margin-bottom:10px;"><select id="c-tipo" style="width:100%; padding:10px; margin-bottom:10px;"><option value="porcentagem">%</option><option value="fixo">R$</option></select><input id="c-val" type="number" placeholder="Valor" style="width:100%; padding:10px;"><div class="modal-footer"><button class="btn-confirm" onclick="CRUD.salvarCupom()">Salvar</button></div>`;
+             abrirModalContent(html);
+        },
+        salvarCupom: () => {
+            db.cupons.push({ codigo: document.getElementById('c-cod').value.toUpperCase(), tipo: document.getElementById('c-tipo').value, valor: parseFloat(document.getElementById('c-val').value) });
+            fecharModal(); renderizarAtual(); persistir();
+        },
+        removerCupom: (idx) => { db.cupons.splice(idx, 1); renderizarAtual(); persistir(); }
+    };
+
+    // ===========================================
+    // 5. DRAG AND DROP & UTILS
+    // ===========================================
+    function allowDrop(ev) { ev.preventDefault(); }
+    function dragSessao(e, idx) { dragIdx = idx; e.dataTransfer.effectAllowed = 'move'; }
+    function dropSessao(e, tIdx) { e.preventDefault(); if(dragIdx===null || dragIdx===tIdx) return; const i = db.secoes.splice(dragIdx, 1)[0]; db.secoes.splice(tIdx, 0, i); dragIdx=null; renderizarAtual(); persistir(); }
+    
+    function dragProduto(e, s, i) { e.stopPropagation(); dragProdutoIdx=i; dragOrigemSecaoIdx=s; e.dataTransfer.effectAllowed='move'; }
+    function dropProduto(e, ts, ti) { e.preventDefault(); e.stopPropagation(); if(dragOrigemSecaoIdx!==ts || dragProdutoIdx===null || dragProdutoIdx===ti) return; const l = db.secoes[ts].itens; l.splice(ti, 0, l.splice(dragProdutoIdx, 1)[0]); dragProdutoIdx=null; renderizarAtual(); persistir(); }
+
+    function abrirModalContent(html) { const c = document.getElementById('modal-container'); c.innerHTML = `<div class="modal">${html}</div>`; c.style.display = 'flex'; }
+    function fecharModal() { document.getElementById('modal-container').style.display = 'none'; }
+    document.getElementById('modal-container').addEventListener('click', (e) => { if(e.target.id === 'modal-container') fecharModal(); });
+    
+    function persistir() { localStorage.setItem('pao_do_ciso_db', JSON.stringify(db)); const btn = document.querySelector('.btn-save'); const org = btn.innerHTML; btn.innerHTML = '<i class="fas fa-check"></i> Salvo!'; setTimeout(() => btn.innerHTML = org, 1500); }
+    
+    // Esta função garante a ordem lógica que você solicitou ao salvar o arquivo
+    function gerarConteudoDadosJS() {
+        let conteudo = "// ============================================\n";
+        conteudo += "// DADOS DO SISTEMA - PÃO DO CISO\n";
+        conteudo += "// ============================================\n\n";
+        conteudo += "window.dadosIniciais = {\n";
+
+        // 1º - LOJA
+        conteudo += `    loja: ${JSON.stringify(db.loja, null, 8)},\n\n`;
+
+        // 2º - DADOS DA FORNADA (dados da fonada)
+        conteudo += `    fornada: ${JSON.stringify(db.fornada, null, 8)},\n\n`;
+
+        // 3º - DADOS DOS CUPONS
+        conteudo += `    cupons: ${JSON.stringify(db.cupons, null, 8)},\n\n`;
+
+        // 4º - OPCIONAIS
+        conteudo += `    opcionais: ${JSON.stringify(db.opcionais, null, 8)},\n\n`;
+
+        // 5º - SEÇÕES
+        conteudo += `    secoes: ${JSON.stringify(db.secoes, null, 8)}\n`;
+
+        conteudo += "};";
+        return conteudo;
+    }
+
+    // Função de baixar atualizada para usar a nova organização
+    function baixarDados() {
+        const conteudo = gerarConteudoDadosJS();
+        const blob = new Blob([conteudo], { type: 'text/javascript' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'dados.js';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+</script>
+</body>
+</html>

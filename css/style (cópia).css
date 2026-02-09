@@ -47,6 +47,8 @@ body {
     color: var(--cinza-escuro);
     line-height: 1.6;
     padding-bottom: 80px;
+    max-width: 100%;
+    overflow-x: hidden; /* Garante que o site não role horizontalmente */
 }
 
 .container {
@@ -134,7 +136,7 @@ body {
     background: var(--verde-militar);
     padding: 15px 20px;
     color: var(--branco);
-    position: sticky;
+    position: relative; /* Mudado de sticky para relative para não travar no topo */
     top: 0;
     z-index: 1000;
     box-shadow: 0 2px 10px var(--sombra-suave);
@@ -147,6 +149,7 @@ body {
     gap: 20px;
     max-width: 500px;
     margin: 0 auto;
+    flex-direction: row !important; /* Força o alinhamento lado a lado em todas as telas */
 }
 
 .logo-cabecalho {
@@ -366,9 +369,24 @@ body {
 
 .card-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Preço na esquerda, botões na direita */
+    align-items: center;           /* Centraliza verticalmente preço e botões */
+    padding: 10px 12px;
+    min-height: 45px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.coluna-preco {
+    display: flex;
     align-items: center;
-    margin-top: 10px;
+}
+
+.coluna-controles {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 .card-preco {
@@ -499,10 +517,11 @@ body {
     z-index: 1001;
     max-width: 500px;
     width: 90%;
-    max-height: 90vh;
+    max-height: 95vh;
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: modalEntrada 0.3s ease-out;
+    padding-bottom: 15px;
 }
 
 .botao-fechar-modal {
@@ -763,27 +782,29 @@ body {
     color: #000;
 }
 
+/* Diminuir o título dos opcionais */
 .titulo-opcionais {
-    font-size: 0.9rem;
+    font-size: 0.8rem;    /* Reduzido de 0.9rem */
     font-weight: 900;
-    margin-bottom: 15px;
+    margin-bottom: 10px;  /* Reduzido de 15px */
     color: #333;
     text-align: center;
     text-transform: uppercase;
 }
 
-/*.lista-opcionais {
-    max-height: 200px;
-    overflow-y: auto;
-    padding-right: 5px;
-}*/
+.lista-opcionais {
+    max-height: none; /* Remove o limite de altura */
+    overflow-y: visible; /* Elimina a barra de rolagem interna */
+    padding-right: 0;
+}
 
+/* Diminuir o espaço entre os itens opcionais */
 .opcional-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
+    margin-bottom: 8px;   /* Reduzido de 12px */
+    padding-bottom: 8px;  /* Reduzido de 12px */
     border-bottom: 1px solid #eee;
 }
 
@@ -797,7 +818,7 @@ body {
     flex-grow: 1;
 }
 
-.opcional-nome {
+.opcional-nome {    
     font-size: 0.95rem;
     font-weight: 600;
     color: #111;
@@ -846,13 +867,13 @@ body {
 
 #container-subtotal-produto {
     background: #ffeded;
-    padding: 15px;
+    padding: 10px;        /* Reduzido de 15px */
     border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 15px 0;
+    margin: 10px 0;       /* Reduzido de 15px */
     border: 1px solid #ffcccc;
     transition: all 0.3s;
 }
@@ -866,10 +887,10 @@ body {
 }
 
 .valor-subtotal {
-    font-size: 1.4rem;
+    font-size: 1.2rem;    /* Reduzido de 1.4rem para ser mais compacto */
     font-weight: 900;
     color: #cc0000;
-    margin-top: 5px;
+    margin-top: 2px;      /* Reduzido de 5px */
 }
 
 .botoes-modal-produto {
@@ -1116,11 +1137,10 @@ body {
 }
 
 /* ===================== BOTÕES ===================== */
-/* Base para todos os botões de modal */
 .botao-acao {
     width: 100%;
-    padding: 14px 20px; /* Equilíbrio entre os 16px e 12px que você tinha */
-    border-radius: 8px;   /* Um meio termo elegante entre 5px e 12px */
+    padding: 14px 20px;
+    border-radius: 8px;
     font-weight: 700;
     font-size: 0.9rem;
     cursor: pointer;
@@ -1134,7 +1154,6 @@ body {
     margin-top: 10px;
 }
 
-/* BOTÃO DE AVANÇO (Verde Militar) */
 .botao-verde-militar {
     background-color: var(--verde-militar);
     color: var(--branco);
@@ -1142,12 +1161,11 @@ body {
 }
 
 .botao-verde-militar:hover:not(:disabled) {
-    background-color: #3a5a24; /* O tom que você sugeriu no hover */
+    background-color: #3a5a24;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(45, 58, 39, 0.3);
 }
 
-/* BOTÃO DE RETROCESSO (Bege) */
 .botao-bege {
     background-color: var(--bege-escuro);
     color: var(--marrom-cafe);
@@ -1160,7 +1178,6 @@ body {
     box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
 }
 
-/* ESTADO DESABILITADO */
 .botao-acao:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -1248,7 +1265,7 @@ body {
     gap: 8px;
 }
 
-/* ===================== CARD DE FRETE (CORREÇÃO DE CENTRALIZAÇÃO) ===================== */
+/* ===================== CARD DE FRETE ===================== */
 .card-informacao-frete {
     background: var(--bege-claro);
     border: 2px dashed var(--verde-militar);
@@ -1257,24 +1274,24 @@ body {
     margin-top: 15px;
     display: flex;
     align-items: center;
-    justify-content: center; /* Centraliza horizontalmente */
+    justify-content: center;
     gap: 15px;
     animation: pulseFrete 2s infinite;
-    text-align: center; /* Centraliza o texto */
+    text-align: center;
 }
 
 .card-informacao-frete i {
     font-size: 1.5rem;
     color: var(--verde-militar);
-    flex-shrink: 0; /* Evita que o ícone encolha */
+    flex-shrink: 0;
 }
 
 .info-frete-conteudo {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centraliza os itens */
+    align-items: center;
     justify-content: center;
-    text-align: center; /* Centraliza o texto */
+    text-align: center;
 }
 
 .info-frete-titulo {
@@ -1282,8 +1299,8 @@ body {
     font-weight: 700;
     color: var(--cinza-escuro);
     display: block;
-    text-align: center; /* Garante centralização */
-    margin-bottom: 5px; /* Espaço entre título e valor */
+    text-align: center;
+    margin-bottom: 5px;
 }
 
 .info-frete-valor {
@@ -1291,7 +1308,7 @@ body {
     font-weight: 900;
     color: var(--verde-militar);
     display: block;
-    text-align: center; /* Garante centralização */
+    text-align: center;
 }
 
 .botoes-acao {
@@ -1352,513 +1369,98 @@ body {
     font-size: 1.2rem;
 }
 
-.notificacao-flutuante {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #4CAF50;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 9999;
-    transform: translateX(120%);
-    transition: transform 0.3s ease;
-    max-width: 300px;
-    font-weight: 500;
-}
+/* ===================== ACESSIBILIDADE E SCROLL ===================== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--verde-militar); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3a5a24; }
 
-.notificacao-flutuante.ativo {
-    transform: translateX(0);
-}
-
-.notificacao-error {
-    background: #f44336;
-}
-
-.notificacao-info {
-    background: #2196F3;
-}
-
-.notificacao-warning {
-    background: #ff9800;
-}
-
-/* ===================== CLASSES DE ESTADO ===================== */
-.visivel, .mostrar {
-    display: block !important;
-}
-
-.escondido, .esconder {
-    display: none !important;
-}
-
-.campo-valido {
-    border-color: var(--verde-sucesso) !important;
-    background-color: rgba(40, 167, 69, 0.05) !important;
-}
-
-.campo-invalido {
-    border-color: var(--vermelho-alerta) !important;
-    background-color: rgba(204, 0, 0, 0.05) !important;
-}
-
-.texto-centralizado {
-    text-align: center;
-}
-
-.margem-superior {
-    margin-top: 20px;
-}
-
-.margem-inferior {
-    margin-bottom: 20px;
-}
-
-/* ===================== SCROLL PERSONALIZADO ===================== */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--verde-militar);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #3a5a24;
-}
-
-/* ===================== RESPONSIVIDADE ===================== */
-@media (max-width: 768px) {
-    .cabecalho-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-    }
-    
-    .logo-cabecalho {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .titulo-cabecalho {
-        font-size: 1.4rem;
-    }
-    
-    .contatos-cabecalho {
-        align-items: center;
-    }
-    
-    .grid-produtos {
-        grid-template-columns: 1fr;
-        padding: 0 10px;
-    }
-    
-    .modal {
-        width: 95%;
-        max-height: 85vh;
-    }
-    
-    .grupo-duplo {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .barra-direita {
-        font-size: 0.8rem;
-    }
-    
-    .titulo-secao {
-        font-size: 1.2rem;
-    }
-    
-    /*.imagem-produto-container {
-        max-height: 200px;
-        overflow: visible !important;
-    }
-    
-    .imagem-produto-modal {
-        max-width: 200px;
-        max-height: 180px;
-    }
-    
-    .controle-quantidade-produto {
-        flex-direction: column;
-        gap: 15px;
-        align-items: stretch;
-    }
-    
-    .controles-quantidade {
-        justify-content: center;
-    }
-    
-    /* RESPONSIVIDADE PARA BADGE NOS CARDS */
-    .card-imagem-wrapper {
-        height: 180px; /* Reduz altura em telas menores */
-    }
-    
-    .card-imagem-wrapper .badge-quantidade,
-    .imagem-produto-container .badge-quantidade {
-        width: 26px;
-        height: 26px;
-        font-size: 0.8rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .conteudo-modal {
-        padding: 20px 15px;
-    }
-    
-    .botao-acao {
-        padding: 14px;
-        font-size: 0.8rem;
-    }
-    
-    .card-imagem-wrapper {
-        height: 160px; /* Reduz ainda mais em telas pequenas */
-    }
-    
-    .fornada-titulo {
-        font-size: 0.8rem;
-    }
-    
-    .fornada-subtitulo {
-        font-size: 0.7rem;
-    }
-    
-    .conteudo-modal-produto {
-        padding: 15px;
-    }
-    
-    .imagem-produto-container {
-        max-height: 180px;
-        padding: 8px;
-        overflow: visible !important;
-    }
-    
-    .imagem-produto-modal {
-        max-width: 180px;
-        max-height: 160px;
-    }
-    
-    .card-content {
-        padding: 12px;
-    }
-    
-    .card-nome {
-        font-size: 1rem;
-    }
-    
-    .card-preco {
-        font-size: 1.2rem;
-    }
-    
-    .botoes-acao {
-        gap: 8px;
-    }
-    
-    .controles-quantidade {
-        gap: 10px;
-    }
-    
-    .botao-quantidade {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
-    }
-    
-    .quantidade-display {
-        font-size: 1.2rem;
-        min-width: 35px;
-    }
-    
-    .opcional-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    .controles-opcional {
-        align-self: flex-end;
-    }
-    
-    /* RESPONSIVIDADE PARA BADGE EM TELAS MUITO PEQUENAS */
-    .card-imagem-wrapper .badge-quantidade,
-    .imagem-produto-container .badge-quantidade {
-        width: 24px;
-        height: 24px;
-        font-size: 0.75rem;
-        top: 8px;
-        right: 8px;
-    }
-}
-
-/* ===================== MODAL DE PRODUTO - LAYOUT COMPACTO ===================== */
-.conteudo-modal-produto {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-/* Imagem mais compacta */
-.imagem-produto-container {
-    max-height: 200px !important;
-    margin-bottom: 10px;
-    padding: 8px;
-}
-
-/* Informações do produto mais compactas */
-.info-produto-modal {
-    padding: 12px;
-    margin-bottom: 5px;
-}
-
-.nome-produto-modal {
-    font-size: 1.1rem;
-    margin-bottom: 5px;
-}
-
-.descricao-produto-modal {
-    font-size: 0.85rem;
-    margin-top: 5px;
-}
-
-/* Controle de quantidade - layout horizontal otimizado */
-.controle-quantidade-produto {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 15px;
-    margin-bottom: 5px;
-}
-
-.controles-quantidade {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-/* Botões de quantidade do produto */
-.botao-quantidade {
-    width: 36px;
-    height: 36px;
-    font-size: 1.1rem;
-}
-
-.quantidade-display {
-    font-size: 1.2rem;
-    min-width: 36px;
-}
-
-.preco-produto {
-    font-size: 1.3rem;
-}
-
-/* Opcionais - sem scroll, alinhamento melhorado */
-.titulo-opcionais {
-    font-size: 0.85rem;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #eee;
-}
-
-.lista-opcionais {
-    max-height: none !important; /* Remove o scroll */
-    overflow-y: visible !important;
-    padding-right: 0;
-}
-
-/* Item de opcional com layout consistente */
-.opcional-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.opcional-item:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.opcional-info {
-    flex-grow: 1;
-    min-width: 0; /* Permite que o texto quebre */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.opcional-nome {
-    font-size: 0.9rem;
-    line-height: 1.2;
-}
-
-.opcional-preco {
-    font-size: 0.8rem;
-    margin-top: 2px;
-}
-
-/* Controles de opcionais alinhados */
-.controles-opcional {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-left: 10px;
-    flex-shrink: 0; /* Evita que encolha */
-}
-
-.quantidade-opcional {
-    font-weight: 900;
-    min-width: 25px;
-    text-align: center;
-}
-
-.botao-quantidade-pequeno {
-    width: 32px; /* Aumentado de 30px para melhor alinhamento */
-    height: 32px; /* Aumentado de 30px */
-    font-size: 1rem;
-}
-
-/* Subtotal mais compacto */
-#container-subtotal-produto {
-    padding: 12px 15px;
-    margin: 10px 0;
-}
-
-.subtitulo-subtotal {
-    font-size: 0.65rem;
-}
-
-.valor-subtotal {
-    font-size: 1.3rem;
-    margin-top: 3px;
-}
-
-/* Botões do modal mais compactos */
-.botoes-modal-produto {
-    padding: 0 10px 15px;
-    gap: 8px;
-}
-
-/* Reduzir altura máxima do modal geral */
-.modal {
-    max-height: 85vh; /* Reduzido de 90vh */
-}
-
-.conteudo-modal {
-    padding: 20px; /* Reduzido de 25px */
-}
-
-/* Responsividade para modal de produto em tablets */
-@media (max-width: 768px) {
-    .conteudo-modal-produto {
-        padding: 12px;
-        gap: 10px;
-    }
-    
-    .imagem-produto-container {
-        max-height: 180px !important;
-    }
-    
-    .controle-quantidade-produto {
-        padding: 10px 12px;
-    }
-    
-    .botao-quantidade {
-        width: 34px;
-        height: 34px;
-    }
-    
-    .opcional-item {
-        flex-direction: row; /* Mantém horizontal em mobile */
-        align-items: center;
-    }
-    
-    .controles-opcional {
-        margin-left: 5px;
-    }
-    
-    .botao-quantidade-pequeno {
-        width: 30px;
-        height: 30px;
-    }
-}
-
-/* Responsividade para modal de produto em celulares */
-@media (max-width: 480px) {
-    .conteudo-modal-produto {
-        padding: 10px;
-    }
-    
-    /* Em telas muito pequenas, permite que opcionais quebrem linha */
-    .opcional-item {
-        flex-wrap: wrap;
-    }
-    
-    .opcional-info {
-        flex-basis: 100%; /* Ocupa toda a largura quando quebra */
-        margin-bottom: 5px;
-    }
-    
-    .controles-opcional {
-        margin-left: 0;
-        align-self: flex-end;
-    }
-}
-
-/* ===================== ACESSIBILIDADE ===================== */
-button:focus,
-input:focus,
-select:focus {
+button:focus, input:focus, select:focus {
     outline: 3px solid rgba(74, 108, 47, 0.4);
     outline-offset: 2px;
 }
 
-/* ===================== TOOLTIPS BÁSICOS ===================== */
-[title] {
-    position: relative;
+/* ===================== RESPONSIVIDADE ===================== */
+
+.botao-adicionar-card, 
+.card-descricao {
+    display: none !important;
 }
 
-[title]:hover::after {
-    content: attr(title);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--preto);
-    color: var(--branco);
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    z-index: 1000;
+@media (max-width: 768px) {
+    /* CABEÇALHO NO CELULAR - CENTRALIZADO VERTICALMENTE */
+    .cabecalho-container {
+        flex-direction: row !important;
+        align-items: center !important; /* Centraliza verticalmente */
+        justify-content: center !important; /* Centraliza horizontalmente */
+        gap: 15px !important;
+        max-width: 100% !important; /* Ocupa toda largura disponível */
+    }
+    
+    .cabecalho-info {
+        text-align: center !important; /* Centraliza o texto */
+    }
+    
+    .titulo-cabecalho {
+        text-align: center !important; /* Centraliza o título */
+        font-size: 1.3rem !important; /* Tamanho ajustado para mobile */
+    }
+    
+    .contatos-cabecalho {
+        align-items: center !important; /* Centraliza os contatos */
+        text-align: center !important;
+    }
+    
+    .link-contato {
+        justify-content: center !important; /* Centraliza os links */
+        text-align: center !important;
+    }
+    
+    /* PRODUTOS EM DUAS COLUNAS NO CELULAR */
+    .grid-produtos {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        padding: 0 8px !important;
+    }
+    
+    .card-imagem-wrapper {
+        height: 140px;
+    }
 }
 
-/* Adicione no final do style.css */
-.aviso-cep {
-    display: block;
-    margin-top: 5px;
-    color: var(--cinza-escuro);
-    font-size: 0.75rem;
-    font-style: italic;
-    opacity: 0.8;
-}
+@media (max-width: 480px) {
+    .card-imagem-wrapper {
+        height: 120px;
+    }
+    
+    .card-content {
+        padding: 8px;
+        /* Mudamos para left para alinhar com o novo layout de preço/botão */
+        text-align: left; 
+    }
+    
+    .card-nome {
+        font-size: 0.85rem;
+        min-height: 35px;
+        line-height: 1.2;
+        margin-bottom: 4px;
+    }
+    
+    .card-preco {
+        font-size: 1rem;
+        font-weight: 800;
+        /* IMPORTANTE: Removemos o width 100% e o display block */
+        width: auto;
+        display: inline-block;
+    }
 
-.aviso-cep i {
-    margin-right: 5px;
-    color: var(--verde-militar);
+    .card-footer {
+        padding: 4px 0;
+        /* Garante que fiquem um em cada ponta, ou centralizados verticalmente */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 }
 
 .secao-cep-carrinho {
@@ -1897,59 +1499,159 @@ select:focus {
     gap: 8px;
 }
 
-.botao-calcular-frete:hover {
-    background: #3a5a24;
-}
-
 .resultado-frete {
     margin-top: 15px;
     padding: 12px;
     background: #e8f5e9;
     border-radius: 8px;
     border: 1px solid #c8e6c9;
-    text-align: center; /* Adicione esta linha para centralizar tudo dentro */
-}
-
-.frete-info {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Adicione esta linha */
-    gap: 15px;
-}
-
-.frete-info i {
-    font-size: 1.5rem;
-    color: #2e7d32;
-    /* Remove o flex-shrink se existir */
-}
-
-.frete-detalhes {
-    flex: 1;
-    text-align: center; /* Adicione esta linha para centralizar o texto */
-}
-
-.frete-titulo {
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: #1b5e20;
-    display: block;
-    text-align: center; /* Adicione esta linha */
+    text-align: center;
 }
 
 .frete-valor {
     font-size: 1.3rem;
     font-weight: 900;
     color: #2e7d32;
-    display: block; /* Adicione esta linha */
-    text-align: center; /* Adicione esta linha */
+    display: block;
+    text-align: center;
 }
 
-/* ===================== CORREÇÃO DE FOCO NO MODAL ===================== */
-.modal[data-modal="dados"] .grupo-campo:first-child .campo-entrada {
-    animation: fadeIn 0.5s ease;
+/* --- ESTRUTURA DOS OPCIONAIS NO MODAL (ESTILO ORIGINAL) --- */
+
+.opcional-linha-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Alinhamento vertical perfeito */
+    width: 100%;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
 }
 
-.modal[data-modal="dados"] .grupo-campo:first-child .campo-entrada:focus {
-    border-color: var(--verde-militar);
-    box-shadow: 0 0 0 3px rgba(74, 108, 47, 0.2);
+.coluna-preco-opcional {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Moldura idêntica à do seletor de quantidade do produto */
+.controles-quantidade-opcional {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #f0f0f0; /* Mesmo background que você usa no principal */
+    padding: 8px 12px;
+    border-radius: 50px; /* Moldura arredondada (pílula) */
+}
+
+/* Botões Redondos Originais */
+.botao-quantidade-pequeno {
+    background: var(--marrom-detalhe); /* Ou a cor que você usa nos botões originais */
+    color: white;
+    border: none;
+    width: 28px;  /* Tamanho fixo para ser redondo */
+    height: 28px;
+    border-radius: 50%; /* Garante que seja um círculo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+}
+
+.quantidade-opcional {
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+    font-size: 1rem;
+    color: var(--texto);
+}
+
+/* O FRAME CINZA */
+.moldura-agrupadora-opcionais {
+    background-color: #f2f2f2 !important; /* Cinza claro */
+    border-radius: 12px !important;
+    padding: 10px 15px !important;
+    margin: 15px 0 !important;
+    border: 1px solid #e0e0e0 !important;
+}
+
+/* ALINHAMENTO OPOSTO (NOME VS BOTÕES) */
+.opcional-item-moldura {
+    display: flex !important;
+    justify-content: space-between !important; /* Joga um para cada ponta */
+    align-items: center !important;
+    padding: 12px 0 !important;
+}
+
+.opcional-item-moldura:not(:last-child) {
+    border-bottom: 1px solid #dcdcdc !important;
+}
+
+/* NOME E PREÇO JUNTOS NO CANTO ESQUERDO */
+.opcional-texto-lado-a-lado {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.opcional-nome {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+.opcional-preco {
+    font-size: 12px;
+    color: #666;
+}
+
+/* BOTÕES NO CANTO DIREITO */
+.controles-opcional {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px;
+}
+
+/* CLASSE UNIFICADA PARA TODOS OS FRAMES DO MODAL */
+.moldura-padrao-modal, .moldura-agrupadora-opcionais {
+    background-color: #f2f2f2 !important;
+    border-radius: 12px !important;
+    padding: 15px !important;
+    margin: 10px 0 !important;
+    border: 1px solid #e0e0e0 !important;
+}
+
+/* AJUSTE PARA NOME E DESCRIÇÃO */
+.nome-produto-modal {
+    margin: 0 0 5px 0 !important;
+    font-size: 1.3rem !important;
+    color: #333;
+}
+
+.descricao-produto-modal {
+    margin: 0 !important;
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* LINHA LADO A LADO (Preço vs Botões / Subtotal) */
+.linha-flex-modal {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100%;
+}
+
+.preco-produto-destaque, .valor-subtotal {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #2e2e2e;
+}
+
+.subtitulo-subtotal {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
 }
