@@ -2482,3 +2482,118 @@ img {
     background: #3a5a24;
 }
 */
+
+/* ===================== CORREÇÃO FORÇADA PARA ALTURA DOS MODAIS NO CELULAR ===================== */
+
+/* SOBRESCREVE TODAS AS REGRAS ANTERIORES PARA MODAIS NO MOBILE */
+@media (max-width: 768px) {
+    /* FORÇAR altura menor para todos os modais */
+    .modal[style*="display: block"],
+    .modal:not([style*="display: none"]) {
+        max-height: 75vh !important; /* REDUZIDO drasticamente */
+        height: auto !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        position: fixed !important;
+        overflow: hidden !important;
+    }
+    
+    /* FORÇAR altura menor para conteúdo */
+    .conteudo-modal,
+    .conteudo-modal-produto,
+    .conteudo-modal-carrinho,
+    .conteudo-modal-sucesso,
+    #corpo-modal-produto,
+    #conteudo-carrinho {
+        max-height: 65vh !important; /* Conteúdo ainda menor */
+        height: auto !important;
+        overflow-y: auto !important;
+        padding: 15px 12px !important;
+        margin: 0 !important;
+    }
+    
+    /* Remover qualquer min-height que possa estar forçando altura */
+    .modal,
+    .conteudo-modal,
+    .conteudo-modal-produto,
+    .conteudo-modal-carrinho {
+        min-height: unset !important;
+    }
+    
+    /* Ajustar imagens para caber no modal menor */
+    .imagem-produto-container {
+        max-height: 150px !important;
+        height: 150px !important;
+        margin: 0 0 10px 0 !important;
+    }
+    
+    .imagem-produto-modal {
+        max-height: 140px !important;
+        height: auto !important;
+    }
+    
+    /* Reduzir todos os paddings internos */
+    .moldura-padrao-modal,
+    .moldura-agrupadora-opcionais,
+    .info-produto-modal,
+    .controle-quantidade-produto {
+        padding: 8px 10px !important;
+        margin: 5px 0 !important;
+    }
+    
+    /* Reduzir tamanho de fontes */
+    .titulo-modal,
+    .nome-produto-modal {
+        font-size: 1.1rem !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .texto-modal,
+    .descricao-produto-modal {
+        font-size: 0.8rem !important;
+        line-height: 1.4 !important;
+    }
+    
+    /* Botões mais compactos */
+    .botao-acao {
+        padding: 10px !important;
+        font-size: 0.8rem !important;
+        margin-top: 8px !important;
+        min-height: unset !important;
+    }
+    
+    /* Controles de quantidade menores */
+    .controles-quantidade {
+        gap: 5px !important;
+    }
+    
+    .botao-quantidade {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .quantidade-display {
+        font-size: 1rem !important;
+        min-width: 30px !important;
+    }
+    
+    /* Especificamente para modal de carrinho */
+    #modal-carrinho {
+        max-height: 70vh !important;
+    }
+    
+    #modal-carrinho .conteudo-modal {
+        max-height: 60vh !important;
+    }
+    
+    /* Especificamente para modal de produto */
+    #modal-produto {
+        max-height: 70vh !important;
+    }
+    
+    #corpo-modal-produto {
+        max-height: 60vh !important;
+    }
+}
