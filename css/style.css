@@ -1378,11 +1378,270 @@ button:focus, input:focus, select:focus {
     outline-offset: 2px;
 }
 
+/* ===================== CORREÇÕES PARA MODAIS SEM SCROLL HORIZONTAL ===================== */
+
+/* 1. GARANTIR QUE NENHUM MODAL TENHA SCROLL HORIZONTAL */
+.modal,
+.conteudo-modal,
+.conteudo-modal-produto,
+.conteudo-modal-carrinho,
+.conteudo-modal-sucesso {
+    overflow-x: hidden !important; /* Remove scroll horizontal */
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* 2. CORRIGIR GRUPO CEP NO CARRINHO - BOTÃO ABAIXO DO CAMPO */
+/* Correção para grupo CEP no carrinho */
+.grupo-cep-carrinho {
+    display: flex;
+    flex-direction: column; /* Empilha verticalmente */
+    gap: 10px;
+    margin-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.grupo-cep-carrinho input,
+.grupo-cep-carrinho button {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.campo-cep-carrinho {
+    width: 100% !important;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.botao-calcular-frete {
+    background: var(--verde-militar);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 3. REMOVER SCROLL SECUNDÁRIO NA LISTA DE ITENS DO CARRINHO */
+#conteudo-carrinho {
+    overflow-y: visible !important; /* Remove scroll interno */
+    max-height: none !important; /* Remove altura máxima */
+    padding: 20px;
+}
+
+/* Em vez disso, fazer o modal inteiro scrollar */
+#modal-carrinho .conteudo-modal {
+    max-height: calc(85vh - 50px);
+    overflow-y: auto;
+}
+
+/* 4. CORRIGIR BOTÕES QUE ESTOURAM A LARGURA */
+.modal .botao-acao,
+.modal .botao-verde-militar,
+.modal .botao-bege {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    white-space: normal !important; /* Permite quebra de texto */
+    word-wrap: break-word !important;
+}
+
+/* 5. CORRIGIR CAMPOS DE FORMULÁRIO QUE ESTOURAM */
+.modal .campo-entrada,
+.modal input[type="text"],
+.modal input[type="tel"],
+.modal input[type="email"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* 6. CORRIGIR OPÇÕES DE PAGAMENTO */
+.modal .opcao-pagamento {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.modal .opcao-titulo {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    max-width: 100% !important;
+}
+
+/* 7. CORRIGIR PIX CHAVE */
+.modal .pix-chave {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 5px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.modal .pix-chave span {
+    width: 100% !important;
+    word-break: break-all !important;
+    font-size: 0.8rem !important;
+}
+
+/* 8. CORRIGIR ITENS DO CARRINHO */
+.modal .item-carrinho {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 15px 10px !important;
+    margin: 0 0 10px 0 !important;
+}
+
+/* 9. CORRIGIR PREÇOS E VALORES */
+.modal .item-preco,
+.modal .item-subtotal,
+.modal .valor-subtotal,
+.modal .frete-valor {
+    white-space: nowrap !important; /* Mantém preços em uma linha */
+    overflow: visible !important;
+}
+
+/* 10. CORREÇÕES ESPECÍFICAS PARA MOBILE */
+@media (max-width: 768px) {
+    /* Forçar que todos os grupos com dois elementos fiquem verticais */
+    .modal .grupo-duplo {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .modal .grupo-duplo .grupo-campo {
+        width: 100% !important;
+        margin-bottom: 0 !important;
+    }
+    
+    /* Garantir que botões não quebrem o layout */
+    .modal .botao-acao {
+        font-size: 0.85rem !important;
+        padding: 12px 10px !important;
+    }
+    
+    /* Ajustar espaçamento interno dos modais */
+    .modal .conteudo-modal,
+    .modal .conteudo-modal-produto,
+    .modal .conteudo-modal-carrinho {
+        padding: 15px 12px !important;
+    }
+    
+    /* Reduzir tamanho de fontes em textos longos */
+    .modal .texto-modal,
+    .modal .opcao-descricao,
+    .modal .opcao-observacao {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Ajustar QR Code PIX */
+    .modal .pix-qrcode img {
+        width: 140px !important;
+        height: 140px !important;
+    }
+    
+    /* Remover scroll horizontal para imagens dentro de modais */
+    .modal img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* 11. CORREÇÃO ESPECÍFICA PARA BOTÕES DE CUPOM */
+.modal .secao-cupom .grupo-cupom {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.modal .secao-cupom .campo-cupom {
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.modal .secao-cupom .botao-aplicar-cupom {
+    width: 100% !important;
+    margin-top: 5px;
+}
+
+/* 12. CORREÇÃO PARA LISTA DE ITENS NO CARRINHO */
+.modal .lista-itens-carrinho {
+    max-height: none !important; /* Remove limite de altura */
+    overflow-y: visible !important; /* Remove scroll interno */
+    margin-bottom: 20px;
+}
+
+/* 13. AJUSTAR MODAL DE CARRINHO PARA SCROLL COMPLETO */
+#modal-carrinho {
+    max-height: 90vh;
+}
+
+#modal-carrinho .conteudo-modal {
+    max-height: calc(90vh - 60px);
+    overflow-y: auto;
+    padding: 20px 15px;
+}
+
+/* 14. CORRIGIR CONTAINER DE FRETE NO CARRINHO */
+.modal .secao-cep-carrinho {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-top: 15px;
+    padding: 15px !important;
+}
+
+/* 15. SCROLLBAR PERSONALIZADA PARA MODAIS */
+.conteudo-modal::-webkit-scrollbar {
+    width: 6px;
+}
+
+.conteudo-modal::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.conteudo-modal::-webkit-scrollbar-thumb {
+    background: var(--verde-militar);
+    border-radius: 3px;
+}
+
+.conteudo-modal::-webkit-scrollbar-thumb:hover {
+    background: #3a5a24;
+}
+
+/* 16. GARANTIR QUE IMAGENS DENTRO DE MODAIS NÃO ESTOUREM */
+.modal img {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+
 /* ===================== RESPONSIVIDADE ===================== */
 
 .botao-adicionar-card, 
 .card-descricao {
     display: none !important;
+}
+
+@media (max-width: 768px) {
+    .grupo-cep-carrinho {
+        flex-direction: column !important; /* Garante coluna no mobile */
+    }
 }
 
 @media (max-width: 768px) {
@@ -1697,12 +1956,6 @@ button:focus, input:focus, select:focus {
     border: 1px solid #eee;
 }
 
-.grupo-cep-carrinho {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
 .campo-cep-carrinho {
     flex: 1;
     padding: 12px;
@@ -1945,3 +2198,287 @@ img {
         border-color: #3a5a24 !important;
     }
 }
+
+/* ===================== CORREÇÕES RÁPIDAS PARA DESKTOP ===================== */
+
+/* Apenas para desktop - restaura o layout original */
+@media (min-width: 769px) {
+    /* MODAIS - TAMANHO ORIGINAL */
+    .modal {
+        max-width: 500px !important;
+        width: 90% !important;
+    }
+    
+    /* Conteúdo - padding original */
+    .conteudo-modal {
+        padding: 25px !important;
+    }
+    
+    .conteudo-modal-produto,
+    .conteudo-modal-carrinho {
+        padding: 20px !important;
+    }
+    
+    .conteudo-modal-sucesso {
+        padding: 40px 25px !important;
+    }
+    
+    /* Grupos duplos lado a lado */
+    .modal .grupo-duplo {
+        flex-direction: row !important;
+    }
+    
+    /* CEP e cupom lado a lado no desktop (opcional) */
+    .modal .grupo-cep-carrinho,
+    .modal .secao-cupom .grupo-cupom {
+        flex-direction: row !important;
+    }
+    
+    .modal .pix-chave {
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+
+    @media (min-width: 769px) {
+    .grupo-cep-carrinho {
+        flex-direction: row; /* Lado a lado no desktop */
+    }
+    
+    .grupo-cep-carrinho input {
+        flex: 1; /* Campo ocupa espaço disponível */
+    }
+    
+    .grupo-cep-carrinho button {
+        width: auto; /* Largura automática */
+        min-width: 150px; /* Largura mínima */
+    }
+}
+}
+
+/* 
+CORREÇÕES PARA MODAIS SEM SCROLL HORIZONTAL - BLOCO COMENTADO
+TODO ESTE BLOCO ESTÁ COMENTADO E NÃO SERÁ APLICADO
+
+.modal,
+.conteudo-modal,
+.conteudo-modal-produto,
+.conteudo-modal-carrinho,
+.conteudo-modal-sucesso {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.grupo-cep-carrinho {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.campo-cep-carrinho {
+    width: 100% !important;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.botao-calcular-frete {
+    background: var(--verde-militar);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#conteudo-carrinho {
+    overflow-y: visible !important;
+    max-height: none !important;
+    padding: 20px;
+}
+
+#modal-carrinho .conteudo-modal {
+    max-height: calc(85vh - 50px);
+    overflow-y: auto;
+}
+
+.botao-acao,
+.botao-verde-militar,
+.botao-bege {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+}
+
+.campo-entrada,
+input[type="text"],
+input[type="tel"],
+input[type="email"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.opcao-pagamento {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.opcao-titulo {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    max-width: 100% !important;
+}
+
+.pix-chave {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 5px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.pix-chave span {
+    width: 100% !important;
+    word-break: break-all !important;
+    font-size: 0.8rem !important;
+}
+
+.item-carrinho {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 15px 10px !important;
+    margin: 0 0 10px 0 !important;
+}
+
+.item-preco,
+.item-subtotal,
+.valor-subtotal,
+.frete-valor {
+    white-space: nowrap !important;
+    overflow: visible !important;
+}
+
+@media (max-width: 768px) {
+    .grupo-duplo {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .grupo-duplo .grupo-campo {
+        width: 100% !important;
+        margin-bottom: 0 !important;
+    }
+    
+    .botao-acao {
+        font-size: 0.85rem !important;
+        padding: 12px 10px !important;
+    }
+    
+    .conteudo-modal,
+    .conteudo-modal-produto,
+    .conteudo-modal-carrinho {
+        padding: 15px 12px !important;
+    }
+    
+    .texto-modal,
+    .opcao-descricao,
+    .opcao-observacao {
+        font-size: 0.85rem !important;
+    }
+    
+    .pix-qrcode img {
+        width: 140px !important;
+        height: 140px !important;
+    }
+}
+
+.secao-cupom .grupo-cupom {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.secao-cupom .campo-cupom {
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.secao-cupom .botao-aplicar-cupom {
+    width: 100% !important;
+    margin-top: 5px;
+}
+
+img {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+* {
+    max-width: 100vw !important;
+}
+
+.lista-itens-carrinho {
+    max-height: none !important;
+    overflow-y: visible !important;
+    margin-bottom: 20px;
+}
+
+#modal-carrinho {
+    max-height: 90vh;
+}
+
+#modal-carrinho .conteudo-modal {
+    max-height: calc(90vh - 60px);
+    overflow-y: auto;
+    padding: 20px 15px;
+}
+
+.secao-cep-carrinho {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-top: 15px;
+    padding: 15px !important;
+}
+
+.modal * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.conteudo-modal::-webkit-scrollbar {
+    width: 6px;
+}
+
+.conteudo-modal::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.conteudo-modal::-webkit-scrollbar-thumb {
+    background: var(--verde-militar);
+    border-radius: 3px;
+}
+
+.conteudo-modal::-webkit-scrollbar-thumb:hover {
+    background: #3a5a24;
+}
+*/
