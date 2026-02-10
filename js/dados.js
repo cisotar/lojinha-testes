@@ -23,17 +23,14 @@ window.dadosIniciais = {
    "bairros": [
       {
          "nome": "Centro",
-         "valor": 5,
          "taxa": 10
       },
       {
          "nome": "Vila Aparecida",
-         "valor": 12,
          "taxa": 12
       },
       {
          "nome": "Cidade Planejada",
-         "valor": 8,
          "taxa": 17
       },
       {
@@ -67,6 +64,18 @@ window.dadosIniciais = {
       {
          "nome": "Bosques da Pedra",
          "taxa": 18
+      },
+      {
+         "nome": "Jardim Fraternidade",
+         "taxa": 18
+      },
+      {
+         "nome": "Jardim São Miguel",
+         "taxa": 15
+      },
+      {
+         "nome": "Taboão",
+         "taxa": 10
       }
    ]
 },
@@ -404,6 +413,16 @@ window.dadosIniciais = {
          "nome": "Pastinha de pimentão vermelho",
          "preco": 4
       }
+   ],
+   "Cafés": [
+      {
+         "nome": "Potinho de plástico",
+         "preco": 2
+      },
+      {
+         "nome": "Potinho de vidro",
+         "preco": 5
+      }
    ]
 },
 
@@ -632,6 +651,35 @@ window.dadosIniciais = {
             ],
             "visivel": true,
             "esgotado": true
+         }
+      ]
+   },
+   {
+      "nome": "Cafés",
+      "itens": [
+         {
+            "nome": "Capuccino",
+            "descricao": "Seja mais sóbrio, evite exclamações. acrescente as palavras-chave: praticidade e facilidade.",
+            "preco": 20,
+            "imagem": "img/capuccino.webp",
+            "visivel": true,
+            "esgotado": false,
+            "opcionais_ativos": [
+               "Potinho de plástico",
+               "Potinho de vidro"
+            ]
+         },
+         {
+            "nome": "Café cremoso",
+            "descricao": "Seja mais sóbrio, evite exclamações. acrescente as palavras-chave: praticidade e facilidade.",
+            "preco": 20,
+            "imagem": "img/cafe-cremoso.webp",
+            "visivel": true,
+            "esgotado": false,
+            "opcionais_ativos": [
+               "Potinho de plástico",
+               "Potinho de vidro"
+            ]
          }
       ]
    },
