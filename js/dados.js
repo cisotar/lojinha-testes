@@ -23,7 +23,7 @@ window.dadosIniciais = {
    "bairros": [
       {
          "nome": "Centro",
-         "taxa": 10
+         "taxa": 20
       },
       {
          "nome": "Vila Aparecida",

@@ -2148,16 +2148,20 @@ img {
 /* ===================== CORREÇÕES ESPECÍFICAS DOS BOTÕES ===================== */
 
 /* GARANTIR QUE TODOS OS BOTÕES DE QUANTIDADE FIQUEM VERDES */
-.controles-opcional .botao-quantidade-pequeno,
-.controles-quantidade .botao-quantidade {
+.controles-opcional 
+.botao-quantidade-pequeno,
+.controles-quantidade 
+.botao-quantidade {
     background: var(--verde-militar) !important;
     color: white !important;
     border: none !important;
 }
 
 /* HOVER PARA BOTÕES DE QUANTIDADE */
-.controles-opcional .botao-quantidade-pequeno:hover,
-.controles-quantidade .botao-quantidade:hover {
+.controles-opcional 
+.botao-quantidade-pequeno:hover,
+.controles-quantidade 
+.botao-quantidade:hover {
     background: #3a5a24 !important;
     transform: scale(1.1);
 }
@@ -2183,24 +2187,7 @@ img {
     color: white !important;
 }
 
-/* PARA MOBILE - GARANTIR VISIBILIDADE */
-@media (max-width: 768px) {
-    .botao-quantidade,
-    .botao-quantidade-pequeno {
-        background: var(--verde-militar) !important;
-        color: white !important;
-        border: 2px solid var(--verde-militar) !important;
-    }
-    
-    .botao-quantidade:hover,
-    .botao-quantidade-pequeno:hover {
-        background: #3a5a24 !important;
-        border-color: #3a5a24 !important;
-    }
-}
-
 /* ===================== CORREÇÕES RÁPIDAS PARA DESKTOP ===================== */
-
 /* Apenas para desktop - restaura o layout original */
 @media (min-width: 769px) {
     /* MODAIS - TAMANHO ORIGINAL */
@@ -2233,13 +2220,25 @@ img {
     .modal .secao-cupom .grupo-cupom {
         flex-direction: row !important;
     }
+
+    .grupo-cep-carrinho {
+        flex-direction: column !important; /* SEMPRE VERTICAL */
+        gap: 10px !important;
+    }
+    
+    .grupo-cep-carrinho input,
+    .grupo-cep-carrinho button {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+}
     
     .modal .pix-chave {
         flex-direction: row !important;
         align-items: center !important;
     }
 
-    @media (min-width: 769px) {
+    /* CEP LADO A LADO NO DESKTOP */
     .grupo-cep-carrinho {
         flex-direction: row; /* Lado a lado no desktop */
     }
@@ -2252,242 +2251,69 @@ img {
         width: auto; /* Largura automática */
         min-width: 150px; /* Largura mínima */
     }
-}
-}
-
-/* 
-CORREÇÕES PARA MODAIS SEM SCROLL HORIZONTAL - BLOCO COMENTADO
-TODO ESTE BLOCO ESTÁ COMENTADO E NÃO SERÁ APLICADO
-
-.modal,
-.conteudo-modal,
-.conteudo-modal-produto,
-.conteudo-modal-carrinho,
-.conteudo-modal-sucesso {
-    overflow-x: hidden !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.grupo-cep-carrinho {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-    width: 100%;
-}
-
-.campo-cep-carrinho {
-    width: 100% !important;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    font-weight: bold;
-    box-sizing: border-box;
+    
+    /* GARANTIR QUE BADGE "RECOMENDADO" NÃO SEJA CORTADA NO DESKTOP */
+    .opcao-pagamento:first-child {
+        position: relative !important;
+        overflow: visible !important;
+    }
+    
+    .opcao-recomendado {
+        top: -10px !important;
+        left: auto !important;
+        right: 20px !important;
+        transform: none !important;
+    }
+    
+    /* MODAL PRODUTO - SCROLL COMPLETO NO DESKTOP TAMBÉM */
+    #modal-produto {
+        overflow-y: auto !important;
+    }
+    
+    #modal-produto .botoes-modal-produto {
+        position: relative !important;
+        margin-top: 20px !important;
+    }
 }
 
-.botao-calcular-frete {
-    background: var(--verde-militar);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-#conteudo-carrinho {
-    overflow-y: visible !important;
-    max-height: none !important;
-    padding: 20px;
-}
-
-#modal-carrinho .conteudo-modal {
-    max-height: calc(85vh - 50px);
-    overflow-y: auto;
-}
-
-.botao-acao,
-.botao-verde-militar,
-.botao-bege {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-    white-space: normal !important;
-    word-wrap: break-word !important;
-}
-
-.campo-entrada,
-input[type="text"],
-input[type="tel"],
-input[type="email"] {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.opcao-pagamento {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-}
-
-.opcao-titulo {
-    white-space: normal !important;
-    word-wrap: break-word !important;
-    max-width: 100% !important;
-}
-
-.pix-chave {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 5px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.pix-chave span {
-    width: 100% !important;
-    word-break: break-all !important;
-    font-size: 0.8rem !important;
-}
-
-.item-carrinho {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 15px 10px !important;
-    margin: 0 0 10px 0 !important;
-}
-
-.item-preco,
-.item-subtotal,
-.valor-subtotal,
-.frete-valor {
-    white-space: nowrap !important;
-    overflow: visible !important;
-}
-
-@media (max-width: 768px) {
-    .grupo-duplo {
+/* ===================== FORÇAR BOTÃO CEP ABAIXO NO DESKTOP ===================== */
+@media (min-width: 769px) {
+    .grupo-cep-carrinho {
         flex-direction: column !important;
         gap: 10px !important;
     }
     
-    .grupo-duplo .grupo-campo {
+    .grupo-cep-carrinho input,
+    .grupo-cep-carrinho button {
         width: 100% !important;
-        margin-bottom: 0 !important;
+        box-sizing: border-box !important;
     }
     
-    .botao-acao {
-        font-size: 0.85rem !important;
-        padding: 12px 10px !important;
-    }
-    
-    .conteudo-modal,
-    .conteudo-modal-produto,
-    .conteudo-modal-carrinho {
-        padding: 15px 12px !important;
-    }
-    
-    .texto-modal,
-    .opcao-descricao,
-    .opcao-observacao {
-        font-size: 0.85rem !important;
-    }
-    
-    .pix-qrcode img {
-        width: 140px !important;
-        height: 140px !important;
+    .grupo-cep-carrinho button {
+        min-width: 100% !important;
     }
 }
-
-.secao-cupom .grupo-cupom {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-}
-
-.secao-cupom .campo-cupom {
-    width: 100% !important;
-    box-sizing: border-box;
-}
-
-.secao-cupom .botao-aplicar-cupom {
-    width: 100% !important;
-    margin-top: 5px;
-}
-
-img {
-    max-width: 100% !important;
-    height: auto !important;
-}
-
-* {
-    max-width: 100vw !important;
-}
-
-.lista-itens-carrinho {
-    max-height: none !important;
-    overflow-y: visible !important;
-    margin-bottom: 20px;
-}
-
-#modal-carrinho {
-    max-height: 90vh;
-}
-
-#modal-carrinho .conteudo-modal {
-    max-height: calc(90vh - 60px);
-    overflow-y: auto;
-    padding: 20px 15px;
-}
-
-.secao-cep-carrinho {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    margin-top: 15px;
-    padding: 15px !important;
-}
-
-.modal * {
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.conteudo-modal::-webkit-scrollbar {
-    width: 6px;
-}
-
-.conteudo-modal::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-}
-
-.conteudo-modal::-webkit-scrollbar-thumb {
-    background: var(--verde-militar);
-    border-radius: 3px;
-}
-
-.conteudo-modal::-webkit-scrollbar-thumb:hover {
-    background: #3a5a24;
-}
-*/
 
 /* ===================== CORREÇÃO FORÇADA PARA ALTURA DOS MODAIS NO CELULAR ===================== */
 
-/* ===================== CORREÇÕES FINAIS PARA MODAIS ===================== */
 
 /* SOBRESCREVE REGRAS PARA MODAIS NO MOBILE COM ALTURA AJUSTADA */
+/* PARA MOBILE - GARANTIR VISIBILIDADE */
+@media (max-width: 768px) {
+    .botao-quantidade,
+    .botao-quantidade-pequeno {
+        background: var(--verde-militar) !important;
+        color: white !important;
+        border: 2px solid var(--verde-militar) !important;
+    }
+    
+    .botao-quantidade:hover,
+    .botao-quantidade-pequeno:hover {
+        background: #3a5a24 !important;
+        border-color: #3a5a24 !important;
+    }
+}
+
 @media (max-width: 768px) {
     /* ALTURA DOS MODAIS - VERSÃO BALANCEADA (88vh em vez de 75vh) */
     .modal[style*="display: block"],
@@ -2649,31 +2475,6 @@ img {
     }
 }
 
-/* CORREÇÕES PARA DESKTOP (se necessário) */
-@media (min-width: 769px) {
-    /* GARANTIR QUE BADGE "RECOMENDADO" NÃO SEJA CORTADA NO DESKTOP */
-    .opcao-pagamento:first-child {
-        position: relative !important;
-        overflow: visible !important;
-    }
-    
-    .opcao-recomendado {
-        top: -10px !important;
-        left: auto !important;
-        right: 20px !important;
-        transform: none !important;
-    }
-    
-    /* MODAL PRODUTO - SCROLL COMPLETO NO DESKTOP TAMBÉM */
-    #modal-produto {
-        overflow-y: auto !important;
-    }
-    
-    #modal-produto .botoes-modal-produto {
-        position: relative !important;
-        margin-top: 20px !important;
-    }
-}
 
 /* CORREÇÕES GERAIS PARA TODOS OS DISPOSITIVOS */
 /* REMOVER POSITION FIXED/STICKY DOS BOTÕES */
@@ -2702,4 +2503,17 @@ img {
 .opcao-pagamento {
     position: relative !important;
     overflow: visible !important; /* ESSENCIAL para não cortar a badge */
+}
+
+/* ===================== BOTÕES DE AVANÇO NO FLUXO ===================== */
+.botao-avancar {
+    background-color: var(--verde-militar);
+    color: var(--branco);
+    border: none;
+}
+
+.botao-avancar:hover:not(:disabled) {
+    background-color: #3a5a24;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(45, 58, 39, 0.3);
 }

@@ -169,7 +169,7 @@
     </div>
 
     <!-- ===================== MODAL 2: DETALHES DO PRODUTO ===================== -->
-    <div id="modal-produto" class="modal">
+        <div id="modal-produto" class="modal">
         <button class="botao-fechar-modal" onclick="fecharModal('modal-produto')">&times;</button>
         
         <div id="corpo-modal-produto" class="conteudo-modal-produto">
@@ -177,19 +177,19 @@
         </div>
         
         <div class="botoes-modal-produto">
+            <!-- Botão para adicionar e ir para o carrinho -->
+            <button id="botao-adicionar-e-ir-para-carrinho" 
+                    class="botao-acao botao-verde botao-avancar" 
+                    onclick="adicionarEIrParaCarrinho()" 
+                    style="display: none;">
+                <i class="fas fa-shopping-basket"></i> VER CARRINHO
+            </button>
+            
             <!-- Botão para adicionar e continuar comprando -->
             <button id="botao-adicionar-simples" 
                     class="botao-acao botao-bege" 
                     onclick="adicionarItemAoCarrinho()">
                 <i class="fas fa-plus"></i> ADICIONAR AO CARRINHO
-            </button>
-            
-            <!-- Botão para adicionar e ir para o carrinho -->
-            <button id="botao-adicionar-e-ir-para-carrinho" 
-                    class="botao-acao botao-verde" 
-                    onclick="adicionarEIrParaCarrinho()" 
-                    style="display: none;">
-                <i class="fas fa-shopping-basket"></i> VER CARRINHO
             </button>
         </div>
     </div>

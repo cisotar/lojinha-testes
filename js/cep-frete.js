@@ -120,87 +120,35 @@ function preencherCamposEndereco(dados) {
 }
 
 // ===================== CÁLCULO DE FRETE POR BAIRRO =====================
+// 1. Função que DEFINE o valor (chamada quando o bairro é identificado)
 function calcularFretePorBairro(nomeBairro) {
-    // NOTA: Você precisa adicionar 'entrega' ao seus dadosIniciais!
-    // Exemplo em dados.js:
-    // "entrega": {
-    //   "taxaGeral": 8.00,
-    //   "bairros": [
-    //     { "nome": "Centro", "valor": 5.00 },
-    //     { "nome": "Jardins", "valor": 7.00 }
-    //   ]
-    // }
-    
-    if (!dadosIniciais.entrega) {
-        console.warn('Dados de entrega não configurados em dados.js');
-        // Usar taxa padrão
-        estadoAplicativo.taxaEntrega = 8.00;
-        estadoAplicativo.bairroEntrega = 'Taxa padrão';
-        atualizarDisplayFrete(8.00, nomeBairro);
-        return;
-    }
-    
-    const dadosEntrega = dadosIniciais.entrega;
-    let taxaEntrega = dadosEntrega.taxaGeral || 8.00; // Taxa padrão
-    
-    // Normalizar nome do bairro (remover acentos, converter para minúsculas)
-    const nomeBairroNormalizado = normalizarTexto(nomeBairro);
-    
-    // Buscar bairro na lista
-    const bairroEncontrado = dadosEntrega.bairros?.find(b => 
-        normalizarTexto(b.nome) === nomeBairroNormalizado
+    if (!nomeBairro) return;
+
+    const bairros = window.dadosIniciais.entrega.bairros;
+    const bairroEncontrado = bairros.find(b => 
+        b.nome.toLowerCase().trim() === nomeBairro.toLowerCase().trim()
     );
-    
-    // Se encontrar, usar taxa específica
-    if (bairroEncontrado) {
-        taxaEntrega = bairroEncontrado.valor;
-        estadoAplicativo.bairroEntrega = bairroEncontrado.nome;
-        console.log(`Frete para ${bairroEncontrado.nome}: R$ ${taxaEntrega.toFixed(2)}`);
-    } else {
-        // Usar taxa geral
-        estadoAplicativo.bairroEntrega = 'Outro bairro';
-        console.log(`Frete para bairro não cadastrado: R$ ${taxaEntrega.toFixed(2)} (taxa geral)`);
-    }
-    
-    // Atualizar estado da aplicação
-    estadoAplicativo.taxaEntrega = taxaEntrega;
-    
-    // Atualizar interface
-    atualizarDisplayFrete(taxaEntrega, nomeBairro);
-    
-    // Atualizar resumo do carrinho se estiver aberto
-    if (typeof atualizarResumoFinanceiroCarrinho === 'function') {
-        atualizarResumoFinanceiroCarrinho();
+
+    // Se achar o bairro usa a taxa dele, senão usa a taxa geral
+    enderecoCliente.taxaEntrega = bairroEncontrado ? bairroEncontrado.taxa : window.dadosIniciais.entrega.taxaGeral;
+
+    // Atualiza apenas a interface visual do frete
+    const elementoFrete = document.getElementById('valor-frete');
+    if (elementoFrete) {
+        elementoFrete.textContent = formatarMoeda(enderecoCliente.taxaEntrega);
     }
 }
 
-function normalizarTexto(texto) {
-    return texto
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Remover acentos
-        .trim();
+// 2. Função que CONSULTA o valor (será usada pelo carrinho e pagamento)
+function obterTaxaEntregaAtual() {
+    // Retorna o que estiver gravado no endereço ou a taxa geral como última opção
+    return (enderecoCliente && enderecoCliente.taxaEntrega !== undefined) 
+        ? enderecoCliente.taxaEntrega 
+        : window.dadosIniciais.entrega.taxaGeral;
 }
 
-function atualizarDisplayFrete(taxa, bairro) {
-    // Atualizar card de informação de frete
-    const cardFrete = elemento('informacao-frete');
-    const valorFreteElemento = elemento('valor-frete');
-    
-    if (cardFrete && valorFreteElemento) {
-        cardFrete.style.display = 'flex';
-        valorFreteElemento.textContent = formatarMoeda(taxa);
-        
-        // Adicionar tooltip com o bairro
-        cardFrete.title = `Frete calculado para: ${bairro}`;
-    }
-    
-    // Atualizar no modal de pagamento se estiver aberto
-    const taxaPagamentoElemento = elemento('taxa-entrega-pagamento');
-    if (taxaPagamentoElemento) {
-        taxaPagamentoElemento.textContent = formatarMoeda(taxa);
-    }
-}
+// Tornar global para que o carrinho.js consiga enxergar
+window.obterTaxaEntregaAtual = obterTaxaEntregaAtual;
 
 // ===================== VALIDAÇÃO DE ENDEREÇO =====================
 function validarEnderecoCompleto() {
