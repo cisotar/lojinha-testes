@@ -28,6 +28,21 @@
             overflow: hidden;
         }
 
+        .card-link {
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s ease;
+        }
+
+        .card-link:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card {
+            height: 100%; /* Garante que todos tenham o mesmo tamanho */
+        }
+
         /* --- SIDEBAR --- */
         .sidebar {
             width: 260px;
@@ -410,11 +425,20 @@
     // 2. INICIALIZAÇÃO
     // ===========================================
     window.onload = function() {
-        // Tenta carregar do arquivo primeiro
+        // 1. Carrega os dados do arquivo ou localStorage
         carregarDadosJS();
-        // Força a abertura no Dashboard
+        
+        // 2. Busca o container da aba dashboard
+        const dashContainer = document.getElementById('tab-dashboard');
+        
+        // 3. Renderiza os novos cards com links
+        if (dashContainer) {
+            renderDashboard(dashContainer);
+        }
+        
+        // 4. Abre na visão geral por padrão
         navegarPara('dashboard');
-    };
+    }; // <--- Verifique se há apenas um fechamento aqui
 
     function navegarPara(secao) {
         secaoAtiva = secao;
@@ -438,23 +462,57 @@
     // ===========================================
     // 3. RENDERIZAÇÃO
     // ===========================================
-
     function renderDashboard(container) {
+        if (!container) return;
+
         const totalProdutos = db.secoes.reduce((acc, s) => acc + s.itens.length, 0);
+        const totalBairros = db.entrega.bairros.length;
         
         container.innerHTML = `
             <header><h1><i class="fas fa-chart-line"></i> Visão Geral</h1></header>
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-value">${totalProdutos}</div><div class="stat-label">Produtos</div></div>
-                <div class="stat-card"><div class="stat-value">${db.cupons.length}</div><div class="stat-label">Cupons</div></div>
-                <div class="stat-card"><div class="stat-value">R$ ${parseFloat(db.entrega.taxaGeral).toFixed(2)}</div><div class="stat-label">Frete Base</div></div>
+            
+            <div class="secao-container" style="margin-bottom: 30px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: var(--shadow);">
+                <div class="secao-header" style="background: var(--verde-militar); color: white; border-radius: 8px 8px 0 0; padding: 15px;">
+                    <div class="secao-titulo" style="color: white;">
+                        <i class="far fa-calendar-alt"></i> DATA DA PRÓXIMA FORNADA
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 25px;">
+                    <div class="form-group">
+                        <label style="font-weight: bold; color: var(--marrom-detalhe);">Data de Entrega</label>
+                        <input type="date" id="dash-data" value="${db.fornada.dataISO}" onchange="CRUD.atualizarFornada()" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-weight: bold; color: var(--marrom-detalhe);">Antecedência (Dias)</label>
+                        <input type="number" id="dash-dias" value="${db.fornada.diasAntecedencia}" onchange="CRUD.atualizarFornada()" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-weight: bold; color: var(--marrom-detalhe);">Hora Limite</label>
+                        <input type="text" id="dash-hora" value="${db.fornada.horaLimite}" onchange="CRUD.atualizarFornada()" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+                </div>
             </div>
-            <div class="secao-container">
-                <div class="secao-header"><div class="secao-titulo"><i class="far fa-clock"></i> Configuração da Fornada</div></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                    <div class="form-group"><label>Data Entrega</label><input type="date" id="dash-data" value="${db.fornada.dataISO}" onchange="CRUD.atualizarFornada()"></div>
-                    <div class="form-group"><label>Antecedência (Dias)</label><input type="number" id="dash-dias" value="${db.fornada.diasAntecedencia}" onchange="CRUD.atualizarFornada()"></div>
-                    <div class="form-group"><label>Hora Limite</label><input type="text" id="dash-hora" value="${db.fornada.horaLimite}" onchange="CRUD.atualizarFornada()"></div>
+
+            <div class="stats-grid" style="margin-bottom: 40px;">
+                <div class="stat-card" onclick="navegarPara('produtos')" style="cursor:pointer !important;">
+                    <div class="stat-value">${totalProdutos}</div>
+                    <div class="stat-label">Produtos <i class="fas fa-chevron-right" style="font-size:0.7rem"></i></div>
+                </div>
+
+                <div class="stat-card" onclick="navegarPara('cupons')" style="cursor:pointer !important;">
+                    <div class="stat-value">${db.cupons.length}</div>
+                    <div class="stat-label">Cupons <i class="fas fa-chevron-right" style="font-size:0.7rem"></i></div>
+                </div>
+
+                <div class="stat-card" onclick="navegarPara('logistica')" style="cursor:pointer !important; border-bottom: 4px solid var(--marrom-detalhe);">
+                    <div class="stat-value">${totalBairros}</div>
+                    <div class="stat-label">Bairros Atendidos <i class="fas fa-chevron-right" style="font-size:0.7rem"></i></div>
+                </div>
+
+                <div class="stat-card" onclick="navegarPara('logistica')" style="cursor:pointer !important;">
+                    <div class="stat-value">R$ ${parseFloat(db.entrega.taxaGeral).toFixed(2)}</div>
+                    <div class="stat-label">Taxa Geral <i class="fas fa-chevron-right" style="font-size:0.7rem"></i></div>
                 </div>
             </div>
         `;
@@ -541,25 +599,179 @@
     }
 
     function renderLogistica(container) {
-        if(!db.entrega) db.entrega = { taxaGeral: 10, bairros: [] };
-        let html = `
-            <header><h1><i class="fas fa-motorcycle"></i> Logística e Frete</h1></header>
-            <div class="taxa-geral-box">
-                <div><strong>Taxa Padrão</strong> (Sem bairro)</div>
-                <div>R$ <input type="number" step="0.50" style="width:70px; padding:5px;" value="${db.entrega.taxaGeral}" onchange="CRUD.atualizarTaxaGeral(this.value)"></div>
-            </div>
-            <div class="secao-container">
-                <div class="secao-header">
-                    <div class="secao-titulo">Taxas por Bairro</div>
-                    <button class="btn-action btn-add" onclick="CRUD.modalBairro()" style="width: auto;">+ Bairro</button>
+        if (!container) return;
+
+        container.innerHTML = `
+            <header><h1><i class="fas fa-truck"></i> Logística e Entrega</h1></header>
+            
+            <div class="secao-container" style="margin-bottom:20px;">
+                <div class="secao-header"><div class="secao-titulo">Taxa de Entrega Geral</div></div>
+                <div style="padding: 20px;">
+                    <div class="form-group" style="max-width: 200px;">
+                        <label>Valor Padrão (R$)</label>
+                        <input type="number" step="0.5" value="${db.entrega.taxaGeral}" 
+                            onchange="db.entrega.taxaGeral = parseFloat(this.value); persistir();">
+                    </div>
                 </div>
-                <table><thead><tr><th>Bairro</th><th>Valor</th><th width="100">Ações</th></tr></thead><tbody>
+            </div>
+
+            <div class="secao-container">
+                <div class="secao-header"><div class="secao-titulo">Bairros e Taxas Específicas</div></div>
+                <div style="padding: 20px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="text-align: left; border-bottom: 2px solid #eee;">
+                                <th style="padding: 10px;">Bairro</th>
+                                <th style="padding: 10px; width: 150px;">Taxa (R$)</th>
+                                <th style="padding: 10px; width: 50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo-tabela-bairros">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
         `;
+        // Chama a função que desenha as linhas pela primeira vez
+        atualizarTabelaBairros();
+    }
+
+    function atualizarTabelaBairros() {
+        const corpo = document.getElementById('corpo-tabela-bairros');
+        if (!corpo) return;
+
+        let html = '';
+        // Renderiza bairros existentes usando a propriedade .taxa
         db.entrega.bairros.forEach((b, idx) => {
-            html += `<tr><td>${b.nome}</td><td>R$ ${parseFloat(b.valor).toFixed(2)}</td><td><button class="btn-icon" onclick="CRUD.modalBairro(${idx})"><i class="fas fa-edit"></i></button><button class="btn-icon" onclick="CRUD.removerBairro(${idx})" style="color:var(--red)"><i class="fas fa-trash"></i></button></td></tr>`;
+            html += `
+                <tr style="border-bottom: 1px solid #f4f4f4;">
+                    <td style="padding: 8px;">
+                        <input type="text" value="${b.nome}" 
+                            onchange="db.entrega.bairros[${idx}].nome = this.value; persistir();" 
+                            style="width: 95%; padding: 5px;">
+                    </td>
+                    <td style="padding: 8px;">
+                        <input type="number" step="0.5" value="${b.taxa || 0}" 
+                            onchange="db.entrega.bairros[${idx}].taxa = parseFloat(this.value); persistir();" 
+                            style="width: 95%; padding: 5px;">
+                    </td>
+                    <td style="padding: 8px;">
+                        <button onclick="db.entrega.bairros.splice(${idx}, 1); persistir(); atualizarTabelaBairros();" 
+                            style="background:none; border:none; color:#e74c3c; cursor:pointer;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
         });
-        html += `</tbody></table></div>`;
-        container.innerHTML = html;
+
+        // Mantém a linha de input para novo cadastro no final
+        html += `
+            <tr style="background: #fdfdfd;">
+                <td style="padding: 8px;">
+                    <input type="text" id="novo-bairro-nome" placeholder="Nome do bairro..." 
+                        style="width: 95%; padding: 5px; border: 1px dashed #ccc;">
+                </td>
+                <td style="padding: 8px;">
+                    <input type="number" id="novo-bairro-taxa" step="0.5" placeholder="0.00" 
+                        onchange="tentarAdicionarBairro()" 
+                        onkeydown="if(event.key==='Enter') tentarAdicionarBairro()" 
+                        style="width: 95%; padding: 5px; border: 1px dashed #ccc;">
+                </td>
+                <td></td>
+            </tr>
+        `;
+
+        corpo.innerHTML = html;
+    }
+
+    function tentarAdicionarBairro() {
+        const inputNome = document.getElementById('novo-bairro-nome');
+        const inputTaxa = document.getElementById('novo-bairro-taxa');
+        
+        const nome = inputNome.value.trim();
+        const taxaStr = inputTaxa.value;
+
+        if (nome !== "" && taxaStr !== "") {
+            db.entrega.bairros.push({ 
+                nome: nome, 
+                taxa: parseFloat(taxaStr) || 0 // Alterado de 'valor' para 'taxa'
+            });
+            
+            persistir();
+            atualizarTabelaBairros();
+            
+            setTimeout(() => {
+                const proxNome = document.getElementById('novo-bairro-nome');
+                if(proxNome) proxNome.focus();
+            }, 50);
+        }
+    }
+
+    // Função auxiliar para gerar as linhas
+    function renderizarLinhasBairros() {
+        let html = '';
+        // Linhas existentes
+        db.entrega.bairros.forEach((b, idx) => {
+            html += `
+                <tr>
+                    <td><input type="text" value="${b.nome}" onchange="atualizarBairro(${idx}, 'nome', this.value)" style="width: 95%;"></td>
+                    <td><input type="number" step="0.5" value="${b.taxa}" onchange="atualizarBairro(${idx}, 'taxa', this.value)" style="width: 95%;"></td>
+                    <td><button onclick="removerBairro(${idx})" style="background:none; border:none; color:red; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `;
+        });
+        // Linha Vazia - Agora com ID específico para o input de gatilho
+        html += `
+            <tr style="background: #f9f9f9;">
+                <td><input type="text" id="novo-bairro-nome" placeholder="Novo bairro..." onchange="verificarNovaLinha()" style="width: 95%;"></td>
+                <td><input type="number" id="novo-bairro-taxa" step="0.5" placeholder="0.00" onchange="verificarNovaLinha()" style="width: 95%;"></td>
+                <td></td>
+            </tr>
+        `;
+        return html;
+    }
+
+    function atualizarBairro(idx, campo, valor) {
+        if (campo === 'taxa') valor = parseFloat(valor) || 0;
+        db.entrega.bairros[idx][campo] = valor;
+        persistir();
+        // Não precisa renderizar tudo de novo aqui para não perder o foco enquanto edita
+    }
+
+    function removerBairro(idx) {
+        if (confirm('Remover este bairro?')) {
+            db.entrega.bairros.splice(idx, 1);
+            persistir();
+            renderLogistica(document.getElementById('tab-logistica'));
+        }
+    }
+
+    function verificarNovaLinha() {
+        const nomeInput = document.getElementById('novo-bairro-nome');
+        const taxaInput = document.getElementById('novo-bairro-taxa');
+        
+        const nome = nomeInput.value.trim();
+        const taxa = taxaInput.value;
+
+        // Dispara a criação se o nome for preenchido e você sair do campo ou der Enter
+        if (nome !== "") {
+            db.entrega.bairros.push({
+                nome: nome,
+                taxa: parseFloat(taxa) || 0
+            });
+            
+            persistir();
+            
+            // RERENDERIZAÇÃO IMEDIATA:
+            // Buscamos o container da aba de logística e chamamos a renderização
+            const container = document.getElementById('tab-logistica');
+            renderLogistica(container);
+            
+            // Coloca o foco no novo campo de nome para você continuar cadastrando
+            const novoInput = document.getElementById('novo-bairro-nome');
+            if (novoInput) novoInput.focus();
+        }
     }
 
     function renderCupons(container) {
@@ -581,10 +793,12 @@
             db.fornada.horaLimite = document.getElementById('dash-hora').value;
             persistir();
         },
+
         novaSessao: () => {
             const nome = prompt("Nome da nova categoria:");
             if (nome) { db.secoes.push({ nome, itens: [] }); db.opcionais[nome] = []; renderizarAtual(); persistir(); }
         },
+
         removerSessao: (idx) => { if(confirm('Apagar categoria?')) { delete db.opcionais[db.secoes[idx].nome]; db.secoes.splice(idx, 1); renderizarAtual(); persistir(); } },
         
         editarSessao: (idx) => {
@@ -603,12 +817,14 @@
                 <div class="modal-footer"><button class="btn-cancel" onclick="fecharModal()">Cancelar</button><button class="btn-confirm" onclick="CRUD.salvarSessao(${idx})">Salvar</button></div>`;
             abrirModalContent(html);
         },
+
         addOpTemp: (sIdx) => { 
             const n = db.secoes[sIdx].nome; 
             if(!db.opcionais[n]) db.opcionais[n]=[]; 
             db.opcionais[n].push({nome:"Novo", preco:0}); 
             CRUD.editarSessao(sIdx); 
         },
+
         rmOpTemp: (sIdx, oIdx) => { db.opcionais[db.secoes[sIdx].nome].splice(oIdx, 1); CRUD.editarSessao(sIdx); },
         salvarSessao: (idx) => {
             const novoNome = document.getElementById('edit-cat-nome').value;
@@ -636,6 +852,7 @@
             renderizarAtual();
             persistir();
         },
+
         toggleEsgotado: (sIdx, pIdx) => {
             const item = db.secoes[sIdx].itens[pIdx];
             item.esgotado = !item.esgotado;
@@ -643,36 +860,78 @@
             persistir();
         },
 
+        selecionarArquivo: (input) => {
+            if (input.files && input.files[0]) {
+                // Pega apenas o nome do arquivo (ex: "pao-italiano.jpg")
+                const nomeArquivo = input.files[0].name;
+                
+                // Atualiza o campo de texto no modal com o prefixo da sua pasta de imagens
+                document.getElementById('prod-img').value = "img/" + nomeArquivo;
+            }
+        },
+
         editarProduto: (sIdx, pIdx) => {
             const item = db.secoes[sIdx].itens[pIdx];
             const todosOps = db.opcionais[db.secoes[sIdx].nome] || [];
             
-            // GERAÇÃO DOS BALÕES CLICÁVEIS (BADGES)
-            let badgesHtml = '';
-            if (todosOps.length === 0) {
-                badgesHtml = '<p style="color:#999; font-size:0.9rem;">Nenhum opcional configurado nesta categoria.</p>';
-            } else {
-                badgesHtml = todosOps.map(op => {
-                    const isSelected = (item.opcionais_ativos || []).includes(op.nome);
-                    return `<div class="badge-select ${isSelected ? 'selected' : ''}" onclick="this.classList.toggle('selected')" data-val="${op.nome}">
-                        ${isSelected ? '<i class="fas fa-check"></i>' : '<i class="far fa-circle"></i>'} 
-                        ${op.nome} (+R$${op.preco})
-                    </div>`;
-                }).join('');
-            }
-
             const html = `
                 <h2>Editar Produto</h2>
-                <div class="form-group"><label>Nome</label><input id="prod-nome" value="${item.nome}"></div>
+                
+                <div class="form-group">
+                    <label>Nome do Produto</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input id="prod-nome" value="${item.nome}" style="flex: 1;">
+                        <button type="button" class="btn-action" style="width: auto; margin: 0; background: #4285F4; color: white; padding: 0 15px;" 
+                            title="Buscar no Google"
+                            onclick="window.open('https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(document.getElementById('prod-nome').value), '_blank')">
+                            <i class="fab fa-google"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Status e Disponibilidade</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" id="btn-modal-vis" class="btn-toggle ${item.visivel ? 'ativo' : ''}" style="flex: 1; justify-content: center; padding: 10px;" 
+                            onclick="this.classList.toggle('ativo'); const i = this.querySelector('i'); i.classList.toggle('fa-eye'); i.classList.toggle('fa-eye-slash'); this.querySelector('span').textContent = this.classList.contains('ativo') ? 'Visível' : 'Oculto';">
+                            <i class="fas ${item.visivel ? 'fa-eye' : 'fa-eye-slash'}"></i> <span style="margin-left:8px">${item.visivel ? 'Visível' : 'Oculto'}</span>
+                        </button>
+                        
+                        <button type="button" id="btn-modal-esg" class="btn-toggle ${item.esgotado ? 'esgotado' : 'ativo'}" style="flex: 1; justify-content: center; padding: 10px;"
+                            onclick="this.classList.toggle('esgotado'); this.classList.toggle('ativo'); const i = this.querySelector('i'); i.classList.toggle('fa-ban'); i.classList.toggle('fa-check'); this.querySelector('span').textContent = this.classList.contains('esgotado') ? 'Esgotado' : 'Disponível';">
+                            <i class="fas ${item.esgotado ? 'fa-ban' : 'fa-check'}"></i> <span style="margin-left:8px">${item.esgotado ? 'Esgotado' : 'Disponível'}</span>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="form-group"><label>Descrição</label><textarea id="prod-desc" rows="3">${item.descricao}</textarea></div>
+                
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
                     <div class="form-group"><label>Preço (R$)</label><input type="number" step="0.5" id="prod-preco" value="${item.preco}"></div>
-                    <div class="form-group"><label>Imagem</label><input id="prod-img" value="${item.imagem}"></div>
+                    
+                    <div class="form-group">
+                        <label>Imagem</label>
+                        <div style="display: flex; gap: 5px;">
+                            <input id="prod-img" value="${item.imagem}" readonly style="flex: 1; background: #f0f0f0; cursor: not-allowed;">
+                            <button type="button" class="btn-action" style="width: auto; margin: 0; padding: 0 15px; background: #7d4f39; color: white;" onclick="document.getElementById('file-input').click()">
+                                <i class="fas fa-folder-open"></i>
+                            </button>
+                        </div>
+                        <input type="file" id="file-input" style="display: none;" onchange="CRUD.selecionarArquivo(this)">
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label>Opcionais (Clique para ativar)</label>
-                    <div class="badges-container">${badgesHtml}</div>
+                    <div class="badges-container">
+                        ${todosOps.length === 0 
+                            ? '<p style="color:#999; font-size:0.9rem;">Nenhum opcional configurado.</p>' 
+                            : todosOps.map(op => {
+                                const isSelected = (item.opcionais_ativos || []).includes(op.nome);
+                                return `<div class="badge-select ${isSelected ? 'selected' : ''}" onclick="this.classList.toggle('selected')" data-val="${op.nome}">${op.nome} (+R$${op.preco})</div>`;
+                            }).join('')
+                        }
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -682,19 +941,32 @@
             `;
             abrirModalContent(html);
         },
-        
+   
         salvarProduto: (sIdx, pIdx) => {
             const item = db.secoes[sIdx].itens[pIdx];
+            
+            // Campos de texto e número
             item.nome = document.getElementById('prod-nome').value;
             item.descricao = document.getElementById('prod-desc').value;
             item.preco = parseFloat(document.getElementById('prod-preco').value);
             item.imagem = document.getElementById('prod-img').value;
             
-            // Captura os opcionais marcados nos balões
-            const selecionados = Array.from(document.querySelectorAll('.badge-select.selected')).map(el => el.getAttribute('data-val'));
+            // CAPTURA DOS NOVOS STATUS DO MODAL
+            // Verifica se o botão de visibilidade tem a classe 'ativo'
+            item.visivel = document.getElementById('btn-modal-vis').classList.contains('ativo');
+            
+            // Verifica se o botão de estoque tem a classe 'esgotado'
+            item.esgotado = document.getElementById('btn-modal-esg').classList.contains('esgotado');
+
+            // Captura dos Opcionais (Badges selecionadas)
+            const selecionados = Array.from(document.querySelectorAll('.badge-select.selected'))
+                                    .map(el => el.getAttribute('data-val'));
             item.opcionais_ativos = selecionados;
 
-            fecharModal(); renderizarAtual(); persistir();
+            // Finalização padrão
+            fecharModal();
+            renderizarAtual();
+            persistir();
         },
         
         duplicarProduto: (sIdx, pIdx) => {
@@ -703,6 +975,7 @@
             db.secoes[sIdx].itens.push(novo);
             renderizarAtual(); persistir();
         },
+
         removerProduto: (sIdx, pIdx) => { if(confirm('Excluir?')) { db.secoes[sIdx].itens.splice(pIdx, 1); renderizarAtual(); persistir(); } },
         
         // Logística e Cupons (Simples)
@@ -712,12 +985,22 @@
             const html = `<h2>Bairro</h2><input id="b-nome" value="${b.nome}" placeholder="Nome" class="form-group" style="width:100%; padding:10px; margin-bottom:10px;"><input id="b-val" type="number" value="${b.valor}" placeholder="Valor" class="form-group" style="width:100%; padding:10px;"><div class="modal-footer"><button class="btn-confirm" onclick="CRUD.salvarBairro(${idx})">Salvar</button></div>`;
             abrirModalContent(html);
         },
+
         salvarBairro: (idx) => {
             const novo = { nome: document.getElementById('b-nome').value, valor: parseFloat(document.getElementById('b-val').value) };
             if(idx!==null) db.entrega.bairros[idx] = novo; else db.entrega.bairros.push(novo);
             fecharModal(); renderizarAtual(); persistir();
         },
-        removerBairro: (idx) => { db.entrega.bairros.splice(idx,1); renderizarAtual(); persistir(); },
+
+        removerBairro: (idx) => { 
+            if(confirm('Excluir este bairro?')) {
+                db.entrega.bairros.splice(idx, 1); 
+                persistir(); 
+                // Garante que a tabela seja redesenhada usando a nova lógica de 'taxa'
+                atualizarTabelaBairros();
+            }
+        },
+
         modalCupom: () => {
              const html = `<h2>Cupom</h2><input id="c-cod" placeholder="Código" style="text-transform:uppercase; width:100%; padding:10px; margin-bottom:10px;"><select id="c-tipo" style="width:100%; padding:10px; margin-bottom:10px;"><option value="porcentagem">%</option><option value="fixo">R$</option></select><input id="c-val" type="number" placeholder="Valor" style="width:100%; padding:10px;"><div class="modal-footer"><button class="btn-confirm" onclick="CRUD.salvarCupom()">Salvar</button></div>`;
              abrirModalContent(html);
@@ -726,6 +1009,7 @@
             db.cupons.push({ codigo: document.getElementById('c-cod').value.toUpperCase(), tipo: document.getElementById('c-tipo').value, valor: parseFloat(document.getElementById('c-val').value) });
             fecharModal(); renderizarAtual(); persistir();
         },
+
         removerCupom: (idx) => { db.cupons.splice(idx, 1); renderizarAtual(); persistir(); }
     };
 

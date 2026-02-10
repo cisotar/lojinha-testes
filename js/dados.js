@@ -13,7 +13,7 @@ window.dadosIniciais = {
 },
 
     fornada: {
-   "dataISO": "2026-02-11",
+   "dataISO": "2026-02-16",
    "diasAntecedencia": 2,
    "horaLimite": "23:59h"
 },
@@ -23,15 +23,50 @@ window.dadosIniciais = {
    "bairros": [
       {
          "nome": "Centro",
-         "valor": 5
+         "valor": 5,
+         "taxa": 10
       },
       {
-         "nome": "Jardim Planalto",
-         "valor": 12
+         "nome": "Vila Aparecida",
+         "valor": 12,
+         "taxa": 12
       },
       {
-         "nome": "Vila Nova",
-         "valor": 8
+         "nome": "Cidade Planejada",
+         "valor": 8,
+         "taxa": 17
+      },
+      {
+         "nome": "Parque dos Estado",
+         "taxa": 17
+      },
+      {
+         "nome": "Altos de Bragança",
+         "taxa": 13
+      },
+      {
+         "nome": "Residencial das Ilhas",
+         "taxa": 13
+      },
+      {
+         "nome": "Jardim Nova Bragança",
+         "taxa": 11
+      },
+      {
+         "nome": "Jardim Santa Helena",
+         "taxa": 15
+      },
+      {
+         "nome": "Jardim Europa",
+         "taxa": 10
+      },
+      {
+         "nome": "Jardim América",
+         "taxa": 10
+      },
+      {
+         "nome": "Bosques da Pedra",
+         "taxa": 18
       }
    ]
 },
@@ -419,7 +454,7 @@ window.dadosIniciais = {
             "esgotado": false
          },
          {
-            "nome": "Pão multigrãos",
+            "nome": "Pão com mix de grãos",
             "descricao": "Pão rústico de longa fermentação, com blend de trigo italiano refinado, trigo integral orgânico e centeio integral orgânico. Casca crocante e miolo úmido e saboroso.",
             "preco": 38,
             "imagem": "img/paodecampanha.jpg",
@@ -436,7 +471,7 @@ window.dadosIniciais = {
             "nome": "Ciabatta",
             "descricao": "Este pão rústico combina casca crocante e miolo leve, de sabor profundo. Simples, autêntica e feita para quem valoriza pão de verdade.",
             "preco": 15,
-            "imagem": "img/ciabatta.jpeg",
+            "imagem": "img/ciabatta.webp",
             "opcionais_ativos": [
                "Alichella (100g)",
                "Sardella (100g)",
@@ -493,10 +528,80 @@ window.dadosIniciais = {
       "nome": "Panini",
       "itens": [
          {
+            "nome": "Giovanni",
+            "descricao": "Sanduíche feito com mortadela Giovanni Ceratti na focaccia.",
+            "preco": 7,
+            "imagem": "img/panino-mortadela.webp",
+            "opcionais": "Panini",
+            "opcionais_ativos": [
+               "Chancliche",
+               "Chancliche apimentado",
+               "Muçarela",
+               "Provolone",
+               "Queijo Prato",
+               "Melanzane sottolio",
+               "Azeite",
+               "Manteiga",
+               "Maionese",
+               "Pesto de azeitona",
+               "Pesto tradicional (manjericão)",
+               "Rúcula",
+               "Tomate"
+            ],
+            "visivel": true,
+            "esgotado": false
+         },
+         {
+            "nome": "Italiano",
+            "descricao": "Sanduíche feito com salame italiano na focaccia.",
+            "preco": 7,
+            "imagem": "img/panino-salame.webp",
+            "opcionais": "Panini",
+            "opcionais_ativos": [
+               "Chancliche",
+               "Chancliche apimentado",
+               "Muçarela",
+               "Provolone",
+               "Queijo Prato",
+               "Melanzane sottolio",
+               "Azeite",
+               "Manteiga",
+               "Maionese",
+               "Pesto de azeitona",
+               "Pesto tradicional (manjericão)",
+               "Rúcula",
+               "Tomate"
+            ],
+            "visivel": true,
+            "esgotado": false
+         },
+         {
+            "nome": "Piripiri",
+            "descricao": "Monte seu sanduíche de lomo piripiri (apimentado) na focaccia.",
+            "preco": 9,
+            "imagem": "img/panino-piripiri.webp",
+            "opcionais": "Panini",
+            "opcionais_ativos": [
+               "Chancliche",
+               "Chancliche apimentado",
+               "Muçarela",
+               "Provolone",
+               "Queijo Prato",
+               "Melanzane sottolio",
+               "Azeite",
+               "Pesto de azeitona",
+               "Pesto tradicional (manjericão)",
+               "Rúcula",
+               "Tomate"
+            ],
+            "visivel": true,
+            "esgotado": false
+         },
+         {
             "nome": "Monte seu Panino",
             "descricao": "Sanduíche feito na focaccia.",
             "preco": 5,
-            "imagem": "img/monteseupanino.jpg",
+            "imagem": "img/panino-monteoseu.webp",
             "opcionais": "Panini",
             "opcionais_ativos": [
                "Ciabatta",
@@ -527,72 +632,6 @@ window.dadosIniciais = {
             ],
             "visivel": true,
             "esgotado": true
-         },
-         {
-            "nome": "Piripiri",
-            "descricao": "Monte seu sanduíche de lomo piripiri (apimentado) na focaccia.",
-            "preco": 9,
-            "imagem": "img/monteseupanino.jpg",
-            "opcionais": "Panini",
-            "opcionais_ativos": [
-               "Chancliche",
-               "Chancliche apimentado",
-               "Muçarela",
-               "Provolone",
-               "Queijo Prato",
-               "Melanzane sottolio",
-               "Azeite",
-               "Pesto de azeitona",
-               "Pesto tradicional (manjericão)",
-               "Rúcula",
-               "Tomate"
-            ],
-            "visivel": true,
-            "esgotado": false
-         },
-         {
-            "nome": "Hamburguês",
-            "descricao": "Sanduíche feito com salame italiano na focaccia.",
-            "preco": 7,
-            "imagem": "img/monteseupanino.jpg",
-            "opcionais": "Panini",
-            "opcionais_ativos": [
-               "Chancliche",
-               "Chancliche apimentado",
-               "Muçarela",
-               "Provolone",
-               "Queijo Prato",
-               "Melanzane sottolio",
-               "Azeite",
-               "Pesto de azeitona",
-               "Pesto tradicional (manjericão)",
-               "Rúcula",
-               "Tomate"
-            ],
-            "visivel": true,
-            "esgotado": false
-         },
-         {
-            "nome": "Giovanni",
-            "descricao": "Sanduíche feito com mortadela Giovanni Ceratti na focaccia.",
-            "preco": 7,
-            "imagem": "img/monteseupanino.jpg",
-            "opcionais": "Panini",
-            "opcionais_ativos": [
-               "Chancliche",
-               "Chancliche apimentado",
-               "Muçarela",
-               "Provolone",
-               "Queijo Prato",
-               "Melanzane sottolio",
-               "Azeite",
-               "Pesto de azeitona",
-               "Pesto tradicional (manjericão)",
-               "Rúcula",
-               "Tomate"
-            ],
-            "visivel": true,
-            "esgotado": false
          }
       ]
    },
@@ -613,7 +652,7 @@ window.dadosIniciais = {
                "Tomate"
             ],
             "visivel": true,
-            "esgotado": false
+            "esgotado": true
          }
       ]
    },

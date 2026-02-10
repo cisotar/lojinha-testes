@@ -130,6 +130,11 @@ function renderizarModalProduto(produto) {
         <div class="imagem-produto-container">
             <img src="${produto.imagem}" alt="${produto.nome}" class="imagem-produto-modal">
         </div>
+
+        <div id="status-no-carrinho" class="${produtoAtual.quantidade > 0 ? 'visivel' : 'escondido'}" 
+             style="text-align: center; color: #4b6b35; font-weight: bold; font-size: 0.85rem; padding: 10px 0; background-color: #f0f7ed; border-bottom: 1px solid #e0eadd;">
+            <i class="fas fa-check-circle"></i> Item adicionado ao carrinho de compras
+        </div>
         
         <div class="moldura-padrao-modal">
             <h2 class="nome-produto-modal">${produto.nome}</h2>
@@ -263,37 +268,47 @@ function atualizarSubtotalProduto() {
 
 function verificarVisibilidadeBotoesModal() {
     const qtd = produtoAtual.quantidade;
-    const containerOpcionais = document.getElementById('contener-opcionais-produto');
     const containerSubtotal = document.getElementById('container-subtotal-produto');
+    const statusCarrinho = document.getElementById('status-no-carrinho');
     
-    // IDs REAIS do seu index.html
     const btnBege = document.getElementById('botao-adicionar-simples');
     const btnVerde = document.getElementById('botao-adicionar-e-ir-para-carrinho');
 
-    console.log(`👁️ Ajustando botões do modal de produto. Qtd: ${qtd}`);
+    console.log(`👁️ Verificando visibilidade. Qtd atual: ${qtd}`);
 
-    // 1. Visibilidade de detalhes (opcionais e subtotal)
+    // 1. Controle da Notificação Permanente e do Subtotal
     if (qtd > 0) {
-        if (containerOpcionais) containerOpcionais.classList.replace('escondido', 'visivel');
-        if (containerSubtotal) containerSubtotal.classList.replace('escondido', 'visivel');
+        // Se tem item, mostra subtotal e mensagem de confirmação
+        if (containerSubtotal) {
+            containerSubtotal.classList.remove('escondido');
+            containerSubtotal.classList.add('visivel');
+        }
+        if (statusCarrinho) {
+            statusCarrinho.classList.remove('escondido');
+            statusCarrinho.classList.add('visivel');
+            statusCarrinho.style.display = 'block';
+        }
     } else {
-        if (containerOpcionais) containerOpcionais.classList.replace('visivel', 'escondido');
-        if (containerSubtotal) containerSubtotal.classList.replace('visivel', 'escondido');
+        // Se zerou, esconde ambos para evitar confusão
+        if (containerSubtotal) {
+            containerSubtotal.classList.remove('visivel');
+            containerSubtotal.classList.add('escondido');
+        }
+        if (statusCarrinho) {
+            statusCarrinho.classList.remove('visivel');
+            statusCarrinho.classList.add('escondido');
+            statusCarrinho.style.display = 'none';
+        }
     }
 
-    // 2. BOTÃO VERDE (AVANÇAR): Abrir Carrinho
+    // 2. Controle dos Botões (Mantendo IDs e classes originais)
     if (btnVerde) {
-        btnVerde.className = 'botao-acao botao-verde-militar'; // Aplicando sua nova cor militar
-        btnVerde.innerHTML = '<i class="fas fa-shopping-basket"></i> ABRIR CARRINHO DE COMPRAS';
+        // Botão verde de "Abrir Carrinho" só aparece se houver itens
         btnVerde.style.display = (qtd > 0) ? 'flex' : 'none';
     }
 
-    // 3. BOTÃO BEGE (RETROCEDER): Continuar Comprando
     if (btnBege) {
-        btnBege.className = 'botao-acao botao-bege';
-        btnBege.innerHTML = '<i class="fas fa-arrow-left"></i> CONTINUAR COMPRANDO';
-        // Ação de apenas fechar o modal
-        btnBege.onclick = function() { fecharModal('modal-produto'); };
+        // Botão bege de "Continuar Comprando" sempre visível para permitir fechar
         btnBege.style.display = 'flex';
     }
 }
