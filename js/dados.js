@@ -50,7 +50,7 @@ window.dadosIniciais = {
          "taxa": 11
       },
       {
-         "nome": "Jardim Santa Helena",
+         "nome": "Santa Helena",
          "taxa": 15
       },
       {

@@ -39,45 +39,70 @@ function formatarCodigoPostal(input) {
 }
 
 // ===================== BUSCA DE ENDEREÇO VIA CEP =====================
-async function buscarEnderecoPorCodigoPostal(cep) {
-    if (!cep || cep.length !== 8) return;
+async function buscarEnderecoPorCodigoPostal(cepCru) {
+    // 1. LIMPEZA: Remove hífens/pontos
+    const cep = String(cepCru).replace(/\D/g, '');
+    
+    console.log("🚀 [Debug] Iniciando busca para o CEP:", cep);
 
-    if (typeof mostrarCarregamentoCEP === 'function') mostrarCarregamentoCEP(true);
+    if (!cep || cep.length !== 8) {
+        console.warn("⚠️ [Debug] CEP inválido ou incompleto detectado:", cep);
+        return;
+    }
+
+    if (typeof mostrarCarregamentoCEP === 'function') {
+        console.log("⏳ [Debug] Ativando loading...");
+        mostrarCarregamentoCEP(true);
+    }
 
     try {
+        console.log("🌐 [Debug] Chamando API ViaCEP...");
         const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const dados = await resposta.json();
 
         if (dados.erro) {
+            console.error("❌ [Debug] API retornou erro: CEP não encontrado.");
             alert("CEP não encontrado.");
             return;
         }
 
-        // Preenchimento imediato
-        if (typeof preencherCamposEndereco === 'function') preencherCamposEndereco(dados);
-        if (dados.bairro && typeof calcularFretePorBairro === 'function') calcularFretePorBairro(dados.bairro);
+        console.log("✅ [Debug] Dados recebidos da API:", dados);
 
-        // === CORREÇÃO DO CURSOR E DESTAQUE ===
-        // Usamos 1.5 segundos para garantir que o AddressManager terminou de processar
+        // 2. ATUALIZAÇÃO DO CARRINHO (IMPORTANTE: Primeiro renderizar)
+        // Chamamos primeiro para que o HTML base seja criado no DOM
+        if (typeof renderizarCarrinho === 'function') {
+            console.log("🔄 [Debug] Chamando renderizarCarrinho() antes do cálculo...");
+            renderizarCarrinho();
+        }
+
+        // 3. PREENCHIMENTO E CÁLCULO (Agora com os elementos já no DOM)
+        if (typeof preencherCamposEndereco === 'function') {
+            console.log("📝 [Debug] Preenchendo campos de endereço...");
+            preencherCamposEndereco(dados);
+        }
+
+        if (dados.bairro && typeof calcularFretePorBairro === 'function') {
+            console.log(`🚚 [Debug] Aplicando frete e notificações para: ${dados.bairro}`);
+            // Esta função agora vai encontrar os elementos e mostrar o bairro e a taxa
+            calcularFretePorBairro(dados.bairro);
+        }
+
+        // Foco e destaque
         setTimeout(() => {
-            const campoNumero = document.getElementById('numero-residencia-cliente');
             const campoNome = document.getElementById('nome-cliente');
-
-            if (campoNumero && !campoNumero.value.trim()) {
-                campoNumero.style.border = '2px solid #e74c3c';
-                campoNumero.style.backgroundColor = '#fff5f5';
-            }
-
             if (campoNome) {
-                campoNome.focus(); // O cursor vai para o NOME
-                console.log("🎯 Foco forçado no campo Nome após carregamento do endereço.");
+                console.log("🎯 [Debug] Movendo foco para o campo Nome.");
+                campoNome.focus();
             }
         }, 1500);
 
     } catch (erro) {
-        console.error('Erro ao buscar CEP:', erro);
+        console.error('❌ [Debug] Erro catastrófico na busca:', erro);
     } finally {
-        if (typeof mostrarCarregamentoCEP === 'function') mostrarCarregamentoCEP(false);
+        if (typeof mostrarCarregamentoCEP === 'function') {
+            mostrarCarregamentoCEP(false);
+            console.log("🏁 [Debug] Processo de busca finalizado.");
+        }
     }
 }
 
@@ -129,13 +154,37 @@ function calcularFretePorBairro(nomeBairro) {
         b.nome.toLowerCase().trim() === nomeBairro.toLowerCase().trim()
     );
 
-    // Se achar o bairro usa a taxa dele, senão usa a taxa geral
-    enderecoCliente.taxaEntrega = bairroEncontrado ? bairroEncontrado.taxa : window.dadosIniciais.entrega.taxaGeral;
+    const taxaCalculada = bairroEncontrado ? bairroEncontrado.taxa : window.dadosIniciais.entrega.taxaGeral;
 
-    // Atualiza apenas a interface visual do frete
-    const elementoFrete = document.getElementById('valor-frete');
-    if (elementoFrete) {
-        elementoFrete.textContent = formatarMoeda(enderecoCliente.taxaEntrega);
+    // 1. Salva nos estados globais (Essencial para os cálculos financeiros)
+    enderecoCliente.taxaEntrega = taxaCalculada;
+    window.taxaEntregaGlobal = taxaCalculada;
+    if(window.estadoAplicativo) window.estadoAplicativo.taxaEntrega = taxaCalculada;
+
+    // --- 2. FORÇAR EXIBIÇÃO NO CARRINHO (Notificação do Bairro e Taxa) ---
+    const divNotificacao = document.getElementById('notificacao-bairro-carrinho');
+    const spanBairro = document.getElementById('nome-bairro-info');
+    if (divNotificacao && spanBairro) {
+        spanBairro.textContent = nomeBairro;
+        divNotificacao.style.display = 'block'; 
+    }
+
+    const elementoValor = document.getElementById('valor-frete-carrinho');
+    const divResultado = document.getElementById('resultado-frete-carrinho');
+    if (elementoValor && divResultado) {
+        elementoValor.textContent = formatarMoeda(taxaCalculada);
+        divResultado.style.display = 'block'; 
+    }
+
+    // --- 3. ATUALIZAÇÃO DO MODAL DE PAGAMENTO (Para o resumo final) ---
+    const elTaxaPgto = document.getElementById('taxa-final-pagamento');
+    const elBairroPgto = document.getElementById('bairro-final-pagamento');
+    if (elTaxaPgto) elTaxaPgto.textContent = formatarMoeda(taxaCalculada);
+    if (elBairroPgto) elBairroPgto.textContent = nomeBairro;
+
+    // 4. Recalcula o Total (Soma produtos + frete)
+    if (typeof atualizarResumoFinanceiroCarrinho === 'function') {
+        atualizarResumoFinanceiroCarrinho();
     }
 }
 
@@ -438,14 +487,12 @@ function limparEnderecoCliente() {
             campo.value = '';
             campo.classList.remove('campo-valido', 'campo-invalido');
             
-            // Restaurar campos de leitura
             if (id === 'logradouro-cliente' || id === 'bairro-cliente' || id === 'cidade-cliente') {
                 campo.readOnly = true;
                 campo.classList.add('campo-leitura');
                 campo.placeholder = 'Será preenchido automaticamente';
             }
             
-            // Habilitar campo de número
             if (id === 'numero-residencia-cliente') {
                 campo.disabled = true;
                 campo.placeholder = 'Digite o CEP primeiro';
@@ -453,11 +500,13 @@ function limparEnderecoCliente() {
         }
     });
     
-    // Ocultar card de frete
-    const cardFrete = elemento('informacao-frete');
-    if (cardFrete) {
-        cardFrete.style.display = 'none';
-    }
+    // --- LIMPEZA DAS NOTIFICAÇÕES DE FRETE ---
+    const divNotificacao = document.getElementById('notificacao-bairro-carrinho');
+    const divResultado = document.getElementById('resultado-frete-carrinho');
+    if (divNotificacao) divNotificacao.style.display = 'none';
+    if (divResultado) divResultado.style.display = 'none';
+
+    window.taxaEntregaGlobal = 0;
 }
 
 // ===================== REMOVER DESTAQUE AO DIGITAR =====================

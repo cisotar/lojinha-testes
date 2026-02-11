@@ -124,7 +124,7 @@ function gerarHTMLOpcoesEntregaCupom() {
     
     // Verificar se deve mostrar resultado do frete
     const mostrarResultadoFrete = estadoAplicativo.modoEntrega === 'entrega' && 
-                                  estadoAplicativo.taxaEntrega > 0;
+                                  (typeof window.obterTaxaEntregaAtual === 'function' ? window.obterTaxaEntregaAtual() : estadoAplicativo.taxaEntrega) > 0;
     
     return `
         <div class="opcoes-carrinho">
@@ -149,41 +149,47 @@ function gerarHTMLOpcoesEntregaCupom() {
                     </label>
                 </div>
                 
-                <!-- SEÇÃO CEP - Controlada pelo estado -->
                 <div id="secao-cep-carrinho" class="secao-cep-carrinho" style="${mostrarCEP ? 'display: block;' : 'display: none;'}">
                     <div class="informacao-taxa">
                         <i class="fas fa-info-circle"></i> 
                         <span>Informe seu CEP para o cálculo da taxa de entrega</span>
-                    </div>
-                    
-                    <div class="grupo-cep-carrinho">
+                    </div>                   
+
+                    <div class="grupo-cep-carrinho" style="display: flex; flex-direction: column; gap: 12px; width: 100%; margin: 15px 0;">
+                        <label style="font-size: 12px; font-weight: bold; color: #666; margin-bottom: -5px;">DIGITE SEU CEP:</label>
                         <input type="text" 
-                               id="cep-carrinho" 
-                               class="campo-cep-carrinho"
-                               placeholder="00000-000"
-                               maxlength="9"
-                               value="${cepValue}">
-                        <button class="botao-calcular-frete" onclick="calcularFreteNoCarrinho()">
-                            <i class="fas fa-calculator"></i> CALCULAR
-                        </button>
-                    </div>
-                    
-                    <!-- Display do frete calculado -->
-                    <div id="resultado-frete-carrinho" class="resultado-frete" style="${mostrarResultadoFrete ? 'display: block;' : 'display: none;'}">
-                        <div class="frete-info">
-                            <i class="fas fa-truck"></i>
-                            <div class="frete-detalhes">
-                                <span class="frete-titulo">TAXA DE ENTREGA:</span>
-                                <span id="valor-frete-carrinho" class="frete-valor">${formatarMoeda(estadoAplicativo.taxaEntrega || 0)}</span>
-                            </div>
+                            id="cep-carrinho" 
+                            class="campo-cep-carrinho"
+                            placeholder="00000-000"
+                            maxlength="9"
+                            style="width: 100%; height: 45px; padding: 0 12px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; font-size: 16px;"
+                            value="${cepValue}">
+
+                        <div id="notificacao-bairro-carrinho" style="display: none; font-size: 13px; color: #5d4037; font-weight: bold; margin-top: -5px;">
+                            <i class="fas fa-map-marker-alt"></i> Localidade: <span id="nome-bairro-info"></span>
                         </div>
-                    </div>
-                </div>
-            </div>
+
+                        <button type="button" 
+                                class="botao-acao botao-verde-militar" 
+                                style="width: 100%; height: 45px; margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 10px;"
+                                onclick="const cepValue = document.getElementById('cep-carrinho').value; if(cepValue.length >= 8) { window.buscarEnderecoPorCodigoPostal(cepValue); } else { alert('Digite um CEP válido'); }">
+                            <i class="fas fa-calculator"></i> CALCULAR TAXA DE ENTREGA
+                        </button>
+                    
+<div id="resultado-frete-carrinho" class="resultado-frete" style="display: none; margin-top: 10px; background: transparent !important; border: none !important; box-shadow: none !important;">
+    <div class="total-geral-carrinho" style="border-top: 1px dashed #ccc; padding-top: 12px; background: transparent !important;">
+        <span class="rotulo-total" style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-truck"></i> TAXA DE ENTREGA
+        </span>
+        <span id="valor-frete-carrinho" class="valor-total">R$ 0,00</span>
+    </div>
+</div>
+
+                </div> </div>
         </div>
     `;
 }
-
+    
 function gerarHTMLBotoesAcaoCarrinho() {
     return `
         <div class="botoes-carrinho" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
@@ -400,50 +406,6 @@ function prosseguirParaDadosCliente() {
     }, 400);
 }
 
-function calcularFreteNoCarrinho() {
-    console.log('[CEP] Calculando frete...');
-    
-    const campoCEP = elemento('cep-carrinho');
-    if (!campoCEP) return;
-    
-    const cep = campoCEP.value.replace(/\D/g, '');
-    
-    if (cep.length !== 8) {
-        alert('Digite um CEP válido com 8 números.');
-        campoCEP.focus();
-        return;
-    }
-    
-    // Salva o CEP no estado da aplicação
-    estadoAplicativo.cepCalculado = cep;
-    console.log(`[CEP] CEP salvo: ${estadoAplicativo.cepCalculado}`);
-    
-    // Formata o CEP no campo para exibição
-    campoCEP.value = cep.substring(0,5) + '-' + cep.substring(5);
-    
-    // Calcula o frete
-    calcularFretePorBairroNoCarrinho(cep);
-}
-
-function calcularFretePorBairroNoCarrinho(cep) {
-    console.log(`[CEP] Calculando frete para CEP: ${cep}`);
-    
-    // Salvar o CEP nos estados
-    enderecoCliente.cep = cep;
-    estadoAplicativo.cepCalculado = cep;
-    
-    // Simulação de cálculo de frete
-    const freteCalculado = 8.00;
-    console.log(`[CEP] Frete calculado: R$ ${freteCalculado.toFixed(2)}`);
-    
-    // Atualizar estado e display
-    estadoAplicativo.taxaEntrega = freteCalculado;
-    atualizarDisplayFreteCarrinho(freteCalculado);
-    atualizarResumoFinanceiroCarrinho();
-    
-    mostrarNotificacao(`Frete calculado: R$ ${freteCalculado.toFixed(2)}`, 'success');
-}
-
 function atualizarDisplayFreteCarrinho(valor) {
     const resultadoDiv = elemento('resultado-frete-carrinho');
     const valorSpan = elemento('valor-frete-carrinho');
@@ -565,8 +527,10 @@ function calcularTotalFinal() {
     // 2. Recupera o desconto do estado global (conforme definido no seu envio.js)
     const valorDesconto = estadoAplicativo.descontoCupom || 0;
 
-    // 3. Recupera a taxa de entrega (conforme definido no seu envio.js)
-    const taxaEntrega = estadoAplicativo.taxaEntrega || 0;
+    // 3. Recupera a taxa de entrega (Busca direto na fonte mestre do cep-frete.js)
+    const taxaEntrega = typeof window.obterTaxaEntregaAtual === 'function' 
+        ? window.obterTaxaEntregaAtual() 
+        : (estadoAplicativo.taxaEntrega || 0);
 
     // 4. Cálculo final
     const totalGeral = Math.max(0, subtotalItens - valorDesconto) + taxaEntrega;
@@ -585,35 +549,39 @@ function atualizarResumoPagamentoFinal() {
     // 1. Obtém os valores calculados
     const valores = calcularTotalFinal();
     
-    // 2. Localiza o container no modal (Certifique-se que este ID existe no seu HTML)
+    // 2. Recupera o bairro (para mostrar no resumo)
+    const bairroFinal = (window.enderecoCliente && window.enderecoCliente.bairro) 
+        ? window.enderecoCliente.bairro 
+        : "Não informado";
+    
+    // 3. Localiza o container no modal
     const container = document.getElementById('resumo-valores-pagamento'); 
-    if (!container) {
-        console.error('❌ Elemento "resumo-valores-pagamento" não encontrado no HTML.');
-        return;
-    }
+    if (!container) return;
 
-    // 3. Monta o HTML seguindo o padrão de frames (molduras) que você aprovou
+    // 4. Monta o HTML com os IDs necessários para o cep-frete.js te encontrar
     container.innerHTML = `
-        <div class="moldura-padrao-modal">
-            <div class="linha-flex-modal">
+        <div class="moldura-padrao-modal" style="padding: 15px; background: #fff; border-radius: 12px; border: 1px solid #eee;">
+            <div class="linha-flex-modal" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                 <span>Subtotal Itens:</span>
                 <span>${formatarMoeda(valores.itens)}</span>
             </div>
             
             ${valores.desconto > 0 ? `
-            <div class="linha-flex-modal" style="color: #d9534f; font-weight: bold; margin-top: 5px;">
+            <div class="linha-flex-modal" style="display: flex; justify-content: space-between; color: #d9534f; font-weight: bold; margin-bottom: 8px;">
                 <span><i class="fas fa-tag"></i> Desconto Cupom:</span>
                 <span>- ${formatarMoeda(valores.desconto)}</span>
             </div>` : ''}
             
-            <div class="linha-flex-modal" style="margin-top: 5px;">
-                <span>Taxa de Entrega:</span>
-                <span>${valores.taxa > 0 ? formatarMoeda(valores.taxa) : '<span style="color: #28a745;">Grátis</span>'}</span>
+            <div class="linha-flex-modal" style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f5f5f5;">
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-truck" style="color: #28a745;"></i> Entrega (<span id="bairro-final-pagamento">${bairroFinal}</span>):
+                </span>
+                <strong id="taxa-final-pagamento">${valores.taxa > 0 ? formatarMoeda(valores.taxa) : '<span style="color: #28a745;">Grátis</span>'}</strong>
             </div>
             
-            <div class="linha-flex-modal" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ccc; background-color: #e8e8e8; border-radius: 8px; padding: 10px;">
-                <span style="font-weight: bold;">TOTAL A PAGAR:</span>
-                <span style="font-weight: bold; font-size: 1.25rem; color: #333;">${formatarMoeda(valores.total)}</span>
+            <div class="total-final" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 12px; background-color: #f8f9fa; border-radius: 8px;">
+                <span style="font-weight: bold; color: #5d4037;">TOTAL A PAGAR:</span>
+                <span style="font-weight: bold; font-size: 1.3rem; color: #28a745;">${formatarMoeda(valores.total)}</span>
             </div>
         </div>
     `;
@@ -634,8 +602,6 @@ window.sincronizarProdutoNoCarrinho = sincronizarProdutoNoCarrinho; // Important
 window.aplicarCupom = aplicarCupom;
 window.alterarModoEntrega = alterarModoEntrega;
 window.prosseguirParaDadosCliente = prosseguirParaDadosCliente;
-window.calcularFreteNoCarrinho = calcularFreteNoCarrinho;
-window.calcularFretePorBairroNoCarrinho = calcularFretePorBairroNoCarrinho;
 window.calcularTotalFinal = calcularTotalFinal; // A que acabamos de criar
 
 console.log('✅ carrinho.js: Funções exportadas com sucesso');
