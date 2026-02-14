@@ -118,13 +118,9 @@ function gerarHTMLOpcoesEntregaCupom() {
     // Determinar se deve mostrar a seção CEP baseado no estado atual
     const mostrarCEP = estadoAplicativo.modoEntrega === 'entrega';
     
-    // Verificar se já tem CEP calculado para pré-preencher
+    // Verificar se já tem CEP calculado para pré-preencher (mantém o número digitado)
     const cepValue = estadoAplicativo.cepCalculado ? 
         estadoAplicativo.cepCalculado.substring(0,5) + '-' + estadoAplicativo.cepCalculado.substring(5) : '';
-    
-    // Verificar se deve mostrar resultado do frete
-    const mostrarResultadoFrete = estadoAplicativo.modoEntrega === 'entrega' && 
-                                  (typeof window.obterTaxaEntregaAtual === 'function' ? window.obterTaxaEntregaAtual() : estadoAplicativo.taxaEntrega) > 0;
     
     return `
         <div class="opcoes-carrinho">
@@ -132,6 +128,7 @@ function gerarHTMLOpcoesEntregaCupom() {
                 <input type="text" id="campo-cupom-carrinho" placeholder="CUPOM DE DESCONTO" class="campo-cupom">
                 <button class="botao-aplicar-cupom" onclick="aplicarCupom()">APLICAR</button>
             </div>
+            
             <div class="grupo-entrega">
                 <p class="titulo-entrega">Como deseja receber seu pedido?</p>
                 <div class="opcoes-entrega">
@@ -150,42 +147,39 @@ function gerarHTMLOpcoesEntregaCupom() {
                 </div>
                 
                 <div id="secao-cep-carrinho" class="secao-cep-carrinho" style="${mostrarCEP ? 'display: block;' : 'display: none;'}">
-                    <div class="informacao-taxa">
-                        <i class="fas fa-info-circle"></i> 
-                        <span>Informe seu CEP para o cálculo da taxa de entrega</span>
-                    </div>                   
-
-                    <div class="grupo-cep-carrinho" style="display: flex; flex-direction: column; gap: 12px; width: 100%; margin: 15px 0;">
-                        <label style="font-size: 12px; font-weight: bold; color: #666; margin-bottom: -5px;">DIGITE SEU CEP:</label>
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 15px; align-items: center;">
                         <input type="text" 
                             id="cep-carrinho" 
                             class="campo-cep-carrinho"
                             placeholder="00000-000"
                             maxlength="9"
-                            style="width: 100%; height: 45px; padding: 0 12px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; font-size: 16px;"
+                            style="flex: 1; height: 42px; padding: 0 12px; border: 1px solid #727d71; border-radius: 8px; font-size: 16px; outline: none;"
                             value="${cepValue}">
-
-                        <div id="notificacao-bairro-carrinho" style="display: none; font-size: 13px; color: #5d4037; font-weight: bold; margin-top: -5px;">
-                            <i class="fas fa-map-marker-alt"></i> Localidade: <span id="nome-bairro-info"></span>
-                        </div>
 
                         <button type="button" 
                                 class="botao-acao botao-verde-militar" 
-                                style="width: 100%; height: 45px; margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 10px;"
-                                onclick="const cepValue = document.getElementById('cep-carrinho').value; if(cepValue.length >= 8) { window.buscarEnderecoPorCodigoPostal(cepValue); } else { alert('Digite um CEP válido'); }">
-                            <i class="fas fa-calculator"></i> CALCULAR TAXA DE ENTREGA
+                                style="width: auto; height: 42px; padding: 0 20px; margin: 0; white-space: nowrap; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center;"
+                                onclick="const val = document.getElementById('cep-carrinho').value; if(val.length >= 8) { window.buscarEnderecoPorCodigoPostal(val); } else { alert('Digite um CEP válido'); }">
+                            APLICAR
                         </button>
-                    
-<div id="resultado-frete-carrinho" class="resultado-frete" style="display: none; margin-top: 10px; background: transparent !important; border: none !important; box-shadow: none !important;">
-    <div class="total-geral-carrinho" style="border-top: 1px dashed #ccc; padding-top: 12px; background: transparent !important;">
-        <span class="rotulo-total" style="display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-truck"></i> TAXA DE ENTREGA
-        </span>
-        <span id="valor-frete-carrinho" class="valor-total">R$ 0,00</span>
-    </div>
-</div>
+                    </div>
 
-                </div> </div>
+                    <div id="notificacao-bairro-carrinho" style="display: none; font-size: 13px; color: #5d4037; font-weight: bold; margin-top: 8px; margin-left: 5px;">
+                        📍 Localidade: <span id="nome-bairro-info"></span>
+                    </div>
+
+                    <div id="resultado-frete-carrinho" class="resultado-frete" style="display: none; margin-top: 10px; background: transparent !important; border: none !important; padding: 0 !important; box-shadow: none !important;">
+                        <div class="total-geral-carrinho" style="border-top: 1px dashed #ccc; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; background: transparent !important;">
+                            <span class="rotulo-total" style="display: flex; align-items: center; gap: 8px;">
+                                🚚 TAXA DE ENTREGA
+                            </span>
+                            <span id="valor-frete-carrinho" class="valor-total">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                </div> 
+            </div>
         </div>
     `;
 }
