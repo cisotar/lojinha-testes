@@ -155,12 +155,11 @@ function gerarHTMLOpcoesEntregaCupom() {
                             placeholder="00000-000"
                             maxlength="9"
                             style="flex: 1; height: 42px; padding: 0 12px; border: 1px solid #727d71; border-radius: 8px; font-size: 16px; outline: none;"
-                            value="${cepValue}">
-
-                        <button type="button" 
-                                class="botao-acao botao-verde-militar" 
-                                style="width: auto; height: 42px; padding: 0 20px; margin: 0; white-space: nowrap; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center;"
-                                onclick="const val = document.getElementById('cep-carrinho').value; if(val.length >= 8) { window.buscarEnderecoPorCodigoPostal(val); } else { alert('Digite um CEP válido'); }">
+                            value="${cepValue}"
+                            oninput="estadoAplicativo.cepCalculado = this.value.replace(/\\D/g, '')"> <button type="button" 
+                            class="botao-acao botao-verde-militar" 
+                            style="width: auto; height: 42px; padding: 0 20px; margin: 0; white-space: nowrap; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center;"
+                            onclick="const val = document.getElementById('cep-carrinho').value; if(val.length >= 8) { window.buscarEnderecoPorCodigoPostal(val); } else { alert('Digite um CEP válido'); }">
                             APLICAR
                         </button>
                     </div>
@@ -215,42 +214,45 @@ function atualizarResumoFinanceiroCarrinho() {
         totalProdutos += subtotalItem;
     });
 
-    // Aplicar cupom se existir
+    // Lógica de valores
     let desconto = estadoAplicativo.descontoCupom || 0;
-    let subtotalComDesconto = totalProdutos - desconto;
+    let taxaEntrega = estadoAplicativo.modoEntrega === 'entrega' ? (estadoAplicativo.taxaEntrega || 0) : 0;
+    let totalGeral = (totalProdutos - desconto) + taxaEntrega;
     
-    // Adicionar taxa de entrega se for entrega
-    let taxaEntrega = 0;
-    if (estadoAplicativo.modoEntrega === 'entrega') {
-        taxaEntrega = estadoAplicativo.taxaEntrega || 0;
-    }
-    
-    const totalGeral = subtotalComDesconto + taxaEntrega;
     estadoAplicativo.totalGeral = totalGeral;
 
     container.innerHTML = `
-        <div class="detalhes-resumo">
-            <div class="linha-resumo">
-                <span>Produtos:</span>
-                <span>${formatarMoeda(totalProdutos)}</span>
-            </div>
+        <div class="resumo-carrinho-container" style="margin-top: 20px; border: 1px solid var(--borda-nav); border-radius: 12px; background-color: var(--branco); overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
             
-            ${desconto > 0 ? `
-            <div class="linha-resumo desconto">
-                <span>Desconto:</span>
-                <span>- ${formatarMoeda(desconto)}</span>
+            <div style="background-color: var(--bege-claro); padding: 10px 15px; border-bottom: 1px solid var(--borda-nav);">
+                <span style="font-size: 13px; color: var(--marrom-cafe); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Resumo do Pedido</span>
             </div>
-            ` : ''}
-            
-            <div class="linha-resumo">
-                <span>Taxa de Entrega:</span>
-                <span>${estadoAplicativo.modoEntrega === 'entrega' ? formatarMoeda(taxaEntrega) : 'Grátis'}</span>
+
+            <div style="padding: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 14px; color: var(--cinza-escuro);">Produtos</span>
+                    <span style="font-size: 14px; font-weight: 500;">${formatarMoeda(totalProdutos)}</span>
+                </div>
+
+                <div style="display: ${desconto > 0 ? 'flex' : 'none'}; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 14px; color: var(--red);">🏷️ Desconto</span>
+                    <span style="font-size: 14px; color: var(--red); font-weight: bold;">- ${formatarMoeda(desconto)}</span>
+                </div>
+
+                <div style="display: ${estadoAplicativo.modoEntrega === 'entrega' ? 'flex' : 'none'}; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 14px; color: var(--cinza-escuro);">🚚 Taxa de Entrega</span>
+                    <span style="font-size: 14px; font-weight: 500;">${taxaEntrega > 0 ? formatarMoeda(taxaEntrega) : 'Calculando...'}</span>
+                </div>
+
+                <div style="border-top: 1px dashed var(--borda-nav); margin: 12px 0;"></div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 16px; font-weight: bold; color: var(--verde-militar);">TOTAL GERAL</span>
+                    <span style="font-size: 20px; font-weight: 800; color: var(--verde-militar);">
+                        ${formatarMoeda(totalGeral)}
+                    </span>
+                </div>
             </div>
-        </div>
-        
-        <div class="total-geral-carrinho">
-            <span class="rotulo-total">TOTAL</span>
-            <span class="valor-total">${formatarMoeda(totalGeral)}</span>
         </div>
     `;
 }
