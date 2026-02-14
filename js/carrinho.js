@@ -211,6 +211,7 @@ function atualizarResumoFinanceiroCarrinho() {
 
     let totalProdutos = 0;
     
+    // 1. Calcular o subtotal atualizado (Produtos + Opcionais)
     Object.values(carrinho).forEach(item => {
         const produto = dadosIniciais.secoes[item.indiceSessao].itens[item.indiceItem];
         let subtotalItem = produto.preco * item.quantidade;
@@ -223,27 +224,61 @@ function atualizarResumoFinanceiroCarrinho() {
         totalProdutos += subtotalItem;
     });
 
+    // 2. Recalcular o valor do desconto
     if (estadoAplicativo.cupomAplicado) {
         const dadosCupom = dadosIniciais.cupons.find(c => 
             c.codigo.toUpperCase() === estadoAplicativo.cupomAplicado.toUpperCase()
         );
-        
         if (dadosCupom) {
-            if (dadosCupom.tipo === 'porcentagem') {
-                estadoAplicativo.descontoCupom = totalProdutos * (dadosCupom.valor / 100);
-            } else {
-                estadoAplicativo.descontoCupom = dadosCupom.valor;
-            }
+            estadoAplicativo.descontoCupom = dadosCupom.tipo === 'porcentagem' 
+                ? totalProdutos * (dadosCupom.valor / 100) 
+                : dadosCupom.valor;
         }
     }
 
+    // 3. Preparar valores finais
     let desconto = estadoAplicativo.descontoCupom || 0;
     let taxaEntrega = estadoAplicativo.modoEntrega === 'entrega' ? (estadoAplicativo.taxaEntrega || 0) : 0;
     let totalGeral = (totalProdutos - desconto) + taxaEntrega;
-    
     estadoAplicativo.totalGeral = totalGeral;
-    
-    // Aqui continua o código da sua renderização de layout...
+
+    // 4. Renderizar o Layout Idêntico ao Modal de Pagamento
+    container.innerHTML = `
+        <div class="resumo-carrinho-container" style="margin-top: 20px; margin-bottom: 25px; border: 1px solid var(--borda-nav); border-radius: 12px; background-color: var(--branco); overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: left;">
+            <div style="background-color: var(--bege-claro); padding: 10px 15px; border-bottom: 1px solid var(--borda-nav);">
+                <span style="font-size: 13px; color: var(--marrom-cafe); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Resumo do Pedido</span>
+            </div>
+            <div style="padding: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 14px; color: var(--cinza-escuro);">Produtos</span>
+                    <span style="font-size: 14px; font-weight: 500;">${formatarMoeda(totalProdutos)}</span>
+                </div>
+                
+                ${desconto > 0 ? `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 14px; color: var(--red);">🏷️ Desconto</span>
+                    <span style="font-size: 14px; color: var(--red); font-weight: bold;">- ${formatarMoeda(desconto)}</span>
+                </div>` : ''}
+                
+                ${estadoAplicativo.modoEntrega === 'entrega' ? `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 14px; color: var(--cinza-escuro);">🚚 Taxa de Entrega</span>
+                    <span style="font-size: 14px; font-weight: 500;">${taxaEntrega > 0 ? formatarMoeda(taxaEntrega) : 'Grátis'}</span>
+                </div>` : ''}
+                
+                <div style="border-top: 1px dashed var(--borda-nav); margin: 12px 0;"></div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 16px; font-weight: bold; color: var(--verde-militar);">TOTAL GERAL</span>
+                    <span style="font-size: 20px; font-weight: 800; color: var(--verde-militar);">${formatarMoeda(totalGeral)}</span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 5. Atualiza a barra flutuante
+    const totalElementoBarra = elemento('resumo-total-carrinho');
+    if (totalElementoBarra) totalElementoBarra.textContent = formatarMoeda(totalGeral);
 }
 
 function removerItemDoCarrinho(identificador) {
