@@ -566,7 +566,7 @@ function atualizarResumoPagamentoFinal() {
 
     // 3. Renderizar o Layout IDENTICO ao do Carrinho
     container.innerHTML = `
-        <div class="resumo-carrinho-container" style="margin-top: 20px; border: 1px solid var(--borda-nav); border-radius: 12px; background-color: var(--branco); overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: left;">
+        <div class="resumo-carrinho-container" style="margin-top: 20px; margin-bottom: 40px; border: 1px solid var(--borda-nav); border-radius: 12px; background-color: var(--branco); overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: left;">
             
             <div style="background-color: var(--bege-claro); padding: 10px 15px; border-bottom: 1px solid var(--borda-nav);">
                 <span style="font-size: 13px; color: var(--marrom-cafe); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Resumo do Pedido</span>

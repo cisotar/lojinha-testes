@@ -71,35 +71,51 @@ function processarFinalizacaoPedido() {
 }
 
 function gerarMensagemWhatsApp(nome, whatsapp, endereco, metodoPagamento) {
-    // Calcular totais
+    // 1. Inicializar variáveis de cálculo
     let totalProdutos = 0;
     let itensTexto = '';
     
+    // 2. Percorrer o carrinho com a mesma lógica do resumo financeiro
     if (carrinho) {
         Object.values(carrinho).forEach(item => {
-            if (dadosIniciais?.secoes?.[item.indiceSessao]?.itens?.[item.indiceItem]) {
-                const produto = dadosIniciais.secoes[item.indiceSessao].itens[item.indiceItem];
-                const subtotal = produto.preco * item.quantidade;
-                totalProdutos += subtotal;
-                
-                itensTexto += `• ${item.quantidade}x ${produto.nome} (${formatarMoeda(subtotal)})\n`;
-                
-                // Adicionar opcionais
+            const secao = dadosIniciais?.secoes?.[item.indiceSessao];
+            const produto = secao?.itens?.[item.indiceItem];
+
+            if (produto) {
+                // Cálculo do preço base do produto
+                let precoUnitarioTotal = Number(produto.preco || 0);
+                let listaOpcionaisTexto = '';
+
+                // Soma o valor dos opcionais ao preço unitário (se existirem)
                 if (item.opcionais && Object.keys(item.opcionais).length > 0) {
-                    Object.keys(item.opcionais).forEach(opcionalNome => {
-                        const opcional = item.opcionais[opcionalNome];
-                        itensTexto += `  ├ ${opcional.quantidade}x ${opcionalNome}\n`;
+                    Object.entries(item.opcionais).forEach(([nomeOpcional, dadosOpcional]) => {
+                        const qtdOpc = Number(dadosOpcional.quantidade || 0);
+                        const precoOpc = Number(dadosOpcional.preco || 0);
+                        
+                        precoUnitarioTotal += (precoOpc * qtdOpc);
+                        listaOpcionaisTexto += `   ├ ${qtdOpc}x ${nomeOpcional}\n`;
                     });
+                }
+
+                const subtotalItem = precoUnitarioTotal * item.quantidade;
+                totalProdutos += subtotalItem;
+                
+                // Monta o texto do item principal
+                itensTexto += `• ${item.quantidade}x ${produto.nome} (${formatarMoeda(subtotalItem)})\n`;
+                // Adiciona os opcionais logo abaixo do item se houver
+                if (listaOpcionaisTexto) {
+                    itensTexto += listaOpcionaisTexto;
                 }
             }
         });
     }
     
-    const taxaEntrega = estadoAplicativo?.taxaEntrega || 0;
-    const desconto = estadoAplicativo?.descontoCupom || 0;
+    // 3. Obter valores de taxas e descontos do estado global
+    const taxaEntrega = estadoAplicativo.modoEntrega === 'entrega' ? Number(estadoAplicativo.taxaEntrega || 0) : 0;
+    const desconto = Number(estadoAplicativo.descontoCupom || 0);
     const totalGeral = (totalProdutos - desconto) + taxaEntrega;
     
-    // Construir mensagem
+    // 4. Construir o corpo da mensagem
     let mensagem = `*NOVO PEDIDO - PÃO DO CISO*\n`;
     mensagem += `══════════════════════════════\n\n`;
     mensagem += `👤 *Cliente:* ${nome}\n`;
@@ -123,10 +139,8 @@ function gerarMensagemWhatsApp(nome, whatsapp, endereco, metodoPagamento) {
         mensagem += `Desconto: -${formatarMoeda(desconto)}\n`;
     }
     
-    if (taxaEntrega > 0) {
-        mensagem += `Taxa de Entrega: ${formatarMoeda(taxaEntrega)}\n`;
-    } else if (estadoAplicativo?.modoEntrega === 'entrega') {
-        mensagem += `Taxa de Entrega: Grátis\n`;
+    if (estadoAplicativo.modoEntrega === 'entrega') {
+        mensagem += `Taxa de Entrega: ${taxaEntrega > 0 ? formatarMoeda(taxaEntrega) : 'Grátis'}\n`;
     }
     
     mensagem += `\n*TOTAL FINAL: ${formatarMoeda(totalGeral)}*\n`;

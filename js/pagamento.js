@@ -1,64 +1,21 @@
 // ============================================
 // SISTEMA DE PAGAMENTO - PÃO DO CISO
 // ============================================
+
 function abrirModalPagamento() {
-    // 1. Calcula os valores consolidados (Produtos, Desconto e Taxa)
-    const valores = typeof calcularTotalFinal === 'function' ? calcularTotalFinal() : {
-        itens: 0, desconto: 0, taxa: 0, total: 0
-    };
-    
-    // 2. Localizar o container de resumo no modal de pagamento
-    const containerResumo = elemento('resumo-final-pedido-pagamento');
-    
-    // 3. Injetar o HTML IDÊNTICO ao do modal do carrinho (com ajuste de espaço inferior)
-    if (containerResumo) {
-        containerResumo.innerHTML = `
-            <div class="resumo-carrinho-container" style="margin-top: 20px; margin-bottom: 25px; border: 1px solid var(--borda-nav); border-radius: 12px; background-color: var(--branco); overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: left;">
-                
-                <div style="background-color: var(--bege-claro); padding: 10px 15px; border-bottom: 1px solid var(--borda-nav);">
-                    <span style="font-size: 13px; color: var(--marrom-cafe); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Resumo do Pedido</span>
-                </div>
+    console.log("=== ABRINDO PAGAMENTO ===");
 
-                <div style="padding: 15px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span style="font-size: 14px; color: var(--cinza-escuro);">Produtos</span>
-                        <span style="font-size: 14px; font-weight: 500;">${formatarMoeda(valores.itens)}</span>
-                    </div>
-
-                    <div style="display: ${valores.desconto > 0 ? 'flex' : 'none'}; justify-content: space-between; margin-bottom: 10px;">
-                        <span style="font-size: 14px; color: var(--red);">🏷️ Desconto</span>
-                        <span style="font-size: 14px; color: var(--red); font-weight: bold;">- ${formatarMoeda(valores.desconto)}</span>
-                    </div>
-
-                    <div style="display: ${estadoAplicativo.modoEntrega === 'entrega' ? 'flex' : 'none'}; justify-content: space-between; margin-bottom: 10px;">
-                        <span style="font-size: 14px; color: var(--cinza-escuro);">🚚 Taxa de Entrega</span>
-                        <span style="font-size: 14px; font-weight: 500;">${valores.taxa > 0 ? formatarMoeda(valores.taxa) : 'Calculando...'}</span>
-                    </div>
-
-                    <div style="border-top: 1px dashed var(--borda-nav); margin: 12px 0;"></div>
-
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 16px; font-weight: bold; color: var(--verde-militar);">TOTAL GERAL</span>
-                        <span style="font-size: 20px; font-weight: 800; color: var(--verde-militar);">
-                            ${formatarMoeda(valores.total)}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        `;
+    // 1. Chama a função OFICIAL do carrinho que sabe buscar os preços no banco de dados
+    if (typeof window.atualizarResumoPagamentoFinal === 'function') {
+        window.atualizarResumoPagamentoFinal();
+        console.log("✅ Resumo financeiro gerado com sucesso pela função do carrinho.");
+    } else {
+        console.error("❌ ERRO CRÍTICO: Função atualizarResumoPagamentoFinal não encontrada.");
+        alert("Erro ao carregar valores. Por favor, recarregue a página.");
+        return;
     }
 
-    // 4. Sincroniza o valor do PIX e estado global para o WhatsApp
-    const valorPixElemento = elemento('valor-pix');
-    if (valorPixElemento) {
-        valorPixElemento.textContent = formatarMoeda(valores.total);
-    }
-    
-    if (typeof estadoAplicativo !== 'undefined') {
-        estadoAplicativo.totalGeral = valores.total;
-    }
-
-    // 5. Abre o modal finalmente
+    // 2. Abre o modal visualmente
     abrirModal('modal-pagamento');
 }
 
