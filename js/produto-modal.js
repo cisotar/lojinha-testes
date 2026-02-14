@@ -142,15 +142,23 @@ function renderizarModalProduto(produto) {
         </div>
         
         <div class="moldura-padrao-modal">
-            <div class="linha-flex-modal">
-                <div class="opcional-texto-lado-a-lado">
-                    <span class="opcional-nome">Quantidade</span>
-                    <span class="preco-produto-destaque">${formatarMoeda(produto.preco)}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-weight: bold; font-size: 1rem; color: #000;">Quantidade</span>
+                    <span style="font-size: 0.9rem; color: #666;">${formatarMoeda(produto.preco)}</span>
                 </div>
-                <div class="controles-opcional">
-                    <button class="botao-quantidade-pequeno" onclick="alterarQuantidadeProduto(-1)">-</button>
-                    <span id="quantidade-produto-modal" class="quantidade-opcional">${produtoAtual.quantidade}</span>
-                    <button class="botao-quantidade-pequeno" onclick="alterarQuantidadeProduto(1)">+</button>
+                
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="botao-quantidade-pequeno" 
+                            onclick="alterarQuantidadeProduto(-1)"
+                            style="width: 30px; height: 30px; border-radius: 50%; border: none; background-color: #332616; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;">-</button>
+                    
+                    <span id="quantidade-produto-modal" 
+                          style="font-weight: bold; font-size: 1rem; min-width: 20px; text-align: center;">${produtoAtual.quantidade}</span>
+                    
+                    <button class="botao-quantidade-pequeno" 
+                            onclick="alterarQuantidadeProduto(1)"
+                            style="width: 30px; height: 30px; border-radius: 50%; border: none; background-color: #332616; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;">+</button>
                 </div>
             </div>
         </div>
