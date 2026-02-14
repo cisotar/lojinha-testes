@@ -87,19 +87,19 @@ window.dadosIniciais = {
       "tipo": "porcentagem"
    },
    {
-      "codigo": "BEMVINDO",
-      "valor": 5,
-      "tipo": "fixo"
-   },
-   {
       "codigo": "MATHILDE15",
       "tipo": "porcentagem",
       "valor": 15
    },
    {
-      "codigo": "TESTE50",
+      "codigo": "PRIMEIRACOMPRA",
       "tipo": "porcentagem",
-      "valor": 50
+      "valor": 15
+   },
+   {
+      "codigo": "MENOS10",
+      "tipo": "fixo",
+      "valor": 10
    }
 ],
 
